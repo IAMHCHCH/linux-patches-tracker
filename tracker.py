@@ -17,6 +17,7 @@ import json
 import os
 import re
 import sys
+import hashlib
 import requests
 import argparse
 from datetime import datetime, date
@@ -64,6 +65,106 @@ ORG_MAP = {
     'proton.me': 'Individual Contributor',
     'outlook.com': 'Individual Contributor',
 }
+
+# ============================================================
+# LLM (Large Language Model) Configuration
+# ============================================================
+# Set the environment variable LLM_API_KEY to enable LLM-based patch analysis.
+# Supported providers:
+#   - Anthropic:    LLM_API_KEY=sk-ant-...  (default)
+#   - OpenAI:       LLM_API_KEY=sk-...   +  LLM_API_BASE=https://api.openai.com
+#   - Ollama(local): LLM_API_KEY=sk-dummy  +  LLM_API_BASE=http://localhost:11434
+LLM_API_KEY = os.environ.get('LLM_API_KEY', '')
+LLM_MODEL = os.environ.get('LLM_MODEL', 'claude-sonnet-4-20250514')
+LLM_API_BASE = os.environ.get('LLM_API_BASE', 'https://api.anthropic.com')
+
+# In-memory & on-disk cache for LLM summaries (keyed by patch ID)
+_SUMMARY_CACHE = {}
+_SUMMARY_CACHE_PATH = None
+
+
+def _load_llm_cache(output_dir):
+    global _SUMMARY_CACHE, _SUMMARY_CACHE_PATH
+    _SUMMARY_CACHE_PATH = os.path.join(output_dir, 'summary_cache.json')
+    if os.path.exists(_SUMMARY_CACHE_PATH):
+        with open(_SUMMARY_CACHE_PATH, 'r') as f:
+            _SUMMARY_CACHE = json.load(f)
+    else:
+        _SUMMARY_CACHE = {}
+
+
+def _save_llm_cache():
+    if _SUMMARY_CACHE_PATH:
+        with open(_SUMMARY_CACHE_PATH, 'w', encoding='utf-8') as f:
+            json.dump(_SUMMARY_CACHE, f, ensure_ascii=False, indent=2)
+
+
+def _call_llm_summary(title, diff_text, patch_id=None):
+    """Generate a concise Chinese summary via LLM. Returns None on failure."""
+    cache_key = str(patch_id) if patch_id else hashlib.md5(title.encode()).hexdigest()
+    cached = _SUMMARY_CACHE.get(cache_key)
+    if cached:
+        return cached
+
+    if not LLM_API_KEY or not diff_text:
+        return None
+
+    # Truncate diff to keep API calls fast
+    truncated = diff_text[:6000] if len(diff_text) > 6000 else diff_text
+
+    system_prompt = (
+        '你是一个 Linux 内核 patch 分析专家。'
+        '分析以下 patch 的标题和 diff 内容，用一句话概括其核心改动（不超过200字符）。'
+        '要求：直接说明做了什么改动，保持技术准确性，不使用修饰性词语。'
+    )
+
+    try:
+        resp = requests.post(
+            f'{LLM_API_BASE}/v1/messages',
+            headers={
+                'x-api-key': LLM_API_KEY,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+            },
+            json={
+                'model': LLM_MODEL,
+                'max_tokens': 500,
+                'temperature': 0.1,
+                'system': system_prompt,
+                'messages': [{
+                    'role': 'user',
+                    'content': f'## 标题\n{title}\n\n## Diff\n```diff\n{truncated}\n```'
+                }]
+            },
+            timeout=30
+        )
+        resp.raise_for_status()
+        data = resp.json()
+        # Iterate content blocks to find the first 'text' type
+        summary = None
+        for block in data.get('content', []):
+            if block.get('type') == 'text':
+                summary = block.get('text', '')
+                break
+            if block.get('type') == 'thinking':
+                summary = block.get('thinking', '')
+        if not summary:
+            print(f'    [LLM] 响应中无 text/thinking 内容 (id={patch_id})')
+            return None
+        summary = summary.strip()[:200]
+        _SUMMARY_CACHE[cache_key] = summary
+        _save_llm_cache()
+        return summary
+    except Exception as e:
+        print(f'    [LLM] 概括失败 (id={patch_id}): {e}')
+        return None
+
+
+def _batch_llm_task(args):
+    """Wrapper for ThreadPoolExecutor — returns (patch_id, summary_or_None)."""
+    title, diff_text, patch_id = args
+    return patch_id, _call_llm_summary(title, diff_text, patch_id)
+
 
 MODULES = {}
 
@@ -790,26 +891,30 @@ def _fetch_one_diff(patch_id):
                              if l.startswith('+') and not l.startswith('+++')])
                 removed = len([l for l in diff.split('\n')
                                if l.startswith('-') and not l.startswith('---')])
-                return patch_id, added + removed
-        return patch_id, 0
+                return patch_id, added + removed, diff[:8000]
+        return patch_id, 0, ''
     except Exception:
-        return patch_id, 0
+        return patch_id, 0, ''
 
 
 def fetch_line_counts(patch_ids, max_workers=8):
-    results = {}
+    """Returns (line_counts_dict, diff_map_dict)."""
+    line_counts = {}
+    diff_map = {}
     total = len(patch_ids)
     done = 0
     print(f"    正在获取 {total} 个 patch 的代码量...")
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {ex.submit(_fetch_one_diff, pid): pid for pid in patch_ids}
         for f in as_completed(futures):
-            pid, count = f.result()
-            results[pid] = count
+            pid, count, diff_text = f.result()
+            line_counts[pid] = count
+            if diff_text:
+                diff_map[pid] = diff_text
             done += 1
             if done % 50 == 0 or done == total:
                 print(f"      进度: {done}/{total}")
-    return results
+    return line_counts, diff_map
 
 
 def filter_by_code_lines(patches, line_counts):
@@ -1206,18 +1311,43 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
     ids = [p['id'] for p in deduped if p.get('id')]
     code_filtered_list = []
     if ids:
-        line_counts = fetch_line_counts(ids)
+        line_counts, diff_map = fetch_line_counts(ids)
         deduped, code_filtered_list = filter_by_code_lines(deduped, line_counts)
         print(f"    过滤后 {len(deduped)} 个（过滤 {len(code_filtered_list)} 个小修改）")
     else:
+        line_counts, diff_map = {}, {}
         print("    无 patch ID，跳过")
 
-    # Step 4: Cover letters
+    # Step 4: LLM-powered summary generation
+    print("\n[4.5/6] 使用 LLM 生成 patch 概括（200字以内）...")
+    _load_llm_cache(output_dir)
+    if LLM_API_KEY and diff_map:
+        llm_tasks = [
+            (p['title'], diff_map.get(p.get('id'), ''), p.get('id'))
+            for p in deduped if p.get('id') and p.get('id') in diff_map
+        ]
+        success = 0
+        with ThreadPoolExecutor(max_workers=3) as ex:
+            futures = {ex.submit(_batch_llm_task, t): t[2] for t in llm_tasks}
+            for f in as_completed(futures):
+                pid, summary = f.result()
+                if summary:
+                    success += 1
+                    for p in deduped:
+                        if p.get('id') == pid:
+                            p['summary'] = summary
+                            break
+        _save_llm_cache()
+        print(f"    LLM 概括完成: {success}/{len(llm_tasks)} 个 patch")
+    else:
+        print(f"    跳过 LLM 概括（API_KEY: {bool(LLM_API_KEY)}, diff映射: {bool(diff_map)}）")
+
+    # Step 5: Cover letters
     print("\n[5/6] 应用 Cover Letter 逻辑...")
     deduped, _ = apply_cover_letters(deduped, code_filtered_list, pre_filter)
     print(f"    最终 {len(deduped)} 个条目")
 
-    # Step 5: Generate report
+    # Step 6: Generate report
     print("\n[6/6] 生成报告...")
     report, filtered_patches = generate_report(deduped, start_date, end_date,
                                                config)

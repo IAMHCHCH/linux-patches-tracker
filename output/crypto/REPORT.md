@@ -7,7 +7,7 @@
 | 项目 | 内容 |
 |------|------|
 | 数据来源 | patchwork.kernel.org |
-| 生成日期 | 2026-07-03 |
+| 生成日期 | 2026-07-11 |
 | 报告区间 | 2026-05-01 至 2026-06-30 |
 | 仓库 | [https://github.com/IAMHCHCH/linux-patches-tracker](https://github.com/IAMHCHCH/linux-patches-tracker) |
 
@@ -47,7 +47,7 @@
 
 | 子系统 | 数量 | 占比 |
 |--------|------|------|
-| General Crypto | 53 | 55.8% |
+| General Crypto | 54 | 56.8% |
 | HWRNG | 11 | 11.6% |
 | ICE (Qualcomm) | 6 | 6.3% |
 | ECC | 6 | 6.3% |
@@ -58,7 +58,6 @@
 | DRBG | 2 | 2.1% |
 | Authenc | 1 | 1.1% |
 | CESA (Marvell) | 1 | 1.1% |
-| Test Manager | 1 | 1.1% |
 ## 已合入 Patches
 
 ### ◆ 子系统：General Crypto（20 patches）
@@ -69,49 +68,49 @@
 
 - 日期：2026-05-27
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将 PowerPC AES 加密函数中的 `min_t(unsigned int, ...)` 替换为 `min` 宏，移除显式类型指定，利用类型安全的比较。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260527141146.1230672-3-thorsten.blum@linux.dev/
 
 **crypto: use two-argument strscpy where destination size is known**
 
 - 日期：2026-05-25
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将多个已知目标缓冲区大小的 `strscpy` 调用从三参数形式改为两参数形式。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260525103038.825690-4-thorsten.blum@linux.dev/
 
 **crypto: octeontx - use strscpy_pad in ucode_load_store**
 
 - 日期：2026-05-20
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将固件加载存储函数中的手动长度检查和 strscpy 替换为 strscpy_pad，以简化代码并保证缓冲区末尾填充为零。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260520100031.246078-2-thorsten.blum@linux.dev/
 
 **crypto: atmel-sha - use memcpy_and_pad to simplify hmac_setup**
 
 - 日期：2026-05-16
 - 状态：已合入
-- 概括：简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性
+- 概括：使用 memcpy_and_pad 函数替代 memcpy 与 memset 组合，简化 HMAC ipad 填充处理。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260516234211.1131137-2-thorsten.blum@linux.dev/
 
 **crypto: atmel - use min3 to simplify atmel_sha_append_sg**
 
 - 日期：2026-05-12
 - 状态：已合入
-- 概括：简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性
+- 概括：使用 min3 宏合并两个 min 调用，并将 count 的无效值判断从 <=0 改为 ==0。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260512145123.303311-3-thorsten.blum@linux.dev/
 
 **crypto: use designated initializers for report structs**
 
 - 日期：2026-05-08
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将多个加密算法报告函数中的结构体初始化改为使用指定初始化器，直接在声明时为 `.type` 等字段赋值，替代 `memset` 清零和 `strscpy` 拷贝。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260508105717.472043-3-thorsten.blum@linux.dev/
 
 **crypto: artpec6 - refactor crypto_setup_out_descr for readability**
 
 - 日期：2026-05-06
 - 状态：已合入
-- 概括：重构重新组织代码结构以提升可读性和可维护性，提升代码的可读性和可维护性，为后续功能迭代奠定更清晰的基础
+- 概括：重构函数消除 else 分支，对 short 路径提前返回，将变量声明提前并减少嵌套以提高可读性。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260506091627.177426-3-thorsten.blum@linux.dev/
 
 **▸ 组织：Intel**（4 patches）
@@ -120,14 +119,14 @@
 
 - 日期：2026-05-26
 - 状态：已合入
-- 概括：新增kpt support，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 概括：为 Intel QAT GEN6 设备新增密钥保护技术（KPT）支持，包括添加 sysfs 属性配置封装密钥数量、生存时间及共享模式，并初始化相关硬件数据。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260526092839.432243-1-nitesh.venkatesh@intel.com/
 
 **crypto: qat - use pci logging variants for PCI-specific messages**
 
 - 日期：2026-05-20
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将QAT驱动中PCI相关错误信息的记录方式从`dev_err`统一替换为`pci_err`。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260520125150.211802-1-ahsan.atta@intel.com/
 
 **[SERIES] crypto: qat - add sysfs PCI reset support for QAT devices** （cover letter，5/6 个 patch 达到代码量阈值）
@@ -159,21 +158,21 @@
 
 - 日期：2026-06-04
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在加密模块退出时通过调用crypto_del_default_rng释放默认随机数生成器。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/aiD_flpAvcwS4XnO@gondor.apana.org.au/
 
 **crypto: amcc - convert irq_of_parse_and_map to platform_get_irq**
 
 - 日期：2026-06-02
 - 状态：已合入
-- 概括：迁移irq_of_parse_and_map to platform_get_irq，适配新的接口规范
+- 概括：该补丁将 AMCC 加密驱动的中断获取从 `irq_of_parse_and_map` 替换为 `platform_get_irq`，并添加返回错误检查，同时将 irq 字段类型从 `u32` 改为 `int`。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260602014645.522137-1-rosenp@gmail.com/
 
 **[v2] crypto: ccp: sev-dev-tsm: bail out early when pdev->bus is NULL**
 
 - 日期：2026-05-07
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在 sev-dev-tsm 的 dsm_create 函数中，检测到 pdev->bus 为 NULL 时提前返回 -ENODEV，防止后续空指针解引用。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260507140608.8612-1-sozdayvek@gmail.com/
 
 **▸ 组织：Kernel.org**（3 patches）
@@ -182,21 +181,21 @@
 
 - 日期：2026-05-31
 - 状态：已合入
-- 概括：移除exynos-rng driver，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险
+- 概括：移除 exynos-rng 伪随机数生成器驱动及其 Kconfig、Makefile、defconfig、MAINTAINERS 条目。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260531175932.32171-1-ebiggers@kernel.org/
 
 **crypto: loongson - Remove broken and unused loongson-rng**
 
 - 日期：2026-05-29
 - 状态：已合入
-- 概括：修复and unused loongson-rng，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险
+- 概括：移除了已损坏且未使用的龙芯随机数生成器驱动 loongson-rng。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260529233208.8703-1-ebiggers@kernel.org/
 
 **crypto: loongson - Select CRYPTO_RNG**
 
 - 日期：2026-05-22
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：为Loongson RNG驱动配置增加对CRYPTO_RNG的自动选择，确保依赖正确。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260522022525.12976-1-ebiggers@kernel.org/
 
 **▸ 组织：Google**（1 patches）
@@ -205,7 +204,7 @@
 
 - 日期：2026-05-04
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：允许用户空间通过将证书链长度设为零来查询PDH证书链的blob长度，而不必设置地址为零。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260504222812.2339526-1-seanjc@google.com/
 
 **▸ 组织：NVIDIA**（1 patches）
@@ -214,7 +213,7 @@
 
 - 日期：2026-05-15
 - 状态：已合入
-- 概括：限制touch bo refcount，增加条件判断和安全保护逻辑，持续改进代码质量和功能完备性
+- 概括：该补丁移除了Tegra SE驱动中cmdbuf的pin和unpin操作对host1x_bo引用计数的多余获取与释放。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260515-host1x-bocache-leak-v1-2-a0375f68aeab@nvidia.com/
 
 **▸ 组织：Huawei**（1 patches）
@@ -250,7 +249,7 @@
 
 - 日期：2026-05-04
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将 pci_device_id 数组的初始化方式从位置参数改为使用命名字段 .driver_data，明确指定驱动数据字段，提高代码可读性。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260504152421.2147027-2-u.kleine-koenig@baylibre.com/
 
 **▸ 组织：Qualcomm**（1 patches）
@@ -259,7 +258,7 @@
 
 - 日期：2026-05-05
 - 状态：已合入
-- 概括：移动代码到更合适的位置，优化代码组织结构，持续改进代码质量和功能完备性
+- 概括：将 MODULE_DEVICE_TABLE 宏声明从文件末尾移动到设备 ID 表定义之后，使声明紧邻表本身。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260505102948.191683-2-krzysztof.kozlowski@oss.qualcomm.com/
 
 **▸ 组织：Intel**（1 patches）
@@ -268,7 +267,7 @@
 
 - 日期：2026-05-20
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：为`service_table`链表的遍历添加`service_lock`互斥锁保护，防止并发操作导致的竞态条件。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260520124155.211119-1-ahsan.atta@intel.com/
 
 **▸ 组织：Linux Community**（1 patches）
@@ -277,7 +276,7 @@
 
 - 日期：2026-05-27
 - 状态：已合入
-- 概括：简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性
+- 概括：将服务名称字符串拼接逻辑改为仅从第二个元素开始添加分隔符，避免生成多余的前导分隔符。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260527174655.1390543-3-thorsten.blum@linux.dev/
 
 ---
@@ -329,14 +328,14 @@
 
 - 日期：2026-05-06
 - 状态：已合入
-- 概括：重命名符号或函数以更清晰地表达其用途和语义，持续改进代码质量和功能完备性
+- 概括：将宏 `DRBG_MAX_ADDTL` 重命名为 `DRBG_MAX_ADDTL_BYTES`，以明确该最大值以字节为单位。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260506000217.70738-1-ebiggers@kernel.org/
 
 **crypto: drbg - Remove support for "prediction resistance"**
 
 - 日期：2026-05-06
 - 状态：已合入
-- 概括：移除support，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险
+- 概括：移除 DRBG 对预测抵抗（prediction resistance）的支持，仅保留无预测抵抗模式并简化代码。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260506000258.70807-1-ebiggers@kernel.org/
 
 ---
@@ -349,7 +348,7 @@
 
 - 日期：2026-05-02
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将 authencesn 密码驱动中的 scatterwalk_map_and_copy 调用替换为 memcpy_from_sglist 和 memcpy_to_sglist。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/afWDVpH2ba-DVpkT@gondor.apana.org.au/
 
 ---
@@ -362,7 +361,7 @@
 
 - 日期：2026-05-05
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：该补丁在`af_alg_cmsg_send()`中增加了对AEAD关联数据长度的上限检查，拒绝大于等于`0x80000000`的值，防止溢出或安全风险。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/afmyNZxW3QB33LXi@gondor.apana.org.au/
 
 ---
@@ -375,7 +374,7 @@
 
 - 日期：2026-05-06
 - 状态：已合入
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：为ARM架构下启用KASAN_STACK的GCC编译，放宽ECC模块的栈帧大小限制以绕过编译器bug导致的构建中断。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/7e3d64a53efb28740b32d1f934e78c10086208ab.1778073318.git.lukas@wunner.de/
 
 ---
@@ -388,7 +387,7 @@
 
 - 日期：2026-05-12
 - 状态：已合入
-- 概括：简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性
+- 概括：使用max()宏简化mv_cesa_probe中sram_size的最小值限制逻辑，替代原有的if条件赋值。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260512133415.302370-3-thorsten.blum@linux.dev/
 
 ---
@@ -433,7 +432,7 @@
 
 ## 社区讨论中 Patches
 
-### ◆ 子系统：General Crypto（33 patches）
+### ◆ 子系统：General Crypto（34 patches）
 
 **▸ 组织：Individual Contributor**（16 patches）
 
@@ -455,21 +454,21 @@
 
 - 日期：2026-06-22
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在 virtio_crypto 的 akcipher 回调中，将解密结果长度限制为计算长度与目标缓冲区两者的较小值，防止 dst_len 超出缓冲区边界。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260622-b4-disp-3a2c09a8-v2-1-d1a809281db4@proton.me/
 
 **crypto: virtio - bound the device-reported akcipher result**
 
 - 日期：2026-06-21
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在计算非对称加密结果长度时，将其与原始目标缓冲区长度取最小值，防止设备返回的长度超出目标缓冲区。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260620-b4-disp-27caeeac-v1-1-956e8f9c4f01@proton.me/
 
 **crypto: amcc: move ioremapping up**
 
 - 日期：2026-06-14
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将 I/O 映射操作提前到 SDR 构建之前，使得映射失败时可直接返回，避免使用尚未存在的清理标签。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260614012917.70772-1-rosenp@gmail.com/
 
 **[SERIES] crypto: qat - bound the live migration import parser** （cover letter，1/2 个 patch 达到代码量阈值）
@@ -485,35 +484,35 @@
 
 - 日期：2026-06-13
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将 `list_first_entry` 替换为 `list_first_entry_or_null`，使设备列表为空时安全返回 `NULL` 而非无效指针。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260613085858.32580-1-mertsftl@gmail.com/
 
 **crypto: s5p-sss - correct CONFIG_CRYPTO_DEV_EXYNOS_RNG macro name in comment**
 
 - 日期：2026-06-13
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：修正crypto/s5p-sss.c注释中宏名称CONFIG_EXYNOS_RNG为CONFIG_CRYPTO_DEV_EXYNOS_RNG。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260613223648.119694-1-enelsonmoore@gmail.com/
 
 **crypto: amcc - embed pdr_uinfo as flexible array in crypto4xx_device**
 
 - 日期：2026-06-13
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将`struct crypto4xx_device`中的`pdr_uinfo`从独立动态分配的指针改为嵌入结构体尾部的柔性数组成员，`probe`时使用`struct_size`一次性分配，移除独立的`kzalloc_objs`和`kfree`调用。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260613234559.20934-1-rosenp@gmail.com/
 
 **crypto: amcc - check ppc4xx_trng_probe() return value**
 
 - 日期：2026-06-02
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：修改 ppc4xx_trng_probe 返回 int 以传递错误码，并在 crypto4xx_probe 中检查处理，失败时跳转错误路径。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260602014553.522044-1-rosenp@gmail.com/
 
 **[2/4] crypto: rockchip: Add RK356x/RK3588 cryptographic offloader driver**
 
 - 日期：2026-05-30
 - 状态：社区讨论中
-- 概括：新增rk356x/rk3588 cryptographic offloader driver，扩展功能特性
+- 概括：为 Rockchip RK356x/RK3588 SoC 新增硬件加密卸载器驱动。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260530160704.3453555-3-dawidro@gmail.com/
 
 **[SERIES] Add support for hashing algorithms in TI DTHE V2** （cover letter，2/3 个 patch 达到代码量阈值）
@@ -542,14 +541,14 @@
 
 - 日期：2026-05-23
 - 状态：社区讨论中
-- 概括：新增eip93 esp packet backend，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 概括：为 Inside Secure EIP93 加密驱动添加了 IPsec ESP 数据包硬件卸载后端支持。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260523121522.3023992-3-hurryman2212@gmail.com/
 
 **[1/2] crypto: Delete Qualcomm crypto engine driver**
 
 - 日期：2026-05-23
 - 状态：社区讨论中
-- 概括：移除qualcomm crypto engine driver，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险
+- 概括：删除了Qualcomm加密引擎驱动程序及其所有配置选项和构建条目。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260523-delete-qce-v1-1-86105cd7f406@gmail.com/
 
 **[SERIES] crypto: atmel - introduce shared i2c core client management and capability-based selection framework** （cover letter，8/12 个 patch 达到代码量阈值）
@@ -566,18 +565,18 @@
   - ... 及其他 3 个 patch
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260522230134.32414-5-l.rubusch@gmail.com/
 
-**[SERIES] crypto: atmel - refactor common i2c support and add SHA256 ahash support** （cover letter，8/12 个 patch 达到代码量阈值）
+**[SERIES] crypto: atmel - refactor common i2c support and add SHA256 ahash support** （cover letter，9/12 个 patch 达到代码量阈值）
 
 - 日期：2026-05-12
 - 状态：社区讨论中
 - 概括：新增sha256 ahash support，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
-- 达到阈值的 patches（8 个，显示前 5）：
+- 达到阈值的 patches（9 个，显示前 5）：
+  - crypto: atmel - introduce shared I2C client management
   - crypto: atmel - move capability-based client allocation into i2c core
   - crypto: atmel - add per-device timing and match-data driven configuration
   - crypto: atmel - move RNG support into common i2c core
   - crypto: atmel - move EEPROM access support into common i2c core
-  - crypto: atmel - expose CONFIG zone through sysfs
-  - ... 及其他 3 个 patch
+  - ... 及其他 4 个 patch
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260512224349.64621-2-l.rubusch@gmail.com/
 
 **▸ 组织：Kernel.org**（6 patches）
@@ -607,7 +606,7 @@
 
 - 日期：2026-06-11
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将函数 clmul32 标记为 noinline_for_stack，以阻止编译器内联并控制栈空间使用。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260611125952.3387258-1-arnd@kernel.org/
 
 **[SERIES] ML-KEM and X-Wing support** （cover letter，5/5 个 patch 达到代码量阈值）
@@ -627,14 +626,14 @@
 
 - 日期：2026-05-24
 - 状态：社区讨论中
-- 概括：迁移tpmkey asn.1 objects from trusted-keys，适配新的接口规范，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向
+- 概括：将 TPM2 密钥的 ASN.1 对象定义与解码函数从 trusted-keys 子系统迁移到 crypto 子系统，新增 CRYPTO_TPM2_KEY 配置及 tpm2_key 编解码 API。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260524051519.3708075-3-jarkko@kernel.org/
 
 **[v2] lib/crypto: powerpc/md5: Drop powerpc optimized MD5 code**
 
 - 日期：2026-05-06
 - 状态：社区讨论中
-- 概括：移除powerpc optimized md5 code，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险
+- 概括：移除 PowerPC 架构的 MD5 汇编优化实现，统一使用通用 C 语言实现。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260506030005.9698-1-ebiggers@kernel.org/
 
 **▸ 组织：Linux Community**（4 patches）
@@ -643,7 +642,7 @@
 
 - 日期：2026-06-11
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：该补丁将 DMA 映射前的长度检查与计数由 sg_dma_len 改为直接使用 scatterlist 的 length 字段，以避免依赖映射后的 DMA 长度。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260611103633.458381-3-thorsten.blum@linux.dev/
 
 **[SERIES] crypto: use 2-arg strscpy where destination size is known** （cover letter，6/6 个 patch 达到代码量阈值）
@@ -664,14 +663,14 @@
 
 - 日期：2026-06-04
 - 状态：社区讨论中
-- 概括：简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性
+- 概括：将偏移量和长度变量类型从 int 改为 size_t，并用 min3 宏替代两次 min 调用简化了 omap_crypto_copy_data 的长度计算。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260604001035.1256238-3-thorsten.blum@linux.dev/
 
 **crypto: atmel-tdes - use min3 to simplify sg_copy and crypt_start**
 
 - 日期：2026-05-25
 - 状态：社区讨论中
-- 概括：简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性
+- 概括：将两个连续的 `min` 调用替换为 `min3` 宏，简化 `sg_copy` 和 `crypt_start` 中的最小值计算逻辑。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260525092927.818586-2-thorsten.blum@linux.dev/
 
 **▸ 组织：NXP**（2 patches）
@@ -680,14 +679,14 @@
 
 - 日期：2026-05-21
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：用 dmaengine_prep_config_sg() 替代 dmaengine_slave_config() 和 dmaengine_prep_slave_sg() 的分步调用，将 DMA 配置和描述符准备合并为一次操作。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260521-dma_prep_config-v7-9-1f73f4899883@nxp.com/
 
 **[v5,9/9] crypto: atmel: Use dmaengine_prep_config_single() API**
 
 - 日期：2026-05-12
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将 DMA 从属配置和 SG 描述符准备合并为单一调用 `dmaengine_prep_config_sg`，以简化 Atmel AES 驱动中的 DMA 传输启动代码。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260512-dma_prep_config-v5-9-26865bf7d935@nxp.com/
 
 **▸ 组织：Intel**（2 patches）
@@ -696,30 +695,30 @@
 
 - 日期：2026-06-08
 - 状态：社区讨论中
-- 概括：启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性
+- 概括：在 SR-IOV 重新启用超时后，取消未完成的 sriov_work 以避免挂起的工作项。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260608150104.135313-1-giovanni.cabiddu@intel.com/
 
 **crypto: qat - clear AES key schedule from stack**
 
 - 日期：2026-06-08
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在XTS密钥反转操作后调用memzero_explicit清除栈上的AES扩展密钥，防止密钥残留泄露。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260608150441.136014-1-giovanni.cabiddu@intel.com/
 
 **▸ 组织：Qualcomm**（2 patches）
 
-**[SERIES] crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O** （cover letter，6/8 个 patch 达到代码量阈值）
+**[SERIES] crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O** （cover letter，7/8 个 patch 达到代码量阈值）
 
 - 日期：2026-06-29
 - 状态：社区讨论中
 - 概括：引入bam locking and use dma for register i/o，扩展框架的功能范围
-- 达到阈值的 patches（6 个，显示前 5）：
+- 达到阈值的 patches（7 个，显示前 5）：
   - crypto: qce - Cancel work on device detach
   - crypto: qce - Include algapi.h in the core.h header
   - crypto: qce - Simplify arguments of devm_qce_dma_request()
   - crypto: qce - Use existing devres APIs in devm_qce_dma_request()
   - crypto: qce - Map crypto memory for DMA
-  - ... 及其他 1 个 patch
+  - ... 及其他 2 个 patch
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260629-qcom-qce-cmd-descr-v20-7-56f67da84c05@oss.qualcomm.com/
 
 **[SERIES] crypto: qce - Fix crypto self-test failures** （cover letter，5/8 个 patch 达到代码量阈值）
@@ -748,6 +747,18 @@
   - crypto: hisilicon/sec2 - restore iv for ctr mode
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260528115531.174593-2-wuzongyu1@huawei.com/
 
+**▸ 组织：Amazon**（1 patches）
+
+**[SERIES] crypto: skcipher - multi-data-unit dispatch as a template** （cover letter，2/3 个 patch 达到代码量阈值）
+
+- 日期：2026-06-30
+- 状态：社区讨论中
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 达到阈值的 patches（2 个，显示前 5）：
+  - crypto: dun - data-unit-number dispatch template
+  - crypto: testmgr - test dun() dispatch
+- 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260630083431.2772-2-lravich@amazon.com/
+
 ---
 
 ### ◆ 子系统：HWRNG（7 patches）
@@ -758,21 +769,21 @@
 
 - 日期：2026-06-23
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：该补丁修改了返回类型和错误处理逻辑，确保在读取任何数据前发生超时能向上层返回错误码，而不是返回已读字节数0。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260623060728.18906-1-pengpeng@iscas.ac.cn/
 
 **[v4] hwrng: virtio: clamp device-reported used.len at copy_data()**
 
 - 日期：2026-06-14
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：限制 virtio-rng 设备报告的 data_avail 不超过内部缓冲区大小，并检查 data_idx 越界，防止因恶意或 buggy 后端导致 slab 内存越界读取。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260614164000.3343777-1-michael.bommarito@gmail.com/
 
 **hwrng: omap - balance runtime PM and clocks on probe-defer paths**
 
 - 日期：2026-06-05
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：修复时钟获取延迟时直接返回导致的运行时PM与时钟资源未释放问题，改为跳转到错误处理路径进行清理。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260605192842.372935-1-william@theesfeld.net/
 
 **▸ 组织：Bootlin**（1 patches）
@@ -781,7 +792,7 @@
 
 - 日期：2026-06-01
 - 状态：社区讨论中
-- 概括：限制read data during pm sleep transition，增加条件判断和安全保护逻辑
+- 概括：在系统挂起/休眠过渡期间跳过硬件随机数读取，避免访问未就绪的设备。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260601-hw-random-fix-hwrng-fillfn-crash-suspend-resume-v2-1-667ce5da32ee@bootlin.com/
 
 **▸ 组织：StarFive**（1 patches）
@@ -790,7 +801,7 @@
 
 - 日期：2026-06-29
 - 状态：社区讨论中
-- 概括：重写重新设计部分实现，优化数据流和处理逻辑，持续改进代码质量和功能完备性
+- 概括：为JHB100重新设计时钟和复位拆除顺序，改为先禁用时钟再断言复位，以避免复位域交叉造成的毛刺影响下游IP。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260629083658.300191-3-lianfeng.ouyang@starfivetech.com/
 
 **▸ 组织：SUSE**（1 patches）
@@ -799,7 +810,7 @@
 
 - 日期：2026-06-29
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：将via-rng驱动中的MSR访问从32位接口rdmsr/wrmsr切换为64位接口rdmsrq/wrmsrq，并使用msr结构体统一处理寄存器值。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260629060526.3638272-24-jgross@suse.com/
 
 **▸ 组织：Kernel.org**（1 patches）
@@ -825,7 +836,7 @@
 
 - 日期：2026-06-11
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在 atmel-ecc 驱动中增加对公钥是否为空的检查，若公钥缺失则拒绝硬件 ECDH 计算并返回 -EINVAL。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260611213617.463552-2-thorsten.blum@linux.dev/
 
 **[SERIES] crypto: atmel-i2c - improve comment in atmel_i2c_init_ecdh_cmd** （cover letter，1/2 个 patch 达到代码量阈值）
@@ -843,7 +854,7 @@
 
 - 日期：2026-06-07
 - 状态：社区讨论中
-- 概括：优化关键路径的性能表现，降低延迟和提高吞吐量，提升代码的可读性和可维护性，为后续功能迭代奠定更清晰的基础
+- 概括：使用编译器内建函数优化大整数加法和减法的进位/借位处理，以提升椭圆曲线运算的性能。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260607112435.42804-1-fabianblatter09@gmail.com/
 
 **▸ 组织：AMD**（1 patches）
@@ -852,7 +863,7 @@
 
 - 日期：2026-06-15
 - 状态：社区讨论中
-- 概括：禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性
+- 概括：在 SNP 初始化时禁用 CPU 热插拔，并在通过 snp_shutdown() 完全拆除 SNP 后重新启用，使用标志防止重复禁用/启用操作。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/1feccf6e2a56d949b30f403c0ca7949f580e5982.1781419998.git.ashish.kalra@amd.com/
 
 ---
@@ -865,14 +876,17 @@
 
 - 日期：2026-06-17
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：该补丁将sec_alg_skcipher_crypto()函数中的错误处理路径重构为使用goto标签跳转到统一的内存释放点，消除重复的kfree和return语句。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/e6aa4d9d-fe05-481c-be31-17033a60dc4c@web.de/
 
 **crypto: ctr - Convert from skcipher to lskcipher**
 
 - 日期：2026-05-10
 - 状态：社区讨论中
-- 概括：迁移from skcipher to lskcipher，适配新的接口规范，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向
+- 概括：我们被要求分析一个 Linux 内核 patch 的标题和 diff 内容，用一句话概括核心改动，不超过200字符。要求直接说明做了什么改动，保持技术准确性，不使用修饰性词语。
+
+标题: "crypto: ctr - Convert from skcipher to lskcipher"
+diff 内容展示了 ctr.c 文件的修改，将 CTR 模式加密从基于 skcipher（同步块加密）接口转
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260510230901.1772949-1-knecht.alexandre@gmail.com/
 
 **▸ 组织：Amazon**（1 patches）
@@ -898,7 +912,7 @@
 
 - 日期：2026-06-03
 - 状态：社区讨论中
-- 概括：替换将 in_be32/out_be32 替换为 ioread32be/iowrite32be，采用更规范的实现
+- 概括：将文件系统接口函数 in_be32/out_be32 替换为通用 ioread32be/iowrite32be，并在 Kconfig 中新增 COMPILE_TEST 与 HAS_IOMEM 依赖以支持跨平台编译测试。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260603193300.7695-1-rosenp@gmail.com/
 
 **[SERIES] crypto: talitos - fix rename first/last to first_desc/last_desc** （cover letter，3/3 个 patch 达到代码量阈值）
@@ -938,7 +952,7 @@
 
 - 日期：2026-06-22
 - 状态：社区讨论中
-- 概括：新增af_alg_restrict sysctl, defaulting，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 概括：引入 sysctl `af_alg_restrict` 控制 AF_ALG 接口限制级别，默认值 1 仅允许有限算法集，可设为 2 完全禁用。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260622234803.6982-1-ebiggers@kernel.org/
 
 **▸ 组织：Individual Contributor**（1 patches）
@@ -947,7 +961,7 @@
 
 - 日期：2026-06-28
 - 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 概括：在AEAD和SKCIPHER的recvmsg循环中，当请求已完成且未设置MSG_MORE标志时，通过检查ctx->more和ctx->used来终止循环，防止输出缓冲区大于加密结果时陷入永不完成的阻塞等待。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/OwDrEgL--F-9@tutanota.com/
 
 **▸ 组织：Linux Community**（1 patches）
@@ -975,24 +989,8 @@
 
 - 日期：2026-06-15
 - 状态：社区讨论中
-- 概括：引入snp_verify_mitigation command，扩展框架的功能范围，提升框架的抽象能力和代码可扩展性
+- 概括：引入SNP_VERIFY_MITIGATION固件命令，通过sysfs属性报告和请求验证SEV-SNP漏洞缓解措施。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/682e46e778b7394fb679591c9b6e4d9aeafa9462.1781533471.git.prsampat@amd.com/
-
----
-
-### ◆ 子系统：Test Manager（1 patches）
-
-**▸ 组织：Amazon**（1 patches）
-
-**[SERIES] crypto: skcipher - multi-data-unit dispatch as a template** （cover letter，2/3 个 patch 达到代码量阈值）
-
-- 日期：2026-06-30
-- 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
-- 达到阈值的 patches（2 个，显示前 5）：
-  - crypto: dun - data-unit-number dispatch template
-  - crypto: testmgr - test dun() dispatch
-- 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260630083431.2772-2-lravich@amazon.com/
 
 ---
 
@@ -1054,4 +1052,4 @@ python3 tracker.py 子系统 --start 2026-03-01 --end 2026-04-30
 
 ---
 
-*报告由 Linux Patches Tracker 自动生成 | 2026-07-03 15:40:18*
+*报告由 Linux Patches Tracker 自动生成 | 2026-07-11 11:36:20*

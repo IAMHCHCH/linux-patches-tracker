@@ -11,7 +11,7 @@
     "submitter": "Omar Elghoul",
     "email": "oelghoul@linux.ibm.com",
     "version": 2,
-    "summary": "新增vfio fmb device feature，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "我们需要分析patch，用一句话概括核心改动（不超过200字符），直接说明做了什么改动，保持技术准确性，不使用修饰性词语。\n\n从patch内容来看，标题是“vfio-pci/zdev: Add VFIO FMB device feature”。主要改动：\n\n- 在vfio_pci_core.c的ioctl feature处理中添加了case VFIO_DEVICE_FEATURE_ZPCI_FMB",
     "series_id": 1097654,
     "series_name": "vfio-pci/zdev: Improved zPCI Function Measurement Support"
   },
@@ -27,7 +27,7 @@
     "submitter": "Raghavendra Rao Ananta",
     "email": "rananta@google.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "引入私有标志 `sriov_active` 来跟踪 VF 是否激活，取代直接调用 `pci_num_vf()` 检查，以避免在设置电源状态时出现锁竞争。",
     "series_id": 1094932,
     "series_name": "[v2] vfio/pci: Use a private flag to prevent power state change with VFs"
   },
@@ -43,7 +43,7 @@
     "submitter": "Matt Evans",
     "email": "mattev@meta.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将 VFIO_PCI_OFFSET_TO_INDEX 宏中的偏移参数强制转换为 u64，确保右移后返回无符号整型，避免有符号类型可能导致的符号扩展问题。",
     "series_id": 1092879,
     "series_name": "vfio/pci: Make VFIO_PCI_OFFSET_TO_INDEX() return unsigned"
   },
@@ -59,7 +59,7 @@
     "submitter": "Josh Hilke",
     "email": "jrhilke@google.com",
     "version": null,
-    "summary": "新增driver，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为VFIO自测试框架新增Intel IGB网卡驱动，实现对QEMU虚拟IGB设备的初始化、链路协商和收发队列配置。",
     "series_id": 1093097,
     "series_name": "vfio: selftests: Add driver for IGB QEMU device"
   },
@@ -75,7 +75,7 @@
     "submitter": "Zhiping Zhang",
     "email": "zhipingz@meta.com",
     "version": 4,
-    "summary": "新增dma-buf get_tph callback and dma_buf_tph feature，扩展功能特性",
+    "summary": "为 VFIO 设备的 dma-buf 添加 get_tph 回调和 VFIO_DEVICE_FEATURE_DMA_BUF_TPH 特性，支持用户空间设置 dma-buf 的 TPH 转向标签和处理提示。",
     "series_id": 1097605,
     "series_name": "vfio/dma-buf: add TPH support for peer-to-peer access"
   },
@@ -91,7 +91,7 @@
     "submitter": "liulongfang",
     "email": "liulongfang@huawei.com",
     "version": null,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
+    "summary": "该补丁重构驱动中对设备队列配置信息的读取路径，用封装好的hisi_qm_mb_read函数替换手动读取邮箱寄存器的组合操作，并删除已无用的qm_get_sqc/qm_get_cqc辅助函数。",
     "series_id": 1094680,
     "series_name": "hisi_acc_vfio_pci: simplify the command for reading device information."
   },
@@ -107,7 +107,7 @@
     "submitter": "Aneesh Kumar K.V (Arm)",
     "email": "aneesh.kumar@kernel.org",
     "version": 5,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将 VFIO 中缓存的 KVM 引用从裸 struct kvm 指针改为 struct file 文件引用，通过文件引用安全获取 KVM 指针。",
     "series_id": 1100533,
     "series_name": "Add iommufd ioctls to support TSM operations"
   },
@@ -123,7 +123,7 @@
     "submitter": "Ankit Agrawal",
     "email": "ankita@nvidia.com",
     "version": 8,
-    "summary": "新增blackwell-next gpu readiness check via cxl dvsec，扩展功能特性",
+    "summary": "添加基于CXL DVSEC的GPU内存就绪检查，用CXL规范的就绪状态轮询取代传统BAR0寄存器轮询，并在页面错误和内存访问路径中集成CXL状态等待，以支持Blackwell-Next GPU。",
     "series_id": 1104404,
     "series_name": "[v8,1/1] vfio/nvgrace-gpu: Add Blackwell-Next GPU readiness check via CXL DVSEC"
   },
@@ -139,7 +139,7 @@
     "submitter": "Steffen Eiden",
     "email": "seiden@linux.ibm.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为 VFIO 获取 KVM 引用时增加对 KVM 模块的引用计数，避免 KVM 模块在使用中被卸载。",
     "series_id": 1103003,
     "series_name": "KVM: s390: Introduce arm64 KVM"
   },
@@ -155,7 +155,7 @@
     "submitter": "Guanghui Feng",
     "email": "guanghuifeng@linux.alibaba.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "该补丁将 `iommu_iova_to_phys` 替换为 `iommu_iova_to_phys_length`，通过单次页表遍历同时获取物理地址和页表项页大小，批量处理连续物理页面，从而减少页表遍历次数，提升 unmap 效率。",
     "series_id": 1104572,
     "series_name": "[v2,01/30] iommu: introduce iova_to_phys_length in iommu_domain_ops"
   },
@@ -171,7 +171,7 @@
     "submitter": "Junrui Luo",
     "email": "moonafterrain@outlook.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在vfio_mig_get_next_state()的状态查找循环中增加对VFIO_DEVICE_STATE_ERROR的跳出判定，避免因迁移弧被阻塞而陷入无限循环。",
     "series_id": 1104501,
     "series_name": "vfio: prevent infinite loop in vfio_mig_get_next_state() on blocked arc"
   },
@@ -187,7 +187,7 @@
     "submitter": "Guanghui Feng",
     "email": "guanghuifeng@linux.alibaba.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将vfio的unmap操作改用iommu_iova_to_phys_length一次性获取物理地址和页表项大小，以更高效地合并连续物理块并减少硬件缓存刷新调用。",
     "series_id": 1105406,
     "series_name": "[v3,01/32] iommu: introduce iova_to_phys_length in iommu_domain_ops"
   },
@@ -203,7 +203,7 @@
     "submitter": "fengchengwen",
     "email": "fengchengwen@huawei.com",
     "version": 16,
-    "summary": "新增tph_cpu_st，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "添加 VFIO_DEVICE_FEATURE_TPH_CPU_ST 控制特性，允许用户空间通过指定 CPU 列表、内存类型和请求类型查询 TPH steering tag。",
     "series_id": 1105978,
     "series_name": "vfio/pci: Add PCIe TPH support"
   },
@@ -219,7 +219,7 @@
     "submitter": "Dimitri Daskalakis",
     "email": "dimitri.daskalakis1@gmail.com",
     "version": null,
-    "summary": "迁移vfio_pci_core.c to pci_is_sriov_* helpers，适配新的接口规范",
+    "summary": "将 vfio_pci_core.c 中 direct access `pdev->is_virtfn` 和 `pdev->is_physfn` 的代码改为使用 `pci_is_sriov_virtfn()` 和 `pci_is_sriov_physfn()` 辅助函数。",
     "series_id": 1106045,
     "series_name": "PCI: Add support for Scalable I/O Virtualization"
   },
@@ -235,7 +235,7 @@
     "submitter": "Omar Elghoul",
     "email": "oelghoul@linux.ibm.com",
     "version": 5,
-    "summary": "新增vfio fmb device features，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为 VFIO zPCI 设备增加 FMB 功能，支持通过 ioctl 启用/禁用 FMB 并读取其数据。",
     "series_id": 1117260,
     "series_name": "vfio-pci/zdev: Improved zPCI Function Measurement Support"
   },
@@ -251,7 +251,7 @@
     "submitter": "Guixin Liu",
     "email": "kanie@linux.alibaba.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将 vfio-pci 驱动的 nointxmask 和 disable_idle_d3 模块参数的权限改为只读，禁止运行时修改。",
     "series_id": 1108979,
     "series_name": "vfio/pci: make nointxmask and disable_idle_d3 module params read-only"
   },
@@ -267,7 +267,7 @@
     "submitter": "Zhiping Zhang",
     "email": "zhipingz@meta.com",
     "version": 7,
-    "summary": "实现get_tph and dma_buf_tph feature，完善缺失的功能接口，完善子系统的功能完备性，确保与硬件平台和上层框架的正确协同",
+    "summary": "为VFIO导出的dma-buf增加TPH（TLP处理提示）支持，实现get_tph回调及VFIO_DEVICE_FEATURE_DMA_BUF_TPH设置接口，允许用户配置direct tag与处理提示。",
     "series_id": 1110201,
     "series_name": "vfio/dma-buf: add TPH support for peer-to-peer access"
   },
@@ -283,7 +283,7 @@
     "submitter": "Zhiping Zhang",
     "email": "zhipingz@meta.com",
     "version": 11,
-    "summary": "实现get_pci_tph and dma_buf_tph feature，完善缺失的功能接口，完善子系统的功能完备性，确保与硬件平台和上层框架的正确协同",
+    "summary": "在vfio-pci中新增DMA_BUF_TPH特性支持，允许用户态通过VFIO设备特性接口设置并获取DMA缓冲区的PCIe TPH（TLP处理提示）参数。",
     "series_id": 1120663,
     "series_name": "vfio/dma-buf: add TPH support for peer-to-peer access"
   },
@@ -350,8 +350,9 @@
     "is_cover_letter": true,
     "series_id": 1090134,
     "patch_count": 8,
-    "qualified_count": 1,
+    "qualified_count": 2,
     "qualified_titles": [
+      "[v8,3/8] vfio: selftests: Introduce a sysfs lib",
       "[v8,8/8] vfio: selftests: Add tests to validate SR-IOV UAPI"
     ],
     "qualified_has_more": false
@@ -552,7 +553,7 @@
     "date": "2026-06-14",
     "date_end": "2026-06-14",
     "organization": "Google",
-    "subsystem": "VFIO PCI",
+    "subsystem": "VFIO IOMMUFD",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Samiullah Khawaja",

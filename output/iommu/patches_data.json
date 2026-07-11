@@ -11,7 +11,7 @@
     "submitter": "Mukesh R",
     "email": "mrathor@linux.microsoft.com",
     "version": 2,
-    "summary": "重命名符号或函数以更清晰地表达其用途和语义，持续改进代码质量和功能完备性",
+    "summary": "将 drivers/iommu/hyperv-iommu.c 重命名为 hyperv-irq.c，编译依赖从 CONFIG_HYPERV_IOMMU 改为 CONFIG_HYPERV，并调整了 IRQ_REMAP 条件编译的位置。",
     "series_id": 1088386,
     "series_name": "PCI passthru on Hyper-V (Part I)"
   },
@@ -27,7 +27,7 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": null,
-    "summary": "启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性",
+    "summary": "在 ARM SMMUv3 SVA 上下文描述符中依据硬件特性启用硬件访问和脏位更新位。",
     "series_id": 1088941,
     "series_name": "iommu/arm-smmu-v3-sva: Enable Hardware Access and Hardware Dirty bits"
   },
@@ -43,7 +43,7 @@
     "submitter": "Roger Pau Monne",
     "email": "roger.pau@citrix.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "`disable_iommu`增加`force`参数，允许在IOMMU未启用时强制执行部分关闭操作。",
     "series_id": 1090496,
     "series_name": "iommu/amd-vi: remove zeroing of MMIO region"
   },
@@ -59,7 +59,7 @@
     "submitter": "Roger Pau Monne",
     "email": "roger.pau@citrix.com",
     "version": 3,
-    "summary": "限制zero iommu mmio region，增加条件判断和安全保护逻辑，持续改进代码质量和功能完备性",
+    "summary": "移除对IOMMU MMIO区域的全零初始化，改为在驱动接管前检测并禁用固件已启用的IOMMU。",
     "series_id": 1090585,
     "series_name": "[v3] iommu/amd-vi: do not zero IOMMU MMIO region"
   },
@@ -75,7 +75,7 @@
     "submitter": "Anna Maniscalco",
     "email": "anna.maniscalco2000@gmail.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在写入SMMU上下文银行前后增加运行时PM resume/autosuspend调用，以确保操作期间SMMU处于上电状态。",
     "series_id": 1091141,
     "series_name": "[v3] iommu: arm-smmu-qcom: Ensure smmu is powered up in set_ttbr0_cfg"
   },
@@ -91,7 +91,7 @@
     "submitter": "Leo Jiang",
     "email": "leo.jiang1224@foxmail.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将arm-smmu-v3队列分配重试的停止条件从队列大小严格小于PAGE_SIZE改为小于等于PAGE_SIZE，防止大小等于页时继续降级。",
     "series_id": 1091939,
     "series_name": "[v2] iommu/arm-smmu-v3: Limit queue allocation retry boundary to PAGE_SIZE"
   },
@@ -107,7 +107,7 @@
     "submitter": "Yu Zhang",
     "email": "zhangyu1@linux.microsoft.com",
     "version": 1,
-    "summary": "移动代码到更合适的位置，优化代码组织结构，持续改进代码质量和功能完备性",
+    "summary": "将 Hyper-V IOMMU 驱动从单文件 hyperv-iommu.c 移动到独立的 hyperv/ 子目录并重命名为 irq_remapping.c。",
     "series_id": 1092942,
     "series_name": "Hyper-V: Add para-virtualized IOMMU support for Linux guests"
   },
@@ -123,7 +123,7 @@
     "submitter": "Mukesh R",
     "email": "mrathor@linux.microsoft.com",
     "version": 3,
-    "summary": "重命名符号或函数以更清晰地表达其用途和语义，持续改进代码质量和功能完备性",
+    "summary": "我们需要分析这个patch的标题和diff内容，用一句话概括核心改动，不超过200字符。标题是：`[V3,01/11] iommu/hyperv: Rename hyperv-iommu.c to hyperv-irq.c`。diff显示：文件重命名了，编译选项从`CONFIG_HYPERV_IOMMU`改为`CONFIG_HYPERV`，同时也修改了Kconfig相关？但没有显示修改Kconfi",
     "series_id": 1093183,
     "series_name": "PCI passthru on Hyper-V (Part I)"
   },
@@ -139,7 +139,7 @@
     "submitter": "Mykola Kvach",
     "email": "mykola_kvach@epam.com",
     "version": 11,
-    "summary": "实现suspend/resume callbacks，完善缺失的功能接口，完善子系统的功能完备性，确保与硬件平台和上层框架的正确协同",
+    "summary": "为 IPMMU-VMSA IOMMU 驱动添加系统挂起/恢复回调，在挂起时保存根 IPMMU 的域上下文和缓存 IPMMU 的微 TLB，恢复时将其还原。",
     "series_id": 1109267,
     "series_name": "Add initial Xen Suspend-to-RAM support on ARM64"
   },
@@ -155,7 +155,7 @@
     "submitter": "Joonwon Kang",
     "email": "joonwonkang@google.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "允许设备驱动在SVA绑定时传入私有PASID，支持使用设备自身的PASID空间而非全局分配。",
     "series_id": 1098112,
     "series_name": "[v2] iommu: Allow device driver to use its own PASID space for SVA"
   },
@@ -171,7 +171,7 @@
     "submitter": "Shyam Saini",
     "email": "shyamsaini@linux.microsoft.com",
     "version": null,
-    "summary": "传递各层之间正确传递参数和状态信息，持续改进代码质量和功能完备性",
+    "summary": "将 report_iommu_fault 的第二个参数从 NULL 改为 smmu->dev，以便在报告 IOMMU 故障时传递设备指针。",
     "series_id": 1095942,
     "series_name": "iommu/arm-smmu: pass smmu->dev to report_iommu_fault"
   },
@@ -187,7 +187,7 @@
     "submitter": "Alexandre MINETTE",
     "email": "contact@alex-min.fr",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "我们被要求用一句话概括核心改动，不超过200字符，直接说明做了什么改动，保持技术准确性。\n\n分析：这个patch在msm_iommu.c中引入了一个新函数find_iommu_master，它遍历给定iommu实例的ctx_list，找出与给定设备dev的of_node匹配的master。之前，find_iommu_for_dev和msm_iommu_attach_dev函数中，只是取ctx_li",
     "series_id": 1097103,
     "series_name": "Add Samsung Galaxy S4 support"
   },
@@ -203,7 +203,7 @@
     "submitter": "yu fangyu",
     "email": "fangyu.yu@linux.alibaba.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "当 RISC-V IOMMU 的 IGS 字段为 BOTH 且固件描述有线中断资源时，优先选择 WSI 中断模式而非 MSI。",
     "series_id": 1097370,
     "series_name": "iommu/riscv: prefer WSI on IGS=BOTH when wired IRQs are described"
   },
@@ -219,7 +219,7 @@
     "submitter": "Qinxin Xia",
     "email": "xiaqinxin@huawei.com",
     "version": null,
-    "summary": "修复相关功能缺陷或逻辑错误，确保操作行为符合预期规范，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
+    "summary": "在debugfs中添加stream_table目录，为每个Stream ID创建子目录和ste文件，用于显示STE的配置信息和原始数据。",
     "series_id": 1097760,
     "series_name": "[3/5] iommu/arm-smmu-v3: Add Stream Table Entry display to debugfs"
   },
@@ -235,7 +235,7 @@
     "submitter": "Qinxin Xia",
     "email": "xiaqinxin@huawei.com",
     "version": null,
-    "summary": "修复fs framework，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
+    "summary": "为ARM SMMUv3驱动添加基础的debugfs框架，支持在/sys/kernel/debug/iommu/arm_smmu_v3/下创建每个SMMU实例的目录及capabilities文件，用于展示SMMU功能特性与配置。",
     "series_id": 1097762,
     "series_name": "[1/5] iommu/arm-smmu-v3: Add basic debugfs framework"
   },
@@ -251,7 +251,7 @@
     "submitter": "Qinxin Xia",
     "email": "xiaqinxin@huawei.com",
     "version": null,
-    "summary": "修复相关功能缺陷或逻辑错误，确保操作行为符合预期规范，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
+    "summary": "为每个设备的debugfs目录新增cd文件，遍历所有SSID并输出有效的Context Descriptor字段与原始数据。",
     "series_id": 1097768,
     "series_name": "[5/5] iommu/arm-smmu-v3: Add Context Descriptor display to debugfs"
   },
@@ -267,7 +267,7 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": 6,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为支持设备要求ATS始终开启的场景，在ATS强制开启时即使没有PASID也分配CD表并设置S1DSS为bypass，利用EATS实现ATS持续生效。",
     "series_id": 1099021,
     "series_name": "Allow ATS to be always on for certain ATS-capable devices"
   },
@@ -283,7 +283,7 @@
     "submitter": "Bartosz Golaszewski",
     "email": "bartosz.golaszewski@oss.qualcomm.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "使用 platform_device_set_of_node() 替代直接赋值 of_node，并相应地调整了设备节点引用计数的释放逻辑。",
     "series_id": 1118028,
     "series_name": "driver core: count references of the platform device's fwnode, not OF node"
   },
@@ -299,7 +299,7 @@
     "submitter": "Aneesh Kumar K.V (Arm)",
     "email": "aneesh.kumar@kernel.org",
     "version": 7,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将 iommu_dma_alloc() 中原子池分配路径的错误检查改为直接判断 dma_alloc_from_pool() 返回的 page 指针，并提前返回 NULL，同时分离了普通分配路径的错误处理。",
     "series_id": 1119423,
     "series_name": "dma-mapping: Track shared DMA state through direct, pool and swiotlb paths"
   },
@@ -315,7 +315,7 @@
     "submitter": "Ankit Soni",
     "email": "Ankit.Soni@amd.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 iommufd 释放路径中为 dma_buf_unpin 调用添加 dma_resv 锁，以避免并发访问问题。",
     "series_id": 1100893,
     "series_name": "iommufd: take dma_resv lock before dma_buf_unpin() in release path"
   },
@@ -331,7 +331,7 @@
     "submitter": "MidG971",
     "email": "midgy971@gmail.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在RK356x v1 IOMMU使能分页后，清除AUTO_GATING寄存器的位1以防止页表遍历因时钟门控而卡死。",
     "series_id": 1105998,
     "series_name": "accel: rocket: Add RK3568 NPU support"
   },
@@ -347,7 +347,7 @@
     "submitter": "Sven Püschel",
     "email": "s.pueschel@pengutronix.de",
     "version": null,
-    "summary": "禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性",
+    "summary": "在Rockchip IOMMU启用时，通过设置AUTO_GATING寄存器的BIT(31)禁用DTE获取时间限制，以修复IOMMU阻塞问题。",
     "series_id": 1106859,
     "series_name": "media: rockchip: rga: Add multi-core support"
   },
@@ -363,7 +363,7 @@
     "submitter": "Zhanpeng Zhang",
     "email": "zhangzhanpeng.jasper@bytedance.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "添加配置选项和对应实现，使 RISC-V IOMMU 在 64 位寄存器无法对齐访问时，可通过成对 32 位 MMIO 操作配合自旋锁进行模拟访问。",
     "series_id": 1111493,
     "series_name": "[v1] iommu/riscv: Support 32-bit register accesses"
   },
@@ -379,7 +379,7 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将 arm_smmu_get_ste_update_safe 中的局部变量 eats_s1chk 和 eats_trans 的类型从 `__le64` 改为宿主字节序的 `u64`。",
     "series_id": 1111916,
     "series_name": "iommu/arm-smmu-v3: Declare eats_s1chk and eats_trans as host-endian u64"
   },
@@ -395,7 +395,7 @@
     "submitter": "bingyu.xian",
     "email": "shanbeeyoo@gmail.com",
     "version": 1,
-    "summary": "新增page request queue and iopf support，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为RISC-V IOMMU驱动添加debugfs接口，支持通过写入设备ID注入模拟的页面请求队列记录，以在不依赖真实PRI硬件的情况下测试IOPF上报路径。",
     "series_id": 1112779,
     "series_name": "[v1] iommu/riscv: Add page request queue and IOPF support"
   },
@@ -411,7 +411,7 @@
     "submitter": "Vijayanand Jitta",
     "email": "vijayanand.jitta@oss.qualcomm.com",
     "version": null,
-    "summary": "新增支持 contiguous hint bit，扩展框架的硬件兼容性和功能覆盖范围，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为ARM LPAE页表分配器添加连续提示位（CONT bit）支持，通过Kconfig控制，按块大小合并映射并设置CONT位以提升TLB利用率。",
     "series_id": 1113314,
     "series_name": "iommu/io-pgtable-arm: Add support for contiguous hint bit"
   },
@@ -427,7 +427,7 @@
     "submitter": "Breno Leitao",
     "email": "leitao@debian.org",
     "version": null,
-    "summary": "禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性",
+    "summary": "当缺少PRI队列中断时，增加清除ARM_SMMU_FEAT_PRI特性标志的操作以禁用PRI功能。",
     "series_id": 1114853,
     "series_name": "iommu/arm-smmu-v3: Disable PRI when no priq IRQ is available"
   },
@@ -443,7 +443,7 @@
     "submitter": "Alejandro Jimenez",
     "email": "alejandro.j.jimenez@oracle.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将 `X86IOMMUIrq irq` 变量改为 `X86IOMMUIrq irq = { 0 }`，确保该结构体完全零初始化，避免未初始化的字段被用于构建 XT 中断消息。",
     "series_id": 1114983,
     "series_name": "amd_iommu: Fix Coverity issues from 11.1 pull request"
   },
@@ -459,7 +459,7 @@
     "submitter": "no92",
     "email": "leo@managarm.org",
     "version": 3,
-    "summary": "扩展现有功能，增加新的操作参数或接口能力，持续改进代码质量和功能完备性",
+    "summary": "将 VT-d Pass Through 能力位从常规能力寄存器 (CAP) 移到扩展能力寄存器 (ECAP) 中设置，修复原有错误。",
     "series_id": 1115846,
     "series_name": "[v3] intel_iommu: Correctly set pt bit in extended capability register"
   },
@@ -475,7 +475,7 @@
     "submitter": "bingyu.xian",
     "email": "shanbeeyoo@gmail.com",
     "version": null,
-    "summary": "修复on ats invalidati，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
+    "summary": "我们需要分析这个 Linux 内核 patch 的标题和 diff 内容，用一句话（不超过200字符）概括核心改动。要求直接说明做了什么改动，保持技术准确性，不用修饰性词语。\n\n标题是：“[1/1] iommu/riscv: RFC: mark endpoint ATS-broken on ATS invalidation timeout”\n\ndiff 内容显示对 drivers/iommu/ri",
     "series_id": 1116517,
     "series_name": "iommu/riscv: mark endpoint ATS-broken on ATS invalidation timeout"
   },
@@ -491,7 +491,7 @@
     "submitter": "Zong Li",
     "email": "zong.li@sifive.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为支持硬件性能监控(HPM)能力的RISC-V IOMMU设备创建辅助PMU设备。",
     "series_id": 1118782,
     "series_name": "RISC-V IOMMU HPM support"
   },
@@ -507,7 +507,7 @@
     "submitter": "Prakash Gupta",
     "email": "prakash.gupta@oss.qualcomm.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在arm-smmu的上下文和全局故障处理中增加pm_runtime_get_if_active引用检查与释放，同时在挂起回调中禁用故障报告，以防止未上电的寄存器访问。",
     "series_id": 1118790,
     "series_name": "[v3] iommu/arm-smmu: Use pm_runtime in fault handlers"
   },
@@ -523,7 +523,7 @@
     "submitter": "Zhanpeng Zhang",
     "email": "zhangzhanpeng.jasper@bytedance.com",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "完成 RISC-V IOMMU MRIF MSI PTE 的设置，先写入 mrif_info 再使能 PTE 有效位，并添加安全更新函数防止泄漏过期数据。",
     "series_id": 1119385,
     "series_name": "RISC-V: KVM/IOMMU: Fix MRIF irqfd notice handling"
   },
@@ -539,7 +539,7 @@
     "submitter": "Kiryl Shutsemau",
     "email": "kas@kernel.org",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 kdump 内核中将 ARM SMMUv3 的命令/事件/PRI 队列大小限制为单页，以缩减内存占用。",
     "series_id": 1120449,
     "series_name": "[v2] iommu/arm-smmu-v3: Shrink command/event/PRI queues in kdump kernel"
   },
@@ -555,7 +555,7 @@
     "submitter": "Pavol Sakac",
     "email": "sakacpav@amazon.de",
     "version": null,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "将iommu_group的reserved_regions和type sysfs属性从分配时即时创建改为按需延迟创建。",
     "series_id": 1120653,
     "series_name": "driver core: defer per-VF sysfs creation for fast SR-IOV bring-up"
   },
@@ -689,7 +689,7 @@
     "date": "2026-05-08",
     "date_end": "2026-05-08",
     "organization": "Qualcomm",
-    "subsystem": "IOMMU DMA-API",
+    "subsystem": "RISC-V IOMMU",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Andrew Jones",
@@ -808,7 +808,7 @@
     "date": "2026-05-12",
     "date_end": "2026-05-12",
     "organization": "Individual Contributor",
-    "subsystem": "IOMMUPT",
+    "subsystem": "RISC-V IOMMU",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "yu fangyu",
@@ -1169,7 +1169,7 @@
     "date": "2026-06-29",
     "date_end": "2026-06-29",
     "organization": "NVIDIA",
-    "subsystem": "ARM SMMUv3",
+    "subsystem": "ARM SMMU Acceleration",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Shameer Kolothum Thodi",
@@ -1265,7 +1265,7 @@
     "date": "2026-06-23",
     "date_end": "2026-06-23",
     "organization": "Qualcomm",
-    "subsystem": "IOMMU Core",
+    "subsystem": "ARM SMMU (v1/v2)",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Mukesh Ojha",
@@ -1313,7 +1313,7 @@
     "date": "2026-06-29",
     "date_end": "2026-06-29",
     "organization": "NVIDIA",
-    "subsystem": "ARM SMMUv3",
+    "subsystem": "IOMMUFD",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Nicolin Chen",
