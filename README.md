@@ -32,6 +32,9 @@ python3 tracker.py crypto --start 2026-03-01 --end 2026-04-30
 
 # 强制重新获取数据（默认使用缓存）
 python3 tracker.py --all --force-refetch
+
+# 生成 2026 年 7-8 月三个模块报告
+python3 tracker.py --all --force-refetch --start 2026-07-01 --end 2026-08-31
 ```
 
 ## 输出目录
@@ -60,7 +63,7 @@ output/
 [3/6] 跨 series 去重（相同基础标题只保留最新版本）
 [4/6] 获取代码变更量并按阈值过滤小修改
 [5/6] 应用 Cover Letter 逻辑
-[6/6] 生成中文报告
+[6/6] 生成中文报告，并输出重点 Patch Top20 清单
 ```
 
 ## 功能特性
@@ -72,7 +75,8 @@ output/
 5. **按组织分类**: 按贡献者邮箱域名归类（NVIDIA、Intel、Google、AMD、Qualcomm 等）
 6. **按子系统分类**: 按模块内部驱动模块细分（层次清晰的 ◆ 子系统 / ▸ 组织）
 7. **中文概括**: 每个 patch 提供至少 50 字的中文描述
-8. **可扩展**: 通过 `--add-module` 加载自定义模块配置
+8. **重点清单**: 每个模块额外输出已合入/社区讨论 Top20 表格，按厂商汇总重点 cover letter
+9. **可扩展**: 通过 `--add-module` 加载自定义模块配置
 
 ## 添加自定义模块
 

@@ -24,6 +24,8 @@ from datetime import datetime, date
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+PATCH_TAG_RE = re.compile(r'^\s*\[([^\]]+)\]\s*')
+
 # ============================================================
 # Module Configurations
 # ============================================================
@@ -101,7 +103,8 @@ def _save_llm_cache():
 
 def _call_llm_summary(title, diff_text, patch_id=None):
     """Generate a concise Chinese summary via LLM. Returns None on failure."""
-    cache_key = str(patch_id) if patch_id else hashlib.md5(title.encode()).hexdigest()
+    cache_key = 'v2:' + (str(patch_id) if patch_id else
+                         hashlib.md5(title.encode()).hexdigest())
     cached = _SUMMARY_CACHE.get(cache_key)
     if cached:
         return cached
@@ -113,45 +116,72 @@ def _call_llm_summary(title, diff_text, patch_id=None):
     truncated = diff_text[:6000] if len(diff_text) > 6000 else diff_text
 
     system_prompt = (
-        '你是一个 Linux 内核 patch 分析专家。'
-        '分析以下 patch 的标题和 diff 内容，用一句话概括其核心改动（不超过200字符）。'
-        '要求：直接说明做了什么改动，保持技术准确性，不使用修饰性词语。'
+        '你是 Linux 内核 patch 分析专家。请结合标题和代码改动，'
+        '用一句中文概括 patch 的核心技术变化、涉及对象和直接影响。'
+        '不要逐词翻译标题，不要解释你的分析过程，不要输出列表、前言或 Markdown。'
+        '控制在 80 到 160 个中文字符之间。'
     )
 
     try:
-        resp = requests.post(
-            f'{LLM_API_BASE}/v1/messages',
-            headers={
-                'x-api-key': LLM_API_KEY,
-                'anthropic-version': '2023-06-01',
-                'content-type': 'application/json',
-            },
-            json={
-                'model': LLM_MODEL,
-                'max_tokens': 500,
-                'temperature': 0.1,
-                'system': system_prompt,
-                'messages': [{
-                    'role': 'user',
-                    'content': f'## 标题\n{title}\n\n## Diff\n```diff\n{truncated}\n```'
-                }]
-            },
-            timeout=30
-        )
+        user_content = f'## 标题\n{title}\n\n## 证据\n```diff\n{truncated}\n```'
+        if 'anthropic' in LLM_API_BASE:
+            resp = requests.post(
+                f'{LLM_API_BASE}/v1/messages',
+                headers={
+                    'x-api-key': LLM_API_KEY,
+                    'anthropic-version': '2023-06-01',
+                    'content-type': 'application/json',
+                },
+                json={
+                    'model': LLM_MODEL,
+                    'max_tokens': 500,
+                    'temperature': 0.1,
+                    'system': system_prompt,
+                    'messages': [{
+                        'role': 'user',
+                        'content': user_content
+                    }]
+                },
+                timeout=30
+            )
+        else:
+            resp = requests.post(
+                f'{LLM_API_BASE}/v1/chat/completions',
+                headers={
+                    'authorization': f'Bearer {LLM_API_KEY}',
+                    'content-type': 'application/json',
+                },
+                json={
+                    'model': LLM_MODEL,
+                    'max_tokens': 500,
+                    'temperature': 0.1,
+                    'messages': [
+                        {'role': 'system', 'content': system_prompt},
+                        {'role': 'user', 'content': user_content},
+                    ],
+                },
+                timeout=30
+            )
         resp.raise_for_status()
         data = resp.json()
-        # Iterate content blocks to find the first 'text' type
         summary = None
-        for block in data.get('content', []):
-            if block.get('type') == 'text':
-                summary = block.get('text', '')
-                break
-            if block.get('type') == 'thinking':
-                summary = block.get('thinking', '')
+        if 'choices' in data:
+            choices = data.get('choices') or []
+            if choices:
+                summary = choices[0].get('message', {}).get('content', '')
+        else:
+            for block in data.get('content', []):
+                if block.get('type') == 'text':
+                    summary = block.get('text', '')
+                    break
+                if block.get('type') == 'thinking':
+                    summary = block.get('thinking', '')
         if not summary:
             print(f'    [LLM] 响应中无 text/thinking 内容 (id={patch_id})')
             return None
-        summary = summary.strip()[:200]
+        summary = sanitize_summary(summary)
+        if not summary:
+            return None
         _SUMMARY_CACHE[cache_key] = summary
         _save_llm_cache()
         return summary
@@ -160,10 +190,35 @@ def _call_llm_summary(title, diff_text, patch_id=None):
         return None
 
 
+def sanitize_summary(summary):
+    summary = re.sub(r'```.*?```', '', summary, flags=re.S).strip()
+    summary = re.sub(r'^\s*[-*]\s*', '', summary)
+    summary = summary.replace('\n', ' ').strip()
+    blocked = [
+        '我们需要分析', '从patch内容来看', '从 patch 内容来看',
+        '标题是', '主要改动', '一句话概括', '不超过',
+        '直接说明', '保持技术准确性',
+    ]
+    if any(token in summary for token in blocked):
+        return None
+    summary = re.sub(r'\s+', ' ', summary)
+    return summary[:200]
+
+
 def _batch_llm_task(args):
     """Wrapper for ThreadPoolExecutor — returns (patch_id, summary_or_None)."""
     title, diff_text, patch_id = args
     return patch_id, _call_llm_summary(title, diff_text, patch_id)
+
+
+def _call_llm_series_summary(series_title, patch_titles, patch_id=None):
+    evidence = '\n'.join(f'- {extract_base_title(t)}' for t in patch_titles[:30])
+    prompt_text = (
+        f'系列标题：{series_title}\n'
+        f'系列内 patch 标题：\n{evidence}\n'
+        '请归纳这个 patch set 要解决的核心问题和主要技术改动。'
+    )
+    return _call_llm_summary(series_title, prompt_text, f'series-{patch_id}')
 
 
 MODULES = {}
@@ -172,8 +227,8 @@ MODULES = {}
 MODULES['crypto'] = {
     'name': 'Linux Crypto 子系统',
     'output_dir': 'output/crypto',
-    'default_start': '2026-01-01',
-    'default_end': '2026-05-06',
+    'default_start': '2026-07-01',
+    'default_end': '2026-08-31',
     'patchwork': {
         'project_id': 151,
         'search_query': None,
@@ -285,8 +340,8 @@ MODULES['crypto'] = {
 MODULES['vfio'] = {
     'name': 'Linux VFIO 子系统',
     'output_dir': 'output/vfio',
-    'default_start': '2026-02-01',
-    'default_end': '2026-05-06',
+    'default_start': '2026-07-01',
+    'default_end': '2026-08-31',
     'patchwork': {
         'project_id': 8,
         'search_query': 'vfio',
@@ -345,8 +400,8 @@ MODULES['vfio'] = {
 MODULES['iommu'] = {
     'name': 'Linux IOMMU 子系统',
     'output_dir': 'output/iommu',
-    'default_start': '2026-02-01',
-    'default_end': '2026-05-06',
+    'default_start': '2026-07-01',
+    'default_end': '2026-08-31',
     'patchwork': {
         'project_id': None,
         'search_query': 'iommu',
@@ -445,8 +500,44 @@ def extract_organization(email):
     return 'Individual Contributor'
 
 
+def _strip_leading_patch_tags(title):
+    """Remove common mailing-list tags while keeping the real subject intact."""
+    clean = title.strip()
+    while True:
+        match = PATCH_TAG_RE.match(clean)
+        if not match:
+            break
+        tag = match.group(1).strip()
+        tag_lower = tag.lower()
+        tag_parts = [p.strip().lower() for p in re.split(r'[,\s]+', tag_lower)
+                     if p.strip()]
+        has_patch_marker = any(p in (
+            'patch', 'rfc', 'resend', 'pull', 'git', 'for-next',
+            'net', 'net-next'
+        ) or p.startswith('v') and p[1:].isdigit()
+            for p in tag_parts)
+        has_series_index = bool(re.search(r'\b\d+/\d+\b', tag_lower))
+        has_version = bool(re.search(r'\bv\d+\b', tag_lower))
+        if has_patch_marker or has_series_index or has_version:
+            clean = clean[match.end():].lstrip()
+            continue
+        break
+    return clean
+
+
+def extract_patch_index(title):
+    match = PATCH_TAG_RE.match(title.strip())
+    if not match:
+        return None, None
+    idx = re.search(r'\b(\d+)/(\d+)\b', match.group(1))
+    if not idx:
+        return None, None
+    return int(idx.group(1)), int(idx.group(2))
+
+
 def extract_version(title):
     patterns = [
+        r'\[(?:PATCH|RFC|RESEND)?\s*v(\d+)\s+\d+/\d+\]',
         r'\[PATCH\s+v(\d+)\s*,\s*\d+/\d+\]',
         r'\[RFC\s+v(\d+)\s*,\s*\d+/\d+\]',
         r'\[RESEND\s+v(\d+)\s*,\s*\d+/\d+\]',
@@ -464,41 +555,35 @@ def extract_version(title):
 
 
 def extract_base_title(title):
-    base = re.sub(
-        r'^\s*\[(?:GIT\s*,\s*PULL|(?:PATCH|RFC|RESEND)[\s,]?'
-        r'v?\d*(?:\s*,\s*\d+/\d+)?|v\d+(?:\s*,\s*\d+/\d+)?)\]\s*',
-        '', title, flags=re.IGNORECASE)
-    base = re.sub(r'^\s*\[(?:PATCH|RFC|RESEND),\s*v?\d*\s*,\s*\d+/\d+\]\s*',
-                  '', base, flags=re.IGNORECASE)
-    base = re.sub(r'^\s*\[\d+/\d+\]\s*', '', base)
-    return base.strip()
+    return _strip_leading_patch_tags(title)
 
 
 def extract_subject_prefix(title):
-    clean = re.sub(
-        r'^\s*\[(?:GIT\s*,\s*PULL|(?:PATCH|RFC|RESEND)[\s,]?'
-        r'v?\d*(?:\s*,\s*\d+/\d+)?|v\d+(?:\s*,\s*\d+/\d+)?)\]\s*',
-        '', title, flags=re.IGNORECASE)
-    clean = re.sub(r'^\s*\[(?:PATCH|RFC|RESEND),\s*v?\d*\s*,\s*\d+/\d+\]\s*',
-                   '', clean, flags=re.IGNORECASE)
-    clean = re.sub(r'^\s*\[\d+\.\d+(?:\.\w+)?\s*,\s*\d+/\d+\]\s*', '',
-                   clean, flags=re.IGNORECASE)
-    clean = re.sub(r'^\s*\[\d+/\d+\]\s*', '', clean)
-    clean = re.sub(r'^\s*\[(?:net(?:-next)?|sched_ext[^\]]*)\]\s*', '',
-                   clean, flags=re.IGNORECASE)
+    clean = _strip_leading_patch_tags(title)
     match = re.match(r'^([a-zA-Z0-9_\-/\.]+):\s*', clean)
     if match:
         return match.group(1).lower()
     return None
 
 
-def classify_subsystem(title, url, patterns):
-    text = (title + ' ' + url).lower()
+def classify_subsystem(title, url, patterns, extra_text=''):
+    text = (title + ' ' + extra_text + ' ' + url).lower()
     for subsystem, sub_patterns in patterns:
         for pattern in sub_patterns:
             if pattern in text:
                 return subsystem
     return patterns[-1][0] if patterns else 'General'
+
+
+def _match_subject_rules(prefix, rules):
+    if not prefix or not rules:
+        return []
+    matches = []
+    for rule in rules:
+        rule_l = rule.lower().rstrip('/')
+        if prefix == rule_l or prefix.startswith(rule_l + '/'):
+            matches.append(rule_l)
+    return matches
 
 
 def is_module_related(title, url, config):
@@ -512,17 +597,16 @@ def is_module_related(title, url, config):
 
     prefix = extract_subject_prefix(title)
 
-    # Check blacklist first
-    if prefix and config.get('subject_blacklist'):
-        for blocked in config['subject_blacklist']:
-            if prefix == blocked or prefix.startswith(blocked.rstrip('/') + '/'):
-                return False
-
-    # Check whitelist
-    if prefix and config.get('subject_whitelist'):
-        for allowed in config['subject_whitelist']:
-            if prefix == allowed or prefix.startswith(allowed + '/'):
-                return True
+    allowed_matches = _match_subject_rules(prefix, config.get('subject_whitelist'))
+    blocked_matches = _match_subject_rules(prefix, config.get('subject_blacklist'))
+    if allowed_matches and blocked_matches:
+        allowed_len = max(len(m) for m in allowed_matches)
+        blocked_len = max(len(m) for m in blocked_matches)
+        return allowed_len > blocked_len
+    if blocked_matches:
+        return False
+    if allowed_matches:
+        return True
 
     # For modules with search_query (vfio, iommu), also check keyword match
     sq = config.get('patchwork', {}).get('search_query', '')
@@ -544,7 +628,8 @@ def is_module_related(title, url, config):
 
 
 def is_patch_series(title):
-    return bool(re.search(r'\s+\d+/\d+\s', title))
+    idx, total = extract_patch_index(title)
+    return bool(idx and total and total > 1)
 
 
 # ============================================================
@@ -553,18 +638,7 @@ def is_patch_series(title):
 
 def chinese_summary(title):
     """Generate detailed Chinese summary (>= 50 chars) from patch title."""
-    title_clean = re.sub(
-        r'^\s*\[(?:GIT\s*,\s*PULL|(?:PATCH|RFC|RESEND)[\s,]?'
-        r'v?\d*(?:\s*,\s*\d+/\d+)?|v\d+(?:\s*,\s*\d+/\d+)?)\]\s*',
-        '', title, flags=re.IGNORECASE)
-    title_clean = re.sub(
-        r'^\s*\[(?:PATCH|RFC|RESEND),\s*v?\d*\s*,\s*\d+/\d+\]\s*',
-        '', title_clean, flags=re.IGNORECASE)
-    title_clean = re.sub(r'^\s*\[\d+\.\d+(?:\.\w+)?\s*,\s*\d+/\d+\]\s*', '',
-                         title_clean, flags=re.IGNORECASE)
-    title_clean = re.sub(r'^\s*\[\d+/\d+\]\s*', '', title_clean)
-    title_clean = re.sub(r'^\s*\[(?:net(?:-next)?|sched_ext[^\]]*)\]\s*', '',
-                         title_clean, flags=re.IGNORECASE)
+    title_clean = _strip_leading_patch_tags(title)
     title_lower = title_clean.lower()
 
     action = ''
@@ -798,6 +872,142 @@ def chinese_summary(title):
     return summary
 
 
+def chinese_series_summary(series_title, patch_titles):
+    """Summarize a patch set from its cover title and member patch titles."""
+    clean_title = extract_base_title(series_title)
+    titles = [extract_base_title(t) for t in patch_titles if t]
+    text = (clean_title + ' ' + ' '.join(titles)).lower()
+
+    subject = clean_title
+    if ':' in clean_title:
+        subject = clean_title.split(':', 1)[0].strip()
+
+    if 'tph' in text:
+        return ('围绕 PCIe TPH 能力在 VFIO/IOMMU 路径中的发现、配置、'
+                '转发表编程和状态复位展开，使用户态能够安全控制设备 TPH 行为。')
+    if 'live update' in text:
+        return ('为 live update 场景保存和恢复设备、IOMMU 或 VFIO 状态，'
+                '减少内核切换期间设备上下文丢失对虚拟化工作负载的影响。')
+    if 'cxl' in text and 'passthrough' in text:
+        return ('为 VFIO PCI 补充 CXL Type-2 设备直通所需的 UAPI、区域暴露和配置裁剪逻辑，'
+                '使用户态能够管理 CXL 加速设备资源。')
+    if 'sr-iov' in text or 'sriov' in text:
+        return ('补充 SR-IOV 相关 VFIO 流程和自测试覆盖，验证 PF/VF 生命周期、资源暴露和用户态接口行为。')
+    if 'falcon' in text and 'dma' in text:
+        return ('新增面向 NVIDIA GPU Falcon DMA 路径的 VFIO 自测试驱动，用于覆盖设备侧 DMA 与隔离边界。')
+    if 'mlx5' in text and 'self test' in text:
+        return ('补充 MLX5 设备在 VFIO 自测试中的模拟和 DMA 覆盖，验证变体驱动与 IOMMU 映射路径的协同。')
+    if 'module params' in text or 'vga unwind' in text:
+        return ('整理 VFIO PCI 模块参数锁存、位域访问和 VGA 错误回滚流程，减少设备启用失败后的状态不一致。')
+    if 'fmb' in text and ('zpci' in text or 'zdev' in text):
+        return ('为 IBM zPCI VFIO 设备增加 FMB 特性控制和数据读取接口，让用户态可管理 s390 设备测量块。')
+    if 'dmabuf' in text or 'dma-buf' in text:
+        return ('完善 DMA-BUF 相关映射、导出和权限控制流程，增强用户态共享设备内存时的资源管理和安全边界。')
+    if 'smmu' in text and ('invalidation' in text or 'tlbi' in text):
+        return ('重整 ARM SMMU 的失效处理和批量提交路径，降低无效化延迟并强化异常场景下的同步与错误处理。')
+    if 'riscv' in text and 'iommu' in text:
+        return ('完善 RISC-V IOMMU 页表、失效或 DMA 集成能力，补齐架构驱动在虚拟化和设备隔离场景中的关键行为。')
+    if 'qat' in text:
+        return ('围绕 Intel QAT 驱动的设备能力、复位、迁移或接口清理进行调整，提升硬件加速器在主线内核中的可维护性。')
+    if 'hisilicon' in text or 'hisi' in text:
+        return ('改进 HiSilicon 加速器驱动的复位、隔离、队列或错误处理路径，提升设备管理和虚拟化场景稳定性。')
+    if 'qcom' in text or 'qualcomm' in text or 'shikra' in text:
+        return ('补齐 Qualcomm 平台加密或 IOMMU 相关设备树绑定与驱动支持，使新 SoC 的硬件能力可被内核正确发现。')
+    if 'spacc' in text:
+        return ('为 SPAcc 加密硬件补充算法、配置和设备树绑定支持，推动该加速器驱动进入 crypto 子系统。')
+    if 'fix' in text or 'bug' in text or 'race' in text or 'leak' in text:
+        return f'集中修复 {subject} 相关的错误处理、生命周期或并发问题，降低异常路径触发崩溃和资源泄漏的风险。'
+    if 'support' in text or 'add' in text or 'introduce' in text:
+        return f'围绕 {subject} 增加新的硬件、UAPI 或框架能力，扩展子系统可支持的设备和虚拟化使用场景。'
+    if 'cleanup' in text or 'clean up' in text or 'remove' in text or 'drop' in text:
+        return f'清理 {subject} 相关的旧接口、重复实现或风格问题，降低后续维护复杂度。'
+    return f'归纳 {subject} 系列中的关联改动，重点调整核心接口、驱动流程和异常处理逻辑。'
+
+
+def series_cover_title(p):
+    title = extract_base_title(p.get('title', ''))
+    if not p.get('is_cover_letter'):
+        return title
+    total = p.get('series_total') or p.get('patch_count') or 1
+    version = p.get('version')
+    if version:
+        prefix = f'[PATCH v{version} 00/{total}]'
+    else:
+        prefix = f'[PATCH 00/{total}]'
+    return f'{prefix} {title}'
+
+
+def _escape_table_cell(value):
+    return str(value).replace('|', '\\|').replace('\n', ' ')
+
+
+def patch_importance_score(p):
+    title = (p.get('title', '') + ' ' + p.get('summary', '')).lower()
+    score = 0
+    if p.get('is_cover_letter'):
+        score += 50
+        score += min(p.get('qualified_count', 0), 20) * 4
+        score += min(p.get('patch_count', 0), 30)
+    if p.get('status') == '已合入':
+        score += 20
+    if any(k in title for k in ['security', 'hardening', 'overflow', 'use-after-free',
+                                'race', 'leak', 'crash', 'fault', 'isolation']):
+        score += 25
+    if any(k in title for k in ['support', 'add', 'introduce', 'implement',
+                                'uapi', 'pasid', 'pri', 'tph', 'sva', 'migration',
+                                'live update', 'iommufd']):
+        score += 18
+    if any(k in title for k in ['fix', 'bug', 'broken', 'incorrect', 'wrong']):
+        score += 16
+    if any(k in title for k in ['refactor', 'cleanup', 'clean up', 'remove',
+                                'drop', 'rename']):
+        score += 8
+    score += min(p.get('version') or 1, 20)
+    return score
+
+
+def select_top_patches(patches, limit=20):
+    return sorted(patches, key=lambda p: (
+        patch_importance_score(p),
+        p.get('date', ''),
+        p.get('qualified_count', 0),
+    ), reverse=True)[:limit]
+
+
+def format_brief_title(p):
+    if p.get('is_cover_letter'):
+        return series_cover_title(p)
+    title = p.get('title', '')
+    if title.lstrip().startswith('['):
+        return title
+    return f'[PATCH] {title}'
+
+
+def report_summary(p):
+    summary = sanitize_summary(p.get('summary', '')) or ''
+    summary_l = summary.lower()
+    generic_tokens = [
+        '修改对代码进行调整和优化',
+        '持续改进代码质量和功能完备性',
+        '新增support',
+        '更新相关的配置或实现',
+        '启用之前被禁用或条件编译',
+        '扩展功能特性',
+        '增强框架的功能完整性',
+    ]
+    translated_title_shape = bool(re.search(
+        r'(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+'
+        r'(support|feature|test|bugs?|cleanup|fix|interface|issues?)',
+        summary_l))
+    if summary and not any(token in summary for token in generic_tokens) \
+            and not (p.get('is_cover_letter') and translated_title_shape):
+        return summary
+    if p.get('is_cover_letter'):
+        titles = p.get('qualified_titles') or [p.get('title', '')]
+        return chinese_series_summary(p.get('title', ''), titles)
+    return chinese_summary(p.get('title', ''))
+
+
 # ============================================================
 # Core Processing Pipeline
 # ============================================================
@@ -820,10 +1030,16 @@ def process_patches(patches_data, config):
         submitter = patch.get('submitter', {})
         email = submitter.get('email', '') if isinstance(submitter, dict) else ''
 
+        series_info = patch.get('series', [{}])[0] if patch.get('series') else {}
+        series_id = series_info.get('id') or patch.get('series_id')
+        series_name = series_info.get('name') or patch.get('series_name')
+        series_version = series_info.get('version')
+        _, series_total = extract_patch_index(title)
+
         organization = extract_organization(email)
-        subsystem = classify_subsystem(title, url,
-                                       config['subsystem_patterns'])
-        version = extract_version(title)
+        subsystem = classify_subsystem(title, url, config['subsystem_patterns'],
+                                       series_name or '')
+        version = extract_version(title) or series_version
         summary = chinese_summary(title)
 
         if state in ['accepted', 'merged']:
@@ -832,10 +1048,6 @@ def process_patches(patches_data, config):
             status = '已关闭'
         else:
             status = '社区讨论中'
-
-        series_info = patch.get('series', [{}])[0] if patch.get('series') else {}
-        series_id = series_info.get('id') or patch.get('series_id')
-        series_name = series_info.get('name') or patch.get('series_name')
 
         processed.append({
             'id': patch.get('id'),
@@ -853,6 +1065,8 @@ def process_patches(patches_data, config):
             'summary': summary,
             'series_id': series_id,
             'series_name': series_name or title,
+            'series_version': series_version,
+            'series_total': series_total,
         })
 
     return processed, filtered_count
@@ -985,8 +1199,17 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
         subsystems = [sp.get('subsystem', 'General') for sp in all_in]
         orgs = [sp.get('organization', 'Individual Contributor') for sp in all_in]
         dates = [sp.get('date', '') for sp in all_in if sp.get('date')]
+        versions = [sp.get('series_version') or sp.get('version')
+                    for sp in all_in if sp.get('series_version') or sp.get('version')]
+        totals = [sp.get('series_total') for sp in all_in if sp.get('series_total')]
 
         qualified_titles = [sp.get('title', '') for sp in survived_in]
+        all_titles = [sp.get('title', '') for sp in all_in]
+        series_summary = None
+        if LLM_API_KEY:
+            series_summary = _call_llm_series_summary(series_name, all_titles, sid)
+        if not series_summary:
+            series_summary = chinese_series_summary(series_name, all_titles)
 
         cover = {
             'id': None, 'title': series_name,
@@ -998,11 +1221,12 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
             'status': max(set(statuses), key=statuses.count),
             'state': 'series',
             'submitter': all_in[0].get('submitter', ''),
-            'version': all_in[0].get('version'),
-            'summary': chinese_summary(series_name),
+            'version': max(versions) if versions else all_in[0].get('version'),
+            'summary': series_summary,
             'is_cover_letter': True,
             'series_id': sid,
             'patch_count': num_total,
+            'series_total': max(totals) if totals else num_total,
             'qualified_count': num_surv,
             'qualified_titles': qualified_titles[:5],
             'qualified_has_more': len(qualified_titles) > 5,
@@ -1106,6 +1330,27 @@ def generate_report(patches, start_date, end_date, config):
         pct = len(plist) * 100 / total if total > 0 else 0
         report += f"| {sub} | {len(plist)} | {pct:.1f}% |\n"
 
+    def write_top_table(patches_list, table_title):
+        out = f"\n### {table_title}\n\n"
+        top_items = select_top_patches(patches_list, 20)
+        if not top_items:
+            return out + "暂无。\n"
+        out += "| 厂商 | 简介 |\n|------|------|\n"
+        for p in top_items:
+            brief = f"{format_brief_title(p)} ------{report_summary(p)}"
+            out += (
+                f"| {_escape_table_cell(p.get('organization', ''))} "
+                f"| {_escape_table_cell(brief)} |\n"
+            )
+        return out
+
+    report += """
+## 重点 Patch Top20 清单
+"""
+    report += write_top_table(merged, "已合入")
+    report += write_top_table(discussion, "社区讨论")
+    report += "\n---\n\n"
+
     # Helper to write a section
     def write_section(patches_list, section_title):
         out = f"## {section_title}\n\n"
@@ -1195,7 +1440,7 @@ def _fmt_patch(p):
         f"**{p['title']}**\n\n"
         f"- 日期：{p['date']}\n"
         f"- 状态：{p['status']}\n"
-        f"- 概括：{p['summary']}\n"
+        f"- 概括：{report_summary(p)}\n"
         f"- 来源：{p['url']}\n\n"
     )
 
@@ -1209,7 +1454,7 @@ def _fmt_cover(p):
     if p.get('date_end') and p['date_end'] != p['date']:
         lines.append(f"- 截止日期：{p['date_end']}")
     lines.append(f"- 状态：{p['status']}")
-    lines.append(f"- 概括：{p['summary']}")
+    lines.append(f"- 概括：{report_summary(p)}")
     if p.get('qualified_titles'):
         lines.append(f"- 达到阈值的 patches（{p['qualified_count']} 个，显示前 5）：")
         for t in p['qualified_titles']:
