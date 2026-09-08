@@ -880,19 +880,17 @@ def chinese_series_summary(series_title, patch_titles):
     titles = [extract_base_title(t) for t in patch_titles if t]
     text = (clean_title + ' ' + ' '.join(titles)).lower()
 
-    subject = clean_title
-    if ':' in clean_title:
-        subject = clean_title.split(':', 1)[0].strip()
+    concrete = concrete_series_summary(clean_title, titles)
+    if concrete:
+        return concrete
 
+    subject = clean_title.split(':', 1)[0].strip() if ':' in clean_title else clean_title
     if 'tph' in text:
-        return ('围绕 PCIe TPH 能力在 VFIO/IOMMU 路径中的发现、配置、'
-                '转发表编程和状态复位展开，使用户态能够安全控制设备 TPH 行为。')
+        return '具体调整 PCIe TPH 的能力暴露、配置写入、转发表编程和设备启停复位路径。'
     if 'live update' in text:
-        return ('为 live update 场景保存和恢复设备、IOMMU 或 VFIO 状态，'
-                '减少内核切换期间设备上下文丢失对虚拟化工作负载的影响。')
+        return '具体增加 live update 期间设备文件、IOMMU 状态和测试负载的保存恢复路径。'
     if 'cxl' in text and 'passthrough' in text:
-        return ('为 VFIO PCI 补充 CXL Type-2 设备直通所需的 UAPI、区域暴露和配置裁剪逻辑，'
-                '使用户态能够管理 CXL 加速设备资源。')
+        return '具体补充 CXL Type-2 直通 UAPI、VFIO PCI CXL 绑定、HDM/COMP_REGS 区域和文档。'
     if 'sr-iov' in text or 'sriov' in text:
         return ('补充 SR-IOV 相关 VFIO 流程和自测试覆盖，验证 PF/VF 生命周期、资源暴露和用户态接口行为。')
     if 'falcon' in text and 'dma' in text:
@@ -918,12 +916,216 @@ def chinese_series_summary(series_title, patch_titles):
     if 'spacc' in text:
         return ('为 SPAcc 加密硬件补充算法、配置和设备树绑定支持，推动该加速器驱动进入 crypto 子系统。')
     if 'fix' in text or 'bug' in text or 'race' in text or 'leak' in text:
-        return f'集中修复 {subject} 相关的错误处理、生命周期或并发问题，降低异常路径触发崩溃和资源泄漏的风险。'
+        return f'集中修复 {subject} 相关的错误处理、生命周期或并发问题。'
     if 'support' in text or 'add' in text or 'introduce' in text:
-        return f'围绕 {subject} 增加新的硬件、UAPI 或框架能力，扩展子系统可支持的设备和虚拟化使用场景。'
+        return f'围绕 {subject} 增加新的硬件、UAPI 或框架能力。'
     if 'cleanup' in text or 'clean up' in text or 'remove' in text or 'drop' in text:
-        return f'清理 {subject} 相关的旧接口、重复实现或风格问题，降低后续维护复杂度。'
-    return f'归纳 {subject} 系列中的关联改动，重点调整核心接口、驱动流程和异常处理逻辑。'
+        return f'清理 {subject} 相关的旧接口、重复实现或风格问题。'
+    return f'归纳 {subject} 系列中的关联改动。'
+
+
+def _split_patch_title(title):
+    clean = extract_base_title(title).strip().rstrip('.')
+    parts = [p.strip() for p in clean.split(':')]
+    if len(parts) >= 2:
+        return ': '.join(parts[:-1]), parts[-1].strip()
+    return '', clean
+
+
+def _trim_detail(detail):
+    detail = re.sub(r'\s+', ' ', detail.strip().strip('.'))
+    detail = re.sub(r'^(a|an|the)\s+', '', detail, flags=re.I)
+    return detail
+
+
+def _polish_english_condition(text):
+    text = re.sub(r'复位 (.+?) on (.+)$', r'在 \2 时复位 \1', text, flags=re.I)
+    text = re.sub(r'改用 (.+?) for (.+)$', r'为 \2 改用 \1', text, flags=re.I)
+    text = re.sub(r'保留 (.+?) across (.+)$', r'在 \2 前后保留 \1', text, flags=re.I)
+    text = re.sub(r'导出 (.+?) for (.+)$', r'为 \2 导出 \1', text, flags=re.I)
+    text = re.sub(r'新增用于 look up (.+?) 的 helper$', r'新增用于查找 \1 的 helper', text, flags=re.I)
+    text = re.sub(r'新增用于 create (.+?) 的 helper$', r'新增用于创建 \1 的 helper', text, flags=re.I)
+    text = re.sub(r'将 (.+?) 转换为 use (.+)$', r'将 \1 改为使用 \2', text, flags=re.I)
+    text = re.sub(r'阻止 (.+?) from 变为可写$', r'阻止 \1 变为可写', text, flags=re.I)
+    text = re.sub(r'修复 leak of (.+?) and (.+?) in (.+)$',
+                  r'修复 \3 中 \1 和 \2 泄漏', text, flags=re.I)
+    text = re.sub(r'启用 relaxed ordering on (.+)$',
+                  r'启用 \1 的 relaxed ordering', text, flags=re.I)
+    text = re.sub(r'改用 PHY internal loopback on (.+)$',
+                  r'在 \1 上改用 PHY internal loopback', text, flags=re.I)
+    text = re.sub(r'拒绝 to reset an SR-IOV PF（携带 enabled VFs）$',
+                  '拒绝重置仍启用 VF 的 SR-IOV PF', text, flags=re.I)
+    text = re.sub(r'拒绝 live migration on 64KB page（携带 QM_HW_V3 hardware）$',
+                  '拒绝 QM_HW_V3 硬件在 64KB 页配置下执行 live migration', text, flags=re.I)
+    text = re.sub(r'限制 the number of (.+)$', r'限制 \1 数量', text, flags=re.I)
+    text = re.sub(r'确保 index for (.+?) are within range$', r'确保 \1 索引在范围内', text, flags=re.I)
+    text = re.sub(r'计算 idal length based on idaw type$', '根据 IDAW 类型计算 IDAL 长度', text, flags=re.I)
+    text = re.sub(r'确保 first IDAW remains constant$', '确保首个 IDAW 保持不变', text, flags=re.I)
+    text = re.sub(r'取消 existing workqueues$', '取消已存在的 workqueue', text, flags=re.I)
+    text = re.sub(r'绑定时创建 the (.+)$', r'绑定时创建 \1', text, flags=re.I)
+    text = re.sub(r'接管 the whole (.+)$', r'接管整个 \1', text, flags=re.I)
+    text = re.sub(r'拒绝 unsupported (.+?) at bind$', r'绑定时拒绝不支持的 \1', text, flags=re.I)
+    text = re.sub(r'清除 (.+)$', lambda m: f'清除 {m.group(1)}', text, flags=re.I)
+    text = text.replace('read/write regions', '读写 region')
+    text = text.replace('hardware TPH state', '硬件 TPH 状态')
+    text = text.replace('TPH is unsupported', '不支持 TPH')
+    text = text.replace('device enable/disable', '设备启停')
+    text = text.replace('reference to the KVM module', 'KVM 模块引用')
+    text = text.replace('file-based reference counting for KVM', 'KVM 的基于文件引用计数')
+    text = text.replace('file-based reference counting', '基于文件引用计数')
+    text = text.replace('completion timeout retries', 'completion timeout 重试')
+    text = text.replace('read-only region mappings', '只读 region 映射')
+    text = text.replace('becoming writable', '变为可写')
+    text = text.replace('scatterlist length overflows', 'scatterlist 长度溢出')
+    text = text.replace('channel program segments', 'channel program segment')
+    text = text.replace('a BAR sub-range', 'BAR 子范围')
+    text = text.replace('a provider', 'provider')
+    text = text.replace('a user-facing name for BAR mappings', 'BAR 映射的用户可见名称')
+    text = text.replace('the reset logic in VFIO PCI device close path',
+                        'VFIO PCI 设备关闭路径中的 reset logic')
+    text = text.replace('various helpers from VFIO', 'VFIO helper')
+    text = text.replace('the iommufd state of the vfio cdev', 'vfio cdev 的 iommufd 状态')
+    text = text.replace('APIs to preserve/unpreserve a vfio cdev',
+                        '保存/取消保存 vfio cdev 的 API')
+    text = text.replace('mmap() attributes to DMABUF feature',
+                        'DMABUF feature 的 mmap() 属性')
+    text = re.sub(r'\s+when\s+(.+)$', r'（当 \1 时）', text, flags=re.I)
+    text = re.sub(r'\s+during\s+(.+)$', r'（在 \1 期间）', text, flags=re.I)
+    text = re.sub(r'\s+before\s+(.+)$', r'（在 \1 前）', text, flags=re.I)
+    text = re.sub(r'\s+after\s+(.+)$', r'（在 \1 后）', text, flags=re.I)
+    text = re.sub(r'\s+with\s+(.+)$', r'（携带 \1）', text, flags=re.I)
+    text = re.sub(r'阻止 (.+?) from 变为可写$', r'阻止 \1 变为可写', text, flags=re.I)
+    text = re.sub(r'拒绝 live migration on 64KB page（携带 QM_HW_V3 hardware）$',
+                  '拒绝 QM_HW_V3 硬件在 64KB 页配置下执行 live migration', text, flags=re.I)
+    text = re.sub(r'拒绝 to reset an SR-IOV PF（携带 enabled VFs）$',
+                  '拒绝重置仍启用 VF 的 SR-IOV PF', text, flags=re.I)
+    text = text.replace('a file handler', 'file handler')
+    text = text.replace('a DMABUF', 'DMABUF')
+    text = text.replace('PFNs for DMABUFs', 'DMABUF 的 PFN')
+    text = text.replace('the live migration data mkey', 'live migration data mkey')
+    text = text.replace('改用 基于文件引用计数', '改用基于文件的引用计数')
+    text = text.replace('当 不支持 TPH 时', '当设备不支持 TPH 时')
+    text = text.replace('在 设备启停 时', '在设备启停时')
+    text = text.replace('复位 硬件', '复位硬件')
+    return text
+
+
+def _phrase_from_patch_desc(desc):
+    desc = _trim_detail(desc)
+    lower = desc.lower()
+    rules = [
+        (r'^add a helper to (.+)$', lambda m: f'新增用于 {m.group(1)} 的 helper'),
+        (r'^add support for (.+)$', lambda m: f'增加 {m.group(1)} 支持'),
+        (r'^add (.+)$', lambda m: f'新增 {m.group(1)}'),
+        (r'^allow (.+)$', lambda m: f'允许 {m.group(1)}'),
+        (r'^provide (.+)$', lambda m: f'提供 {m.group(1)}'),
+        (r'^export (.+)$', lambda m: f'导出 {m.group(1)}'),
+        (r'^register (.+?) with (.+)$', lambda m: f'向 {m.group(2)} 注册 {m.group(1)}'),
+        (r'^create (.+?) at bind$', lambda m: f'绑定时创建 {m.group(1)}'),
+        (r'^detect (.+?) and load (.+?) on demand$', lambda m: f'检测 {m.group(1)} 并按需加载 {m.group(2)}'),
+        (r'^implement (.+)$', lambda m: f'实现 {m.group(1)}'),
+        (r'^introduce (.+)$', lambda m: f'引入 {m.group(1)}'),
+        (r'^support (.+)$', lambda m: f'支持 {m.group(1)}'),
+        (r'^enable (.+)$', lambda m: f'启用 {m.group(1)}'),
+        (r'^disable (.+)$', lambda m: f'禁用 {m.group(1)}'),
+        (r'^fix (.+)$', lambda m: f'修复 {m.group(1)}'),
+        (r'^harden (.+)$', lambda m: f'加固 {m.group(1)}'),
+        (r'^catch (.+)$', lambda m: f'捕获 {m.group(1)}'),
+        (r'^take (.+)$', lambda m: f'获取 {m.group(1)}'),
+        (r'^limit (.+)$', lambda m: f'限制 {m.group(1)}'),
+        (r'^ensure (.+)$', lambda m: f'确保 {m.group(1)}'),
+        (r'^calculate (.+)$', lambda m: f'计算 {m.group(1)}'),
+        (r'^cancel (.+)$', lambda m: f'取消 {m.group(1)}'),
+        (r'^clear (.+)$', lambda m: f'清除 {m.group(1)}'),
+        (r'^refuse (.+)$', lambda m: f'拒绝 {m.group(1)}'),
+        (r'^reject (.+)$', lambda m: f'拒绝 {m.group(1)}'),
+        (r'^check (.+)$', lambda m: f'检查 {m.group(1)}'),
+        (r'^hide (.+)$', lambda m: f'隐藏 {m.group(1)}'),
+        (r'^expose (.+)$', lambda m: f'暴露 {m.group(1)}'),
+        (r'^virtualize (.+)$', lambda m: f'虚拟化 {m.group(1)}'),
+        (r'^reset (.+)$', lambda m: f'复位 {m.group(1)}'),
+        (r'^revoke (.+)$', lambda m: f'撤销 {m.group(1)}'),
+        (r'^prevent (.+)$', lambda m: f'阻止 {m.group(1)}'),
+        (r'^preserve (.+)$', lambda m: f'保留 {m.group(1)}'),
+        (r'^retrieve (.+)$', lambda m: f'恢复 {m.group(1)}'),
+        (r'^block (.+)$', lambda m: f'阻止 {m.group(1)}'),
+        (r'^avoid (.+)$', lambda m: f'避免 {m.group(1)}'),
+        (r'^let (.+?) exclude (.+?) from (.+)$', lambda m: f'允许 {m.group(1)} 从 {m.group(3)} 中排除 {m.group(2)}'),
+        (r'^(?:don\'t|do not) (.+)$', lambda m: f'避免 {m.group(1)}'),
+        (r'^use (.+?) in place of (.+)$', lambda m: f'用 {m.group(1)} 替代 {m.group(2)}'),
+        (r'^use (.+)$', lambda m: f'改用 {m.group(1)}'),
+        (r'^convert (.+?) to (.+)$', lambda m: f'将 {m.group(1)} 转换为 {m.group(2)}'),
+        (r'^replace (.+?) with (.+)$', lambda m: f'用 {m.group(2)} 替换 {m.group(1)}'),
+        (r'^rename (.+?) to (.+)$', lambda m: f'将 {m.group(1)} 重命名为 {m.group(2)}'),
+        (r'^factor out (.+)$', lambda m: f'抽出 {m.group(1)}'),
+        (r'^split (.+)$', lambda m: f'拆分 {m.group(1)}'),
+        (r'^move (.+?) to (.+)$', lambda m: f'将 {m.group(1)} 移到 {m.group(2)}'),
+        (r'^remove (.+)$', lambda m: f'移除 {m.group(1)}'),
+        (r'^drop (.+)$', lambda m: f'删除 {m.group(1)}'),
+        (r'^document (.+)$', lambda m: f'补充 {m.group(1)} 文档/绑定'),
+        (r'^clean up (.+)$', lambda m: f'清理 {m.group(1)}'),
+        (r'^cleanup (.+)$', lambda m: f'清理 {m.group(1)}'),
+        (r'^make (.+)$', lambda m: f'调整 {m.group(1)}'),
+        (r'^set (.+)$', lambda m: f'设置 {m.group(1)}'),
+        (r'^keep (.+)$', lambda m: f'保持 {m.group(1)}'),
+        (r'^pass (.+)$', lambda m: f'传递 {m.group(1)}'),
+        (r'^thread (.+)$', lambda m: f'串接 {m.group(1)}'),
+        (r'^co-clear (.+)$', lambda m: f'同步清除 {m.group(1)}'),
+        (r'^shrink (.+)$', lambda m: f'缩小 {m.group(1)}'),
+        (r'^cache (.+)$', lambda m: f'缓存 {m.group(1)}'),
+        (r'^latch (.+)$', lambda m: f'锁存 {m.group(1)}'),
+        (r'^own (.+)$', lambda m: f'接管 {m.group(1)}'),
+        (r'^selectively expand (.+)$', lambda m: f'按需扩展 {m.group(1)}'),
+        (r'^periodically try (.+)$', lambda m: f'周期性尝试 {m.group(1)}'),
+        (r'^conditional (.+)$', lambda m: f'按条件执行 {m.group(1)}'),
+    ]
+    for pattern, builder in rules:
+        match = re.search(pattern, lower, flags=re.I)
+        if match:
+            # Re-match against the original text to preserve technical casing.
+            original_match = re.search(pattern, desc, flags=re.I)
+            return _polish_english_condition(builder(original_match or match))
+    return _polish_english_condition(desc)
+
+
+def concrete_patch_summary(title):
+    scope, desc = _split_patch_title(title)
+    phrase = _phrase_from_patch_desc(desc)
+    if not phrase:
+        return ''
+    if scope:
+        return f'在 {scope} 中{phrase}。'
+    return f'{phrase}。'
+
+
+def _dedupe_phrases(phrases):
+    seen = set()
+    result = []
+    for phrase in phrases:
+        key = re.sub(r'[^a-z0-9\u4e00-\u9fff]+', '', phrase.lower())
+        if not key or key in seen:
+            continue
+        seen.add(key)
+        result.append(phrase)
+    return result
+
+
+def concrete_series_summary(series_title, patch_titles, max_items=5):
+    clean_title = extract_base_title(series_title).strip().rstrip('.')
+    phrases = []
+    for title in patch_titles:
+        scope, desc = _split_patch_title(title)
+        phrase = _phrase_from_patch_desc(desc)
+        if not phrase:
+            continue
+        if scope and scope.lower() not in clean_title.lower():
+            phrase = f'{scope} 中{phrase}'
+        phrases.append(phrase)
+    phrases = _dedupe_phrases(phrases)[:max_items]
+    if not phrases:
+        return ''
+    joined = '、'.join(phrases)
+    return f'该系列围绕 {clean_title}，具体包括{joined}。'
 
 
 def series_cover_title(p):
@@ -999,15 +1201,21 @@ def report_summary(p):
     ]
     translated_title_shape = bool(re.search(
         r'(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+'
-        r'(support|feature|test|bugs?|cleanup|fix|interface|issues?)',
-        summary_l))
-    if summary and not any(token in summary for token in generic_tokens) \
-            and not (p.get('is_cover_letter') and translated_title_shape):
-        return summary
+        r'(support|feature|test|bugs?|cleanup|fix|interface|issues?|leak|path|state)',
+        summary_l)) or bool(re.search(
+            r'^(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+',
+            summary_l))
+    is_generic = any(token in summary for token in generic_tokens) or translated_title_shape
     if p.get('is_cover_letter'):
-        titles = p.get('qualified_titles') or [p.get('title', '')]
-        return chinese_series_summary(p.get('title', ''), titles)
-    return chinese_summary(p.get('title', ''))
+        titles = p.get('member_titles') or p.get('qualified_titles') or [p.get('title', '')]
+        concrete = chinese_series_summary(p.get('title', ''), titles)
+        if p.get('summary_source') == 'llm' and summary and not is_generic:
+            return summary
+        return concrete or summary or chinese_summary(p.get('title', ''))
+    if summary and not any(token in summary for token in generic_tokens) \
+            and not translated_title_shape:
+        return summary
+    return concrete_patch_summary(p.get('title', '')) or chinese_summary(p.get('title', ''))
 
 
 # ============================================================
@@ -1208,8 +1416,11 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
         qualified_titles = [sp.get('title', '') for sp in survived_in]
         all_titles = [sp.get('title', '') for sp in all_in]
         series_summary = None
+        summary_source = 'fallback'
         if LLM_API_KEY:
             series_summary = _call_llm_series_summary(series_name, all_titles, sid)
+            if series_summary:
+                summary_source = 'llm'
         if not series_summary:
             series_summary = chinese_series_summary(series_name, all_titles)
 
@@ -1225,12 +1436,14 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
             'submitter': all_in[0].get('submitter', ''),
             'version': max(versions) if versions else all_in[0].get('version'),
             'summary': series_summary,
+            'summary_source': summary_source,
             'is_cover_letter': True,
             'series_id': sid,
             'patch_count': num_total,
             'series_total': max(totals) if totals else num_total,
             'qualified_count': num_surv,
             'qualified_titles': qualified_titles[:5],
+            'member_titles': all_titles,
             'qualified_has_more': len(qualified_titles) > 5,
         }
         final.append(cover)
