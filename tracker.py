@@ -81,6 +81,15 @@ ORG_MAP = {
 LLM_API_KEY = os.environ.get('LLM_API_KEY', '')
 LLM_MODEL = os.environ.get('LLM_MODEL', 'claude-sonnet-4-20250514')
 LLM_API_BASE = os.environ.get('LLM_API_BASE', 'https://api.anthropic.com')
+LLM_SUMMARIZE_ALL = os.environ.get('LLM_SUMMARIZE_ALL', '').lower() in (
+    '1', 'true', 'yes'
+)
+LLM_TABLE_BATCH_SIZE = int(os.environ.get('LLM_TABLE_BATCH_SIZE', '8'))
+if LLM_API_BASE.startswith('[') and '](' in LLM_API_BASE:
+    match = re.search(r'\]\((https?://[^)]+)\)', LLM_API_BASE)
+    if match:
+        LLM_API_BASE = match.group(1)
+LLM_API_BASE = LLM_API_BASE.rstrip('/')
 
 # In-memory & on-disk cache for LLM summaries (keyed by patch ID)
 _SUMMARY_CACHE = {}
@@ -103,9 +112,48 @@ def _save_llm_cache():
             json.dump(_SUMMARY_CACHE, f, ensure_ascii=False, indent=2)
 
 
+def _extract_text_from_llm_response(data):
+    if isinstance(data, dict):
+        if isinstance(data.get('output_text'), str) and data['output_text'].strip():
+            return data['output_text']
+        choices = data.get('choices') or []
+        if choices:
+            choice = choices[0] or {}
+            message = choice.get('message') or {}
+            for key in ['content', 'reasoning_content', 'text']:
+                value = message.get(key) if key in message else choice.get(key)
+                text = _extract_text_from_llm_response(value)
+                if text:
+                    return text
+        content = data.get('content')
+        text = _extract_text_from_llm_response(content)
+        if text:
+            return text
+        output = data.get('output')
+        text = _extract_text_from_llm_response(output)
+        if text:
+            return text
+        if data.get('type') == 'text' and isinstance(data.get('text'), str):
+            return data.get('text')
+        if isinstance(data.get('text'), str):
+            return data.get('text')
+        if isinstance(data.get('thinking'), str):
+            return data.get('thinking')
+    elif isinstance(data, list):
+        parts = []
+        for item in data:
+            text = _extract_text_from_llm_response(item)
+            if text:
+                parts.append(text)
+        return '\n'.join(parts)
+    elif isinstance(data, str):
+        return data
+    return ''
+
+
 def _call_llm_summary(title, diff_text, patch_id=None):
     """Generate a concise Chinese summary via LLM. Returns None on failure."""
-    cache_key = 'v2:' + (str(patch_id) if patch_id else
+    cache_key = 'v3:' + (str(patch_id) if patch_id else
                          hashlib.md5(title.encode()).hexdigest())
     cached = _SUMMARY_CACHE.get(cache_key)
     if cached:
@@ -118,72 +166,23 @@ def _call_llm_summary(title, diff_text, patch_id=None):
     truncated = diff_text[:6000] if len(diff_text) > 6000 else diff_text
 
     system_prompt = (
-        '你是 Linux 内核 patch 分析专家。请结合标题和代码改动，'
-        '用一句中文概括 patch 的核心技术变化、涉及对象和直接影响。'
-        '不要逐词翻译标题，不要解释你的分析过程，不要输出列表、前言或 Markdown。'
-        '控制在 80 到 160 个中文字符之间。'
+        '你是 Linux 内核 patch 分析专家。请结合邮件正文、cover letter、commit message 和 diff，'
+        '用一句中文总结这封 patch 邮件实际做了什么。必须写出具体对象、接口、流程、文件/驱动'
+        '或被修复的问题，避免“增强功能、提升稳定性、完善框架、扩展能力”这类空泛表述。'
+        '不要逐词翻译标题，不要解释分析过程，不要输出列表、前言或 Markdown。'
+        '控制在 80 到 180 个中文字符之间。'
     )
 
     try:
         user_content = f'## 标题\n{title}\n\n## 证据\n```diff\n{truncated}\n```'
-        if 'anthropic' in LLM_API_BASE:
-            resp = requests.post(
-                f'{LLM_API_BASE}/v1/messages',
-                headers={
-                    'x-api-key': LLM_API_KEY,
-                    'anthropic-version': '2023-06-01',
-                    'content-type': 'application/json',
-                },
-                json={
-                    'model': LLM_MODEL,
-                    'max_tokens': 500,
-                    'temperature': 0.1,
-                    'system': system_prompt,
-                    'messages': [{
-                        'role': 'user',
-                        'content': user_content
-                    }]
-                },
-                timeout=30
-            )
-        else:
-            resp = requests.post(
-                f'{LLM_API_BASE}/v1/chat/completions',
-                headers={
-                    'authorization': f'Bearer {LLM_API_KEY}',
-                    'content-type': 'application/json',
-                },
-                json={
-                    'model': LLM_MODEL,
-                    'max_tokens': 500,
-                    'temperature': 0.1,
-                    'messages': [
-                        {'role': 'system', 'content': system_prompt},
-                        {'role': 'user', 'content': user_content},
-                    ],
-                },
-                timeout=30
-            )
-        resp.raise_for_status()
-        data = resp.json()
-        summary = None
-        if 'choices' in data:
-            choices = data.get('choices') or []
-            if choices:
-                summary = choices[0].get('message', {}).get('content', '')
-        else:
-            for block in data.get('content', []):
-                if block.get('type') == 'text':
-                    summary = block.get('text', '')
-                    break
-                if block.get('type') == 'thinking':
-                    summary = block.get('thinking', '')
+        summary = _post_llm(system_prompt, user_content, max_tokens=500, timeout=60)
         if not summary:
-            print(f'    [LLM] 响应中无 text/thinking 内容 (id={patch_id})')
+            print(f'    [LLM] 响应中未解析到文本 (id={patch_id})')
             return None
         summary = sanitize_summary(summary)
         if not summary:
             return None
+        summary = compact_summary(summary)
         _SUMMARY_CACHE[cache_key] = summary
         _save_llm_cache()
         return summary
@@ -192,19 +191,83 @@ def _call_llm_summary(title, diff_text, patch_id=None):
         return None
 
 
+def _post_llm(system_prompt, user_content, max_tokens=500, timeout=90):
+    if 'anthropic' in LLM_API_BASE:
+        resp = requests.post(
+            f'{LLM_API_BASE}/v1/messages',
+            headers={
+                'x-api-key': LLM_API_KEY,
+                'anthropic-version': '2023-06-01',
+                'content-type': 'application/json',
+            },
+            json={
+                'model': LLM_MODEL,
+                'max_tokens': max_tokens,
+                'temperature': 0.1,
+                'system': system_prompt,
+                'messages': [{
+                    'role': 'user',
+                    'content': user_content
+                }]
+            },
+            timeout=timeout
+        )
+    else:
+        payload = {
+            'model': LLM_MODEL,
+            'max_tokens': max_tokens,
+            'temperature': 0.1,
+            'messages': [
+                {'role': 'system', 'content': system_prompt},
+                {'role': 'user', 'content': user_content},
+            ],
+        }
+        if 'deepseek' in LLM_API_BASE or os.environ.get('LLM_JSON_MODE'):
+            payload['response_format'] = {'type': 'json_object'}
+        resp = requests.post(
+            f'{LLM_API_BASE}/v1/chat/completions',
+            headers={
+                'authorization': f'Bearer {LLM_API_KEY}',
+                'content-type': 'application/json',
+            },
+            json=payload,
+            timeout=timeout
+        )
+    resp.raise_for_status()
+    return _extract_text_from_llm_response(resp.json())
+
+
 def sanitize_summary(summary):
+    if summary is None:
+        return None
+    if not isinstance(summary, str):
+        summary = str(summary)
     summary = re.sub(r'```.*?```', '', summary, flags=re.S).strip()
     summary = re.sub(r'^\s*[-*]\s*', '', summary)
     summary = summary.replace('\n', ' ').strip()
     blocked = [
         '我们需要分析', '从patch内容来看', '从 patch 内容来看',
         '标题是', '主要改动', '一句话概括', '不超过',
-        '直接说明', '保持技术准确性',
+        '直接说明', '保持技术准确性', '成员标题', '根据标题',
+        '标题 "', '标题“', '简介：', '同理', '可能', '就是：',
+        '需要概括', '需要总结',
     ]
     if any(token in summary for token in blocked):
         return None
     summary = re.sub(r'\s+', ' ', summary)
-    return summary[:200]
+    return summary[:240]
+
+
+def compact_summary(summary, limit=180):
+    summary = sanitize_summary(summary) or ''
+    if len(summary) <= limit:
+        return summary
+    cut = summary[:limit]
+    for sep in ['。', '；', '，', '、']:
+        pos = cut.rfind(sep)
+        if pos >= int(limit * 0.6):
+            return cut[:pos].rstrip('，、；。') + '。'
+    return cut.rstrip('，、；。') + '。'
 
 
 def _batch_llm_task(args):
@@ -1187,8 +1250,9 @@ def format_brief_title(p):
     return f'[PATCH] {title}'
 
 
-def report_summary(p):
-    summary = sanitize_summary(p.get('summary', '')) or ''
+def _looks_generic_summary(summary):
+    if not summary:
+        return True
     summary_l = summary.lower()
     generic_tokens = [
         '修改对代码进行调整和优化',
@@ -1198,6 +1262,10 @@ def report_summary(p):
         '启用之前被禁用或条件编译',
         '扩展功能特性',
         '增强框架的功能完整性',
+        '增强子系统的能力',
+        '提升子系统的稳定性',
+        '降低后续维护复杂度',
+        '满足更多使用场景',
     ]
     translated_title_shape = bool(re.search(
         r'(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+'
@@ -1205,17 +1273,27 @@ def report_summary(p):
         summary_l)) or bool(re.search(
             r'^(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+',
             summary_l))
-    is_generic = any(token in summary for token in generic_tokens) or translated_title_shape
+    return any(token in summary for token in generic_tokens) or translated_title_shape
+
+
+def report_summary(p):
+    table_summary = sanitize_summary(p.get('table_summary', '')) or ''
+    if table_summary and not _looks_generic_summary(table_summary):
+        return compact_summary(table_summary)
+
+    summary = sanitize_summary(p.get('summary', '')) or ''
+    is_generic = _looks_generic_summary(summary)
     if p.get('is_cover_letter'):
         titles = p.get('member_titles') or p.get('qualified_titles') or [p.get('title', '')]
         concrete = chinese_series_summary(p.get('title', ''), titles)
         if p.get('summary_source') == 'llm' and summary and not is_generic:
-            return summary
-        return concrete or summary or chinese_summary(p.get('title', ''))
-    if summary and not any(token in summary for token in generic_tokens) \
-            and not translated_title_shape:
-        return summary
-    return concrete_patch_summary(p.get('title', '')) or chinese_summary(p.get('title', ''))
+            return compact_summary(summary)
+        return compact_summary(concrete or summary or chinese_summary(p.get('title', '')))
+    if summary and not is_generic:
+        return compact_summary(summary)
+    return compact_summary(
+        concrete_patch_summary(p.get('title', '')) or chinese_summary(p.get('title', ''))
+    )
 
 
 # ============================================================
@@ -1244,6 +1322,7 @@ def process_patches(patches_data, config):
         series_id = series_info.get('id') or patch.get('series_id')
         series_name = series_info.get('name') or patch.get('series_name')
         series_version = series_info.get('version')
+        series_mbox = series_info.get('mbox')
         _, series_total = extract_patch_index(title)
 
         organization = extract_organization(email)
@@ -1273,9 +1352,11 @@ def process_patches(patches_data, config):
             'email': email,
             'version': version,
             'summary': summary,
+            'mbox': patch.get('mbox'),
             'series_id': series_id,
             'series_name': series_name or title,
             'series_version': series_version,
+            'series_mbox': series_mbox,
             'series_total': series_total,
         })
 
@@ -1415,14 +1496,8 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
 
         qualified_titles = [sp.get('title', '') for sp in survived_in]
         all_titles = [sp.get('title', '') for sp in all_in]
-        series_summary = None
         summary_source = 'fallback'
-        if LLM_API_KEY:
-            series_summary = _call_llm_series_summary(series_name, all_titles, sid)
-            if series_summary:
-                summary_source = 'llm'
-        if not series_summary:
-            series_summary = chinese_series_summary(series_name, all_titles)
+        series_summary = chinese_series_summary(series_name, all_titles)
 
         cover = {
             'id': None, 'title': series_name,
@@ -1437,6 +1512,8 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
             'version': max(versions) if versions else all_in[0].get('version'),
             'summary': series_summary,
             'summary_source': summary_source,
+            'mbox': all_in[0].get('mbox'),
+            'series_mbox': all_in[0].get('series_mbox'),
             'is_cover_letter': True,
             'series_id': sid,
             'patch_count': num_total,
@@ -1704,6 +1781,145 @@ def _request_get_with_retries(url, timeout=45, max_retries=5):
     raise RuntimeError(f"请求 patchwork 失败: {url}\n{last_error}")
 
 
+def _fetch_mbox_text(url, max_chars=30000):
+    if not url:
+        return ''
+    try:
+        resp = _request_get_with_retries(url, timeout=60, max_retries=4)
+        text = resp.text
+        return text[:max_chars]
+    except Exception as exc:
+        print(f"      获取邮件失败: {url} ({exc})")
+        return ''
+
+
+def _table_evidence_task(p):
+    title = format_brief_title(p)
+    mbox_url = p.get('series_mbox') if p.get('is_cover_letter') else p.get('mbox')
+    if not mbox_url:
+        mbox_url = p.get('mbox') or p.get('series_mbox')
+    mail_text = _fetch_mbox_text(mbox_url, max_chars=5000)
+    qualified = '\n'.join(
+        f'- {extract_base_title(t)}'
+        for t in (p.get('member_titles') or p.get('qualified_titles') or [])[:40]
+    )
+    return p, title, qualified, mail_text
+
+
+def _parse_batch_summary_response(text):
+    clean = re.sub(r'^```(?:json)?\s*|\s*```$', '', text.strip(), flags=re.S)
+    try:
+        data = json.loads(clean)
+        if isinstance(data, dict):
+            return {str(k): sanitize_summary(v) for k, v in data.items()}
+        if isinstance(data, list):
+            result = {}
+            for item in data:
+                if isinstance(item, dict):
+                    key = item.get('id') or item.get('key') or item.get('编号')
+                    value = item.get('summary') or item.get('简介') or item.get('text')
+                    if key and value:
+                        result[str(key)] = sanitize_summary(value)
+            return result
+    except Exception:
+        pass
+
+    result = {}
+    for line in clean.splitlines():
+        match = re.match(r'^\s*([A-Z]\d{2})\s*[:：]\s*(.+?)\s*$', line)
+        if match:
+            result[match.group(1)] = sanitize_summary(match.group(2))
+    return result
+
+
+def _batch_llm_table_summaries(entries):
+    if not entries:
+        return {}
+    system_prompt = (
+        '你是 Linux 内核 patch 分析专家。用户会提供多封 patch/cover letter 邮件摘录。'
+        '请为每个编号生成一句中文简介，必须基于对应邮件内容和成员 patch 标题，总结实际做了什么工作。'
+        '每条都要写出具体对象、接口、寄存器、驱动、UAPI、错误路径或行为变化。'
+        '禁止使用“增强功能、提升稳定性、完善框架、扩展能力、优化代码质量”等空泛表述。'
+        '禁止出现“标题、成员标题、简介、可能、同理、就是”等分析过程用语。'
+        '不要合并不同编号，不要漏编号。返回严格 JSON 对象，key 为编号，value 为简介字符串。'
+        '示例格式：{"E01":"在 af_alg allowlist 中加入 cryptsetup 需要的 skcipher/aead 算法，使非特权 cryptsetup 能继续通过 AF_ALG socket 调用这些算法。"}'
+    )
+    blocks = []
+    for key, p, title, qualified, mail_text in entries:
+        blocks.append(
+            f'### {key}\n'
+            f'标题: {title}\n'
+            f'厂商: {p.get("organization", "")}\n'
+            f'状态: {p.get("status", "")}\n'
+            f'成员标题:\n{qualified or "- 无"}\n'
+            f'邮件摘录:\n<<<\n{mail_text[:5000] or "无邮件内容"}\n>>>'
+        )
+    user_content = '\n\n'.join(blocks)
+    cache_key = 'batch-table-v3:' + hashlib.md5(user_content.encode()).hexdigest()
+    cached = _SUMMARY_CACHE.get(cache_key)
+    if cached:
+        return cached
+    try:
+        text = _post_llm(system_prompt, user_content, max_tokens=6000, timeout=180)
+        parsed = _parse_batch_summary_response(text)
+        _SUMMARY_CACHE[cache_key] = parsed
+        _save_llm_cache()
+        return parsed
+    except Exception as exc:
+        print(f"      Top20 批量 LLM 总结失败: {exc}")
+        return {}
+
+
+def enrich_top_table_summaries(patches, start_date, end_date):
+    if not LLM_API_KEY:
+        print("    跳过 Top20 邮件级总结（未配置 LLM_API_KEY）")
+        return
+
+    filtered = [p for p in patches if start_date <= p['date'] <= end_date]
+    top_items = []
+    for status in ['已合入', '社区讨论中']:
+        plist = [p for p in filtered if p.get('status') == status]
+        top_items.extend(select_top_patches(plist, 20))
+
+    unique = {}
+    for p in top_items:
+        key = ('series', p.get('series_id')) if p.get('is_cover_letter') else ('patch', p.get('id'))
+        unique[key] = p
+    top_items = list(unique.values())
+
+    print(f"    正在为 {len(top_items)} 个 Top20 表格条目拉取邮件...")
+    evidences = []
+    with ThreadPoolExecutor(max_workers=6) as ex:
+        futures = {ex.submit(_table_evidence_task, p): p for p in top_items}
+        for f in as_completed(futures):
+            evidences.append(f.result())
+
+    batch_entries = []
+    for idx, evidence in enumerate(evidences, 1):
+        batch_entries.append((f'E{idx:02d}',) + evidence)
+
+    print(
+        f"    正在分批调用 LLM 总结 {len(batch_entries)} 个表格条目 "
+        f"（每批 {LLM_TABLE_BATCH_SIZE} 条）..."
+    )
+    batch_summaries = {}
+    for offset in range(0, len(batch_entries), LLM_TABLE_BATCH_SIZE):
+        chunk = batch_entries[offset:offset + LLM_TABLE_BATCH_SIZE]
+        batch_summaries.update(_batch_llm_table_summaries(chunk))
+    success = 0
+    for key, p, _title, _qualified, _mail_text in batch_entries:
+        summary = batch_summaries.get(key)
+        if summary and not _looks_generic_summary(summary):
+            p['table_summary'] = summary
+            p['table_summary_source'] = 'llm-mail-batch'
+            success += 1
+        else:
+            p['table_summary'] = report_summary(p)
+            p['table_summary_source'] = 'fallback'
+    _save_llm_cache()
+    print(f"    Top20 批量邮件级总结完成: {success}/{len(batch_entries)} 个使用 LLM 邮件总结")
+
+
 def fetch_patches(config, since_date):
     """Fetch all patches for a module from patchwork."""
     pw = config['patchwork']
@@ -1800,7 +2016,7 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
     # Step 4: LLM-powered summary generation
     print("\n[4.5/6] 使用 LLM 生成 patch 概括（200字以内）...")
     _load_llm_cache(output_dir)
-    if LLM_API_KEY and diff_map:
+    if LLM_API_KEY and diff_map and LLM_SUMMARIZE_ALL:
         llm_tasks = [
             (p['title'], diff_map.get(p.get('id'), ''), p.get('id'))
             for p in deduped if p.get('id') and p.get('id') in diff_map
@@ -1819,12 +2035,18 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
         _save_llm_cache()
         print(f"    LLM 概括完成: {success}/{len(llm_tasks)} 个 patch")
     else:
-        print(f"    跳过 LLM 概括（API_KEY: {bool(LLM_API_KEY)}, diff映射: {bool(diff_map)}）")
+        print(
+            f"    跳过全量 LLM 概括（API_KEY: {bool(LLM_API_KEY)}, "
+            f"diff映射: {bool(diff_map)}, LLM_SUMMARIZE_ALL: {LLM_SUMMARIZE_ALL}）"
+        )
 
     # Step 5: Cover letters
     print("\n[5/6] 应用 Cover Letter 逻辑...")
     deduped, _ = apply_cover_letters(deduped, code_filtered_list, pre_filter)
     print(f"    最终 {len(deduped)} 个条目")
+
+    print("\n[5.5/6] 为 Top20 表格生成邮件级具体简介...")
+    enrich_top_table_summaries(deduped, start_date, end_date)
 
     # Step 6: Generate report
     print("\n[6/6] 生成报告...")

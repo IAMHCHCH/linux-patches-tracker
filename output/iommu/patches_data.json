@@ -12,9 +12,11 @@
     "email": "zhangzhanpeng.jasper@bytedance.com",
     "version": 1,
     "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260701040017.42707-2-zhangzhanpeng.jasper@bytedance.com/mbox/",
     "series_id": 1119385,
     "series_name": "RISC-V: KVM/IOMMU: Fix MRIF irqfd notice handling",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1119385/mbox/",
     "series_total": 3
   },
   {
@@ -29,10 +31,12 @@
     "submitter": "Aneesh Kumar K.V",
     "email": "aneesh.kumar@kernel.org",
     "version": 8,
-    "summary": "该补丁在iommu_dma_alloc中直接检查dma_alloc_from_pool返回的page是否为空，若分配失败立即返回NULL，避免后续使用无效页码；针对原子池分配与普通页面分配路径分别处理，提高错误路径的显式判断与安全性。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717180442.110954-4-aneesh.kumar@kernel.org/mbox/",
     "series_id": 1129778,
     "series_name": "dma-mapping: Track shared DMA state through direct, pool and swiotlb paths",
     "series_version": 8,
+    "series_mbox": "https://patchwork.kernel.org/series/1129778/mbox/",
     "series_total": 23
   },
   {
@@ -47,10 +51,12 @@
     "submitter": "Kiryl Shutsemau",
     "email": "kas@kernel.org",
     "version": 3,
-    "summary": "该补丁在kdump内核中将ARM SMMUv3的命令、事件和PRI队列大小限制为单页，以避免为硬件宣称的大队列分配过多内存，适用于仅需少量设备保存转储文件的场景。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260706084708.8072-1-kas@kernel.org/mbox/",
     "series_id": 1122139,
     "series_name": "[v3] iommu/arm-smmu-v3: Shrink command/event/PRI queues in kdump kernel",
     "series_version": 3,
+    "series_mbox": "https://patchwork.kernel.org/series/1122139/mbox/",
     "series_total": null
   },
   {
@@ -65,10 +71,12 @@
     "submitter": "Pavol Sakac",
     "email": "sakacpav@amazon.de",
     "version": 1,
-    "summary": "本补丁为每个 iommu_group 内嵌 sysfs_lazy_state，使 reserved_regions 与 type 属性不再在组创建时立即生成，而是通过新增的 lazy populate 回调在访问时按需创建，并辅以 kernfs_set_lazy 与锁保护，从而减少首屏组初始化开销并降低 sysfs 暴露时的无关副作用。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/kexec/patch/20260702175114.24659-5-sakacpav@amazon.de/mbox/",
     "series_id": 1120653,
     "series_name": "driver core: defer per-VF sysfs creation for fast SR-IOV bring-up",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1120653/mbox/",
     "series_total": 14
   },
   {
@@ -83,10 +91,12 @@
     "submitter": "Bartosz Golaszewski",
     "email": "bartosz.golaszewski@oss.qualcomm.com",
     "version": 3,
-    "summary": "该补丁使Freescale PAMU IOMMU驱动在初始化时改用platform_device_set_of_node()设置设备树节点，并借助基于__free(device_node)的自动清理机制管理引用计数，从而简化了错误处理路径并减少手动释放带来的缺陷风险。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/dri-devel/patch/20260706-pdev-fwnode-ref-v3-9-1ff028e33779@oss.qualcomm.com/mbox/",
     "series_id": 1122363,
     "series_name": "driver core: count references of the platform device's fwnode, not OF node",
     "series_version": 3,
+    "series_mbox": "https://patchwork.kernel.org/series/1122363/mbox/",
     "series_total": 20
   },
   {
@@ -101,10 +111,12 @@
     "submitter": "Jason Gunthorpe",
     "email": "jgg@nvidia.com",
     "version": 1,
-    "summary": "该补丁为通用 IOMMU 页表框架新增 64 位 ARMv8 VMSAv8-64 及长描述符格式的支持模块，涵盖多级页表、LPA/LPA2 扩展与不同粒度，并扩展对应的 Kconfig 与构建配置，方便后续驱动自动选用。",
+    "summary": "新增the 64 bit armv8 page table format，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/3-v1-807e2d1a5efb+e1-iommupt_armv8_jgg@nvidia.com/mbox/",
     "series_id": 1122564,
     "series_name": "Use the generic iommu page table for SMMUv3",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1122564/mbox/",
     "series_total": 7
   },
   {
@@ -119,10 +131,12 @@
     "submitter": "Zhanpeng Zhang",
     "email": "zhangzhanpeng.jasper@bytedance.com",
     "version": 3,
-    "summary": "该补丁将RISC-V IOMMU驱动的64位寄存器访问改为32位MMIO读写，引入hi_lo辅助宏组合高低32位，解决不支持64位MMIO访问硬件上的兼容性问题。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260713122903.9458-1-zhangzhanpeng.jasper@bytedance.com/mbox/",
     "series_id": 1126629,
     "series_name": "[v3] iommu/riscv: Use 32-bit MMIO accesses for 64-bit registers",
     "series_version": 3,
+    "series_mbox": "https://patchwork.kernel.org/series/1126629/mbox/",
     "series_total": null
   },
   {
@@ -137,10 +151,12 @@
     "submitter": "Zong Li",
     "email": "zong.li@sifive.com",
     "version": 9,
-    "summary": "此补丁为支持硬件性能监视功能（HPM）的RISC-V IOMMU引入辅助设备创建机制，新增独立IDA命名空间并借助辅助总线注册PMU设备，使IOMMU性能计数器可通过标准perf接口访问和复用。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260908020347.1836653-3-zong.li@sifive.com/mbox/",
     "series_id": 1160078,
     "series_name": "RISC-V IOMMU HPM support",
     "series_version": 9,
+    "series_mbox": "https://patchwork.kernel.org/series/1160078/mbox/",
     "series_total": 2
   },
   {
@@ -155,10 +171,12 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": 5,
-    "summary": "该补丁为Arm SMMUv3驱动新增IDR5.DS特性支持，并将TLBI命令的SCALE字段从5位扩展到6位，使范围无效化能覆盖更大地址空间，同时保持旧硬件兼容性。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/1b35fa8c417a21ac80a4a3f19db34d81ef6ca490.1785258826.git.nicolinc@nvidia.com/mbox/",
     "series_id": 1136110,
     "series_name": "iommufd: Iterate the cache invalidation array in the core",
     "series_version": 5,
+    "series_mbox": "https://patchwork.kernel.org/series/1136110/mbox/",
     "series_total": 6
   },
   {
@@ -173,10 +191,12 @@
     "submitter": "Aaron Lewis",
     "email": "aaronlewis@google.com",
     "version": 1,
-    "summary": "该改动在iommufd取消映射时遍历页面的循环中，每处理完一个PUD阶页数即调用一次cond_resched，周期性让出处理器，避免长时间占用CPU导致调度延迟。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-3-aaronlewis@google.com/mbox/",
     "series_id": 1127741,
     "series_name": "vfio/iommufd: Prevent scheduler warnings when unmapping large regions",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1127741/mbox/",
     "series_total": 2
   },
   {
@@ -191,10 +211,12 @@
     "submitter": "Clément MATHIEU--DRIF",
     "email": "clement.mathieu--drif@bull.com",
     "version": 2,
-    "summary": "该补丁为基于 PASID 的 IOTLB 失效增加地址掩码合法性校验，拒绝大于硬件最大值的掩码并添加断言，防止越界使用导致异常。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260724111424.376680-1-clement.mathieu--drif@bull.com/mbox/",
     "series_id": 1133921,
     "series_name": "[v2] intel_iommu: Check address mask before using it in pasid-based iotlb invalidation",
     "series_version": 2,
+    "series_mbox": "https://patchwork.kernel.org/series/1133921/mbox/",
     "series_total": null
   },
   {
@@ -209,10 +231,12 @@
     "submitter": "Jiaxing Hu",
     "email": "gahing@gahingwoo.com",
     "version": 1,
-    "summary": "该补丁在Rockchip IOMMU驱动的停滞状态检测中，忽略固件遗留的孤儿页错误银行，仅当页错误激活且无停滞但空闲时跳过，避免将其误判为未停滞，确保多银行协同判断更准确。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717085220.3212274-5-gahing@gahingwoo.com/mbox/",
     "series_id": 1129439,
     "series_name": "accel/rocket: RK3576 NPU (RKNN) enablement",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1129439/mbox/",
     "series_total": 9
   },
   {
@@ -228,9 +252,11 @@
     "email": "gahing@gahingwoo.com",
     "version": 1,
     "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260717085220.3212274-6-gahing@gahingwoo.com/mbox/",
     "series_id": 1129436,
     "series_name": "accel/rocket: RK3576 NPU (RKNN) enablement",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1129436/mbox/",
     "series_total": 9
   },
   {
@@ -246,9 +272,11 @@
     "email": "danielpaziyski@gmail.com",
     "version": 1,
     "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260718175208.118721-2-danielpaziyski@gmail.com/mbox/",
     "series_id": 1130126,
     "series_name": "amd_iommu: Honor DTE[IR] and DTE[IW] when DTE[Mode] is 0",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1130126/mbox/",
     "series_total": 2
   },
   {
@@ -263,10 +291,12 @@
     "submitter": "Bartosz Golaszewski",
     "email": "bartosz.golaszewski@oss.qualcomm.com",
     "version": 1,
-    "summary": "该改动将飞思卡尔PAMU驱动初始化中的platform_device_set_of_node替换为platform_device_set_fwnode，并调用of_fwnode_handle将设备节点转为通用fwnode，使平台设备固件节点设置统一走fwnode接口。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/alsa-devel/patch/20260720-pdev-set-fwnode-instead-of-of-node-v1-3-2dee93f42c54@oss.qualcomm.com/mbox/",
     "series_id": 1130708,
     "series_name": "driver core: prefer platform_device_set_fwnode()",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1130708/mbox/",
     "series_total": 8
   },
   {
@@ -281,10 +311,12 @@
     "submitter": "Vijayanand Jitta",
     "email": "vijayanand.jitta@oss.qualcomm.com",
     "version": 4,
-    "summary": "此补丁为ARM LPAE页表映射加入连续提示位支持，依据不同页粒度动态计算连续页组大小，并在对齐映射批量写入时设置PTE的contiguous位以减少页表开销，同时保留通过quirk禁用该功能的选项。",
+    "summary": "新增支持 contiguous hint bit，扩展框架的硬件兼容性和功能覆盖范围，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260804-iommu_contig_hint-v4-1-d7a47ed5db98@oss.qualcomm.com/mbox/",
     "series_id": 1139832,
     "series_name": "[v4] iommu/io-pgtable-arm: Add support for contiguous hint bit",
     "series_version": 4,
+    "series_mbox": "https://patchwork.kernel.org/series/1139832/mbox/",
     "series_total": null
   },
   {
@@ -299,10 +331,12 @@
     "submitter": "Pengpeng Hou",
     "email": "pengpeng@iscas.ac.cn",
     "version": 1,
-    "summary": "该补丁在MSM IOMMU驱动中为每个主设备添加MID数量上限检查，超出MAX_NUM_MIDS即返回错误，防止越界并限制机器ID列表长度。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-msm/patch/20260722041619.17735-1-pengpeng@iscas.ac.cn/mbox/",
     "series_id": 1132123,
     "series_name": "iommu/msm: limit the per-master Machine ID list",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1132123/mbox/",
     "series_total": null
   },
   {
@@ -317,10 +351,12 @@
     "submitter": "Vasant Hegde",
     "email": "vasant.hegde@amd.com",
     "version": 2,
-    "summary": "此补丁将AMD IOMMU的identity映射强制应用条件从所有支持IOMMUv2的设备，收窄为仅针对未连接至AMD上游桥的独立ATI显卡，并新增APU内置GPU的quirk识别逻辑，同时保持加密与SNP场景下的安全防护。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260824085821.5422-1-vasant.hegde@amd.com/mbox/",
     "series_id": 1150714,
     "series_name": "[v2] iommu/amd: Force identity mode for selected GPUs only",
     "series_version": 2,
+    "series_mbox": "https://patchwork.kernel.org/series/1150714/mbox/",
     "series_total": null
   },
   {
@@ -335,10 +371,12 @@
     "submitter": "Peter Griffin",
     "email": "peter.griffin@linaro.org",
     "version": 1,
-    "summary": "本补丁为Arm SMMUv3驱动新增Inst/Data属性覆盖配置，通过设备树选项和硬件IDR1能力检测，在STE中设置INSTCFG字段以强制指令属性为数据模式，并完善STE占用位掩码及不支持时的报错处理。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260724-arm-smmu-v3-instcfg-override-v1-2-e7acf4a8a525@linaro.org/mbox/",
     "series_id": 1133963,
     "series_name": "Add arm-smmu-v3 support for instcfg data override feature",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1133963/mbox/",
     "series_total": 2
   },
   {
@@ -353,10 +391,12 @@
     "submitter": "Pranjal Shrivastava",
     "email": "praan@google.com",
     "version": 1,
-    "summary": "此补丁将ARM SMMU v3寄存器同步等待从普通轮询超时改为原子轮询超时，避免调用中可能出现的睡眠，适用于原子上下文，确保轮询期间不阻塞调度。",
+    "summary": "迁移to use atomic poll timeout，适配新的接口规范，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260728211123.1059708-1-praan@google.com/mbox/",
     "series_id": 1136195,
     "series_name": "iommu/arm-smmu-v3: Convert to use atomic poll timeout",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1136195/mbox/",
     "series_total": null
   },
   {
@@ -371,10 +411,12 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": 3,
-    "summary": "此补丁在tegra241-cmdqv驱动中新增VCMDQ基地址的48位硬件上限检查，拒绝超限值并告警，避免地址被截断导致硬件从错误位置取命令。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260729220329.805417-1-nicolinc@nvidia.com/mbox/",
     "series_id": 1136941,
     "series_name": "[v3] iommu/tegra241-cmdqv: Reject a VCMDQ base above the 48-bit hardware limit",
     "series_version": 3,
+    "series_mbox": "https://patchwork.kernel.org/series/1136941/mbox/",
     "series_total": null
   },
   {
@@ -389,10 +431,12 @@
     "submitter": "Clément MATHIEU--DRIF",
     "email": "clement.mathieu--drif@bull.com",
     "version": 2,
-    "summary": "Intel IOMMU 在启用 SVM 时新增暴露 SMPWC 能力位，并校验宿主 IOMMU 是否支持该可扩展模式一致性遍历，否则拒绝初始化以避免功能不匹配。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260808153626.873965-1-clement.mathieu--drif@bull.com/mbox/",
     "series_id": 1142717,
     "series_name": "[v2] intel_iommu: Expose SMPWC when SVM is enabled",
     "series_version": 2,
+    "series_mbox": "https://patchwork.kernel.org/series/1142717/mbox/",
     "series_total": null
   },
   {
@@ -407,10 +451,12 @@
     "submitter": "Prakash Gupta",
     "email": "prakash.gupta@oss.qualcomm.com",
     "version": 4,
-    "summary": "此补丁让ARM SMMU的全局与上下文故障处理程序改用运行时PM管理，先通过pm_runtime_get_if_active确认设备活跃并加引用，处理完释放，同时将实现层回调迁入统一包装，并在挂起时禁用故障报告以防无时钟寄存器访问。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260806-smmu-rpm-v4-1-8183d007331c@oss.qualcomm.com/mbox/",
     "series_id": 1141403,
     "series_name": "[v4] iommu/arm-smmu: Use pm_runtime in fault handlers",
     "series_version": 4,
+    "series_mbox": "https://patchwork.kernel.org/series/1141403/mbox/",
     "series_total": null
   },
   {
@@ -425,10 +471,12 @@
     "submitter": "Yu Zhang",
     "email": "zhangyu1@linux.microsoft.com",
     "version": 3,
-    "summary": "将x86架构上MSI中断使用的保留IOVA范围（0xfee00000-0xfeefffff）从AMD和Intel IOMMU驱动各自私有宏中提取，统一至新增的arch/x86共享头文件宏定义，并让两驱动引用，消除了重复代码与命名冲突。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260811155022.108148-4-zhangyu1@linux.microsoft.com/mbox/",
     "series_id": 1144179,
     "series_name": "Hyper-V: Add para-virtualized IOMMU support for Linux guests",
     "series_version": 3,
+    "series_mbox": "https://patchwork.kernel.org/series/1144179/mbox/",
     "series_total": 5
   },
   {
@@ -443,10 +491,12 @@
     "submitter": "Dmitry Malkin",
     "email": "dma@nebius.com",
     "version": 1,
-    "summary": "该补丁针对arm-smmu-v3与iommufd的嵌套地址域附着流程，",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/PA1P190MB25578C482C8A3B06A4DCC6FDDBDA2@PA1P190MB2557.EURP190.PROD.OUTLOOK.COM/mbox/",
     "series_id": 1146000,
     "series_name": "[RFC] iommu/arm-smmu-v3: Allow nested attach for PCI bridges without vDEVICE",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1146000/mbox/",
     "series_total": null
   },
   {
@@ -462,10 +512,32 @@
     "email": "j@jannau.net",
     "version": 3,
     "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-iommu-apple-dart-aperture-v3-2-252ce55b7001@jannau.net/mbox/",
     "series_id": 1156420,
     "series_name": "iommu: apple-dart: device specific DMA aperture support",
     "series_version": 3,
+    "series_mbox": "https://patchwork.kernel.org/series/1156420/mbox/",
     "series_total": 2
+  },
+  {
+    "id": 14771390,
+    "title": "[v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks",
+    "url": "https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/",
+    "date": "2026-08-27",
+    "organization": "Individual Contributor",
+    "subsystem": "IOMMU Core",
+    "status": "社区讨论中",
+    "state": "new",
+    "submitter": "Mykola Kvach",
+    "email": "mykola_kvach@epam.com",
+    "version": 12,
+    "summary": "实现suspend/resume callbacks，完善缺失的功能接口，完善子系统的功能完备性，确保与硬件平台和上层框架的正确协同",
+    "mbox": "https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/mbox/",
+    "series_id": 1152678,
+    "series_name": "Add initial Xen Suspend-to-RAM support on ARM64",
+    "series_version": 12,
+    "series_mbox": "https://patchwork.kernel.org/series/1152678/mbox/",
+    "series_total": 13
   },
   {
     "id": 14781126,
@@ -479,10 +551,12 @@
     "submitter": "Runyu Xiao",
     "email": "runyu.xiao@seu.edu.cn",
     "version": 1,
-    "summary": "该补丁将Exynos IOMMU驱动中自旋锁的初始化提前到资源映射和中断请求之前，避免中断处理程序在锁未初始化时访问数据，修复潜在竞态导致的崩溃风险。",
+    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260901130527.3289245-1-runyu.xiao@seu.edu.cn/mbox/",
     "series_id": 1155355,
     "series_name": "iommu/exynos: Initialize lock before requesting IRQ",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1155355/mbox/",
     "series_total": null
   },
   {
@@ -498,9 +572,11 @@
     "email": "smostafa@google.com",
     "version": 1,
     "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907154928.4012151-1-smostafa@google.com/mbox/",
     "series_id": 1159877,
     "series_name": "iommu/arm-smmu-v3-sva: Relax ASID requirements",
     "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1159877/mbox/",
     "series_total": null
   },
   {
@@ -515,8 +591,10 @@
     "state": "series",
     "submitter": "Yu Zhang",
     "version": 5,
-    "summary": "为Hyper-V虚拟机添加半虚拟化IOMMU支持，并引入页级IOTLB刷新及x86 MSI保留区辅助机制，提升直通设备DMA隔离与中断重映射效率。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Hyper-V: Add para-virtualized IOMMU support for Linux guests，具体包括iommu/hyperv 中新增 para-virtualized IOMMU support for Hyper-V guest、iommu/hyperv 中新增 page-selective IOTLB flush support、iommu/x86 中新增 architectural MSI reserved region helper。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260904075512.174154-5-zhangyu1@linux.microsoft.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1157684/mbox/",
     "is_cover_letter": true,
     "series_id": 1157684,
     "patch_count": 3,
@@ -544,8 +622,10 @@
     "state": "series",
     "submitter": "Nicolin Chen",
     "version": 5,
-    "summary": "该补丁集在ATC无效化超时后对相关设备实施隔离，通过将blocked状态扩展为枚举、修正流节点管理及引入锁与批量命令机制，增强SMMU对超时错误的处理能力和设备故障隔离的可靠性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Quarantine device upon ATC invalidation timeout，具体包括将 gdev->blocked from bool 转换为 enum gdev_blocked、避免 rb_erase() a never-inserted stream node、Skip remaining GERROR causes on SFM、Mark ATC invalidate timeouts via lockless bitmap、传递 in reset result to pci_dev_reset_iommu_done()。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/05da17325cf02758fb0eb3bde34c8ef2a22decbe.1783044582.git.nicolinc@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1120844/mbox/",
     "is_cover_letter": true,
     "series_id": 1120844,
     "patch_count": 12,
@@ -585,8 +665,10 @@
     "state": "series",
     "submitter": "Nicolin Chen",
     "version": 2,
-    "summary": "该补丁系列修复 Tegra241 命令队列虚拟化驱动中错误中断与 VINTF 生命周期的竞态及泄漏，通过完善初始化顺序、同步中断处理、收紧 vSID 校验和错误映射边界，并修正资源释放与回退逻辑来增强稳定性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/tegra241-cmdqv: Fix error-interrupt races and VINTF lifecycle bugs，具体包括Publish an LVCMDQ only（在 it is fully initialized 后）、Synchronize the error ISR against VINTF (de)init、Free the error IRQ（在 tearing down VINTFs 前）、拒绝 a vSID wider than the SID_MATCH field、避免 fall back to a freed smmu（在 devm_krealloc() 后）。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/3e0d9156cd7ade5a5ee0b9a63a326dc324866ddf.1784059577.git.nicolinc@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1127739/mbox/",
     "is_cover_letter": true,
     "series_id": 1127739,
     "patch_count": 11,
@@ -612,7 +694,9 @@
       "[v2,10/11] iommu/tegra241-cmdqv: Warn on a VCMDQ base above the 48-bit hardware limit",
       "[v2,09/11] iommu/tegra241-cmdqv: Fix VINTF0 leak on the init-failure path"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "该系列围绕 iommu/tegra241-cmdqv: Fix error-interrupt races and VINTF lifecycle bugs，具体包括Publish an LVCMDQ only（在 it is fully initialized 后）、Synchronize the error ISR against VINTF (de)init、Free the error IRQ（在 tearing down VINTFs 前）、拒绝 a vSID wider than the SID_MATCH field、避免 fall back to a freed smmu（在 devm_krealloc() 后）。",
+    "table_summary_source": "fallback"
   },
   {
     "id": null,
@@ -626,8 +710,10 @@
     "state": "series",
     "submitter": "Michael S. Tsirkin",
     "version": 1,
-    "summary": "该补丁集修复AMD IOMMU在无效命令处理时错误上报操作码的问题，并修正中断寄存器解码、命令缓冲字节序、页遍历状态辅助函数返回值及中断重映射表解析中的位域和字节序错误。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 amd_iommu: Fix opcode reported in invalid command handling，具体包括修复 opcode reported in invalid command handling、intel_iommu 中Correctly set pt bit in extended capability register、Decode XT interrupt control register without bitfields、修复 endianness handling for command buffer entries、Return int from page walk status helpers。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/0611d393031f9941fcfaf3f17c3ac2b7a0ea00d1.1783261895.git.mst@redhat.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1121809/mbox/",
     "is_cover_letter": true,
     "series_id": 1121809,
     "patch_count": 6,
@@ -647,7 +733,9 @@
       "[PULL,02/44] amd_iommu: Return int from page walk status helpers",
       "[PULL,04/44] amd_iommu: Decode IRTEs without bitfields"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "修正 AMD IOMMU 无效命令处理中上报的 opcode，以非位域方式解码 XT 中断控制寄存器和 IRTE，修正命令缓冲区条目大小端问题，让页表遍历状态辅助函数返回 int 以传播错误；同时修正 Intel IOMMU 扩展 capability 寄存器中 pt 位的设置。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -661,8 +749,10 @@
     "state": "series",
     "submitter": "Anna Maniscalco",
     "version": 1,
-    "summary": "针对a7xx系列GPU启用LPAC功能，核心改动是在arm-smmu-qcom驱动中为LPAC设备分配独立的拆分地址空间，并修正GPU与LPAC在流标识符SID到上下文bank映射上的错误，确保两者隔离与正确寻址。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Enable LPAC on a7xx series GPUs，具体包括iommu: arm-smmu-qcom 中Configure lpac device（携带 split address space）、iommu: arm-smmu-qcom 中Fixed mapping between sid and cb for gpu and lpac。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/dri-devel/patch/20260705-descriptive-name-lpac-upstream-v1-1-01d50c3e0c99@gmail.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1121879/mbox/",
     "is_cover_letter": true,
     "series_id": 1121879,
     "patch_count": 2,
@@ -675,7 +765,9 @@
       "[RFC,01/13] iommu: arm-smmu-qcom: Configure lpac device with split address space",
       "[RFC,07/13] iommu: arm-smmu-qcom: Fixed mapping between sid and cb for gpu and lpac"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "在 arm-smmu-qcom 驱动中为 a7xx GPU 的 LPAC 设备配置分离地址空间，并修正 GPU 与 LPAC 之间从 stream ID 到 context bank 的映射关系。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -689,8 +781,10 @@
     "state": "series",
     "submitter": "Nicolin Chen",
     "version": 2,
-    "summary": "此补丁集修复iommufd中vDEVICE分配生命周期缺陷，确保错误路径释放igroup锁、初始化成功后才发布设备，并要求ARM SMMUv3场景下vDEVICE严格对应单一Stream ID。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommufd: Fix vDEVICE allocation lifecycle bugs，具体包括iommufd/viommu 中Release the igroup lock on the vdevice_size error path、iommufd/viommu 中Publish a vDEVICE only（在 vdevice_init() succeeds 后）、iommu/arm-smmu-v3-iommufd 中Require exactly one Stream ID for a vDEVICE。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/e903f775d491296a525097e2a90b3eb6a47cf2ef.1783311134.git.nicolinc@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1122017/mbox/",
     "is_cover_letter": true,
     "series_id": 1122017,
     "patch_count": 3,
@@ -705,7 +799,9 @@
       "[v2,2/3] iommufd/viommu: Publish a vDEVICE only after vdevice_init() succeeds",
       "[v2,3/3] iommu/arm-smmu-v3-iommufd: Require exactly one Stream ID for a vDEVICE"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "该系列围绕 iommufd: Fix vDEVICE allocation lifecycle bugs，具体包括iommufd/viommu 中Release the igroup lock on the vdevice_size error path、iommufd/viommu 中Publish a vDEVICE only（在 vdevice_init() succeeds 后）、iommu/arm-smmu-v3-iommufd 中Require exactly one Stream ID for a vDEVICE。",
+    "table_summary_source": "fallback"
   },
   {
     "id": null,
@@ -719,8 +815,10 @@
     "state": "series",
     "submitter": "Jason Gunthorpe",
     "version": 5,
-    "summary": "该补丁系列重构了ARM SMMUv3驱动的TLB无效化流程，通过预计算命令、结构体传参及调整RIL扩展，使通用iommupt组件能复用该机制，并优化了范围无效化的延迟。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Organize the SMMUv3 invalidation flow so iommupt can use it，具体包括iommu/arm-smmu-v3 中保持 track in the arm_smmu_invs if RIL is used、iommu/arm-smmu-v3 中Precompute the invalidation commands、iommu/arm-smmu-v3 中支持 the DS expansion of RIL's SCALE、iommu/arm-smmu-v3 中Populate the tlbi at the top of the call chain、iommu/arm-smmu-v3 中传递 the parameters for the invalidation in a struct。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/5-v5-b810cf379bfc+13d738-smmu_tlbi_jgg@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1155560/mbox/",
     "is_cover_letter": true,
     "series_id": 1155560,
     "patch_count": 9,
@@ -758,8 +856,10 @@
     "state": "series",
     "submitter": "Jason Gunthorpe",
     "version": 2,
-    "summary": "本补丁系列旨在使SMMUv3采用通用iommu页表框架，移除对io-pgtable-arm的依赖，并新增ARMv8页表格式及DBM支持。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Use the generic iommu page table for SMMUv3，具体包括iommupt 中移除 the sanity check for pt_num_items_lg2() at the top level、iommu/arm-smmu-v3 中移除 io-pgtable-arm from sva.c、iommupt/kunit 中Skip test configs without supported features、iommu/arm-smmu-v3 中将 the DMA API comment 移到 flush_iotlb_all、移除 pgsize from iommu_iotlb_gather。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/1-v2-563ee63886f0+1209-iommupt_armv8_jgg@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1144965/mbox/",
     "is_cover_letter": true,
     "series_id": 1144965,
     "patch_count": 9,
@@ -783,7 +883,9 @@
       "[v2,5/9] iommupt/armv8: Implement the iommu specific components",
       "[v2,3/9] iommupt/armv8: Add the 64 bit ARMv8 page table format"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "将 ARM SMMUv3 从 io-pgtable-arm 切换到通用 iommu 页表：为 iommupt 增加 ARMv8 64 位页表格式与 DBM 支持，实现其专属组件，SMMUv3 使用通用页表并从 sva.c 移除 io-pgtable-arm，同时删除 iommu_iotlb_gather 的 pgsize 字段并调整 flush_iotlb_all 注释。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -797,8 +899,10 @@
     "state": "series",
     "submitter": "Nicolin Chen",
     "version": 6,
-    "summary": "该补丁集将缓存失效数组的遍历逻辑从各驱动和自测代码上移到 iommufd 核心统一执行，驱动仅处理单条失效命令，并新增对不支持位的拒绝检查，从而消除重复实现并增强命令校验一致性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommufd: Iterate the cache invalidation array in the core，具体包括iommufd/selftest 中将 cache invalidation mocks 转换为 the core array loop、Iterate the cache invalidation array in the core、iommu/arm-smmu-v3-iommufd 中拒绝 unsupported bits in invalidation commands、iommu/vt-d 中将 nested cache invalidation 转换为 the core array loop、iommu/arm-smmu-v3-iommufd 中将 cache invalidation 转换为 the core array loop。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/535f3b97e16c437f1df0c988a96229f623142ee9.1788127877.git.nicolinc@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154010/mbox/",
     "is_cover_letter": true,
     "series_id": 1154010,
     "patch_count": 5,
@@ -818,7 +922,9 @@
       "[v6,5/5] iommu/vt-d: Convert nested cache invalidation to the core array loop",
       "[v6,4/5] iommu/arm-smmu-v3-iommufd: Convert cache invalidation to the core array loop"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "将缓存失效数组的迭代逻辑移到 iommufd 核心，并让 selftest、arm-smmu-v3-iommufd 与 vt-d 的嵌套缓存失效路径改用核心数组循环，同时让 arm-smmu-v3-iommufd 拒绝失效命令中不支持的位。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -832,8 +938,10 @@
     "state": "series",
     "submitter": "Sairaj Kodilkar",
     "version": 4,
-    "summary": "该补丁集为AMD IOMMU新增GAPPI支持，通过引入命令行开关、重命名IOMMU接口以明确APICID与唤醒中断语义、传递vCPU运行状态，并在IRTE未运行时编程guest模式表项，实现基于GAPPI的虚拟机中断唤醒。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Add support for AMD IOMMU GAPPI，具体包括iommu/amd 中提供 kernel command line option to enable GAPPI、iommu/amd: KVM: SVM 中将 cpu 重命名为 apicid in IOMMU interface、iommu/amd: KVM: SVM 中将 ga_log_intr 重命名为 wakeup_intr in IOMMU interface、iommu/amd: KVM: SVM 中新增 explicit vCPU running state to IOMMU interface、iommu/amd 中Program guest-mode IRTEs for GAPPI wakeup（当 IRTE[IsRun] = 0 时）。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260821055611.27138-8-sarunkod@amd.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1149482/mbox/",
     "is_cover_letter": true,
     "series_id": 1149482,
     "patch_count": 5,
@@ -852,7 +960,9 @@
       "[v4,3/7] iommu/amd: KVM: SVM: Add explicit vCPU running state to IOMMU interface",
       "[v4,4/7] iommu/amd: Program guest-mode IRTEs for GAPPI wakeup when IRTE[IsRun] = 0"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "为 AMD IOMMU 增加 GAPPI 支持：添加内核命令行使能选项，重命名 IOMMU 接口参数 cpu→apicid 与 ga_log_intr→wakeup_intr，增加显式 vCPU 运行状态，并在 IRTE[IsRun] 为 0 时为 GAPPI 唤醒编程 guest-mode IRTE。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -866,8 +976,10 @@
     "state": "series",
     "submitter": "Ashish Mhetre",
     "version": 9,
-    "summary": "该补丁系列针对 Tegra264 上 SMMU 的 CFGI/TLBI 失效操作需重复执行才能生效的硬件勘误，通过重构命令队列强制同步逻辑并新增重复失效机制，在保留现有流程的同时确保缓存一致性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Tegra264 invalidation workaround，具体包括抽出 CMDQ batch force-sync conditions、启用 CFGI/TLBI-repeat workaround on Tegra264、新增 CFGI/TLBI-repeat workaround、iommu/arm-smmu-v3-iommufd 中Report CFGI/TLBI-repeat erratum。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260726081904.1408859-2-amhetre@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1134596/mbox/",
     "is_cover_letter": true,
     "series_id": 1134596,
     "patch_count": 4,
@@ -883,7 +995,9 @@
       "[v9,2/4] iommu/arm-smmu-v3: Add CFGI/TLBI-repeat workaround",
       "[v9,3/4] iommu/arm-smmu-v3-iommufd: Report CFGI/TLBI-repeat erratum"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "重构 arm-smmu-v3 的 CMDQ 批处理强制同步条件判定，新增 CFGI/TLBI-repeat 硬件缺陷 workaround 并在 Tegra264 上启用，同时在 iommufd 接口中向用户空间报告该 erratum。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -897,8 +1011,10 @@
     "state": "series",
     "submitter": "Nicolin Chen",
     "version": 10,
-    "summary": "该补丁集使kdump内核直接接管崩溃内核保留的SMMU流表，避免设备重置导致IOMMU状态丢失，通过解析并复用原有CD表、流表及预留ASID/VMID，同时关闭事件队列，实现崩溃后IOMMU上下文无缝继承。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump，具体包括Retain CR0_SMMUEN（在 kdump device reset 期间）、iommu/arm-smmu-v3-kdump 中实现 is_attach_deferred()、Skip RMR bypass for kdump adoption、iommu/arm-smmu-v3-kdump 中Reserve crashed kernel's ASIDs and VMIDs、新增 ARM_SMMU_OPT_KDUMP_ADOPT for kdump kernel。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/8280230c0906b4c62635c5eb2760bd0e25bbd1d1.1788130528.git.nicolinc@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154016/mbox/",
     "is_cover_letter": true,
     "series_id": 1154016,
     "patch_count": 13,
@@ -926,7 +1042,9 @@
       "[v10,04/13] iommu/arm-smmu-v3: Disable the EVTQ and the PRIQ in a kdump kernel",
       "[v10,03/13] iommu/arm-smmu-v3: Add ARM_SMMU_FEAT_EVTQ for the event queue"
     ],
-    "qualified_has_more": true
+    "qualified_has_more": true,
+    "table_summary": "让 kdump 内核采纳 crashed kernel 的 stream table：保留 CR0_SMMUEN，新增 ARM_SMMU_OPT_KDUMP_ADOPT 探测选项，跳过 RMR bypass，在 kexec 辅助文件中解析 STRTAB/CD 表并预留 ASID/VMID，使 ASID 空间按 SMMU 实例独立，初始化阶段先建 vmid_map ida，kdump 中禁用 EVT",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -940,8 +1058,10 @@
     "state": "series",
     "submitter": "Daniel Drake",
     "version": 4,
-    "summary": "该补丁集新增了博通BCM2712 IOMMU驱动，并为其定义了专属页表格式，使树莓派5的IOMMU功能得以在Linux内核中启用。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Add support for Broadcom BCM2712 IOMMU driver (Raspberry Pi 5)，具体包括iommu/generic_pt 中新增 Broadcom BCM2712 page table format、新增 Broadcom BCM2712 IOMMU driver。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-bcm2712-iommu-submit-v4-3-9dbb657578c1@reactivated.net/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1156389/mbox/",
     "is_cover_letter": true,
     "series_id": 1156389,
     "patch_count": 2,
@@ -964,13 +1084,15 @@
     "date": "2026-07-14",
     "date_end": "2026-07-14",
     "organization": "Individual Contributor",
-    "subsystem": "RISC-V IOMMU",
+    "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Zhanpeng Zhang",
     "version": 1,
-    "summary": "该补丁系列为RISC-V IOMMU增加QoS ID支持，通过按ID查找和校验更新IOMMU组，为设备分配组并编程QoS ID，同时经sysfs暴露全局ID，服务于resctrl设备分配场景。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 riscv: iommu: Add QoS ID support for resctrl device assignment，具体包括新增 group lookup by ID、新增 checked group device update helper、iommu/riscv 中Program QoS IDs for assigned groups、iommu/riscv 中暴露 global QoS IDs in sysfs。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-kselftest/patch/20260714130657.46963-2-zhangzhanpeng.jasper@bytedance.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1127440/mbox/",
     "is_cover_letter": true,
     "series_id": 1127440,
     "patch_count": 4,
@@ -1001,8 +1123,10 @@
     "state": "series",
     "submitter": "Mostafa Saleh",
     "version": 7,
-    "summary": "该补丁集为pKVM在EL2异常级别新增SMMUv3驱动，采用trap-and-emulate方式截获并模拟设备MMIO访问，影子化流表与命令队列，实现直通设备DMA隔离和嵌套地址翻译。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 KVM: arm64: SMMUv3 driver for pKVM (trap and emulate)，具体包括iommu/arm-smmu-v3 中拆分 code（携带 hyp）、iommu/arm-smmu-v3 中Move TLB range invalidation into common code、iommu/arm-smmu-v3-kvm 中新增 SMMUv3 driver、iommu/arm-smmu-v3-kvm 中Probe SMMU HW、iommu/arm-smmu-v3-kvm 中新增 MMIO emulation。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260715115906.2664882-4-smostafa@google.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1128115/mbox/",
     "is_cover_letter": true,
     "series_id": 1128115,
     "patch_count": 17,
@@ -1034,7 +1158,9 @@
       "[v7,14/24] iommu/arm-smmu-v3-kvm: Shadow the command queue",
       "[v7,05/24] iommu/arm-smmu-v3: Move IDR parsing to common functions"
     ],
-    "qualified_has_more": true
+    "qualified_has_more": true,
+    "table_summary": "为 pKVM 增加 SMMUv3 trap-and-emulate 驱动：将 arm-smmu-v3 代码拆出 hyp 共用部分，新增 arm-smmu-v3-kvm 驱动来探测硬件、模拟 MMIO/CMDQ/GBPA、影子化 stream table/STE/命令队列及 CPU stage-2 页表，在 hypervisor 中支持 io-pgtable-arm 嵌套转换并向宿主暴露相关队列。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1050,6 +1176,8 @@
     "version": 2,
     "summary": "该系列围绕 KVM: selftests: sev_smoke_test: Only run VM types the host offers，具体包括iommufd 中Plumb dma-buf memory-type (RAM vs MMIO) through the phys map、iommufd 中Look up private-interconnect phys via exporter symbols。",
     "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-kselftest/patch/a7ca2d885903679dc63c85620bff72fea21f5c18.1784545391.git.dwmw@amazon.co.uk/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1130810/mbox/",
     "is_cover_letter": true,
     "series_id": 1130810,
     "patch_count": 2,
@@ -1077,8 +1205,10 @@
     "state": "series",
     "submitter": "Jiaxing Hu",
     "version": 2,
-    "summary": "为支持 RK3576 NPU 的 RKNN 功能，此补丁集修复了 Rockchip IOMMU 驱动：确保获取设备树中全部时钟，并在启用停顿时清除陈旧页错误，从而保障 NPU 正常稳定运行。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 accel/rocket: RK3576 NPU (RKNN) enablement，具体包括iommu/rockchip 中获取 all DT clocks、iommu/rockchip 中清除 stale page faults（在 enabling stall 前）。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260718031146.3368811-5-gahing@gahingwoo.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1129921/mbox/",
     "is_cover_letter": true,
     "series_id": 1129921,
     "patch_count": 2,
@@ -1106,8 +1236,10 @@
     "state": "series",
     "submitter": "Mukesh Ojha",
     "version": 2,
-    "summary": "该补丁集修复高通IOMMU驱动的多个缺陷：反转故障检测、运行时电源管理错误处理、页表操作泄漏及时钟顺序，并优化pgtbl_ops发布时机，提升驱动稳定性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/qcom: Misc Fixes，具体包括修复 inverted fault report check in qcom_iommu_fault()、改用 devm_pm_runtime_enable() in qcom_iommu_device_probe()、检查 pm_runtime_resume_and_get() return in probe、修复 pgtbl_ops leak in qcom_iommu_init_domain() error path、Publish pgtbl_ops（在 releasing init_mutex 前）。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717144608.3216274-2-mukesh.ojha@oss.qualcomm.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1129668/mbox/",
     "is_cover_letter": true,
     "series_id": 1129668,
     "patch_count": 6,
@@ -1127,7 +1259,9 @@
       "[v2,5/6] iommu/qcom: Publish pgtbl_ops before releasing init_mutex",
       "[v2,6/6] iommu/qcom: Enable clocks before hardware access in qcom_iommu_ctx_probe()"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "该系列围绕 iommu/qcom: Misc Fixes，具体包括修复 inverted fault report check in qcom_iommu_fault()、改用 devm_pm_runtime_enable() in qcom_iommu_device_probe()、检查 pm_runtime_resume_and_get() return in probe、修复 pgtbl_ops leak in qcom_iommu_init_domain() error path、Publish pgtbl_ops（在 releasing init_mutex 前）。",
+    "table_summary_source": "fallback"
   },
   {
     "id": null,
@@ -1141,8 +1275,10 @@
     "state": "series",
     "submitter": "Andrew Jones",
     "version": 5,
-    "summary": "该补丁系列使RISC-V IOMMU支持MSI重映射、IOMMU_DMA及VFIO，通过将iommufd软件MSI映射改为可增长位图并预留IOVA窗口，同时准备MSI地址列表以管理中断映射。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/riscv: Enable MSI remapping, IOMMU_DMA and VFIO，具体包括iommufd 中将 struct iommufd_sw_msi_maps 转换为 a growable bitmap、iommu/dma 中启用 IOMMU_DMA for 64-bit RISC-V、Reserve an MSI IOVA window for iommufd、Report cache coherency capability、iommu/dma 中Prepare MSI physical address lists。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260831145943.313726-3-andrew.jones@oss.qualcomm.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154600/mbox/",
     "is_cover_letter": true,
     "series_id": 1154600,
     "patch_count": 11,
@@ -1168,7 +1304,9 @@
       "[v5,08/17] iommu/dma: Introduce iommu_dma_prepare_msi_list()",
       "[v5,07/17] iommufd: Prepare software MSI installation for address lists"
     ],
-    "qualified_has_more": true
+    "qualified_has_more": true,
+    "table_summary": "为 RISC-V 启用 MSI 重映射与 IOMMU_DMA：将 iommufd 的软件 MSI 映射表改为可扩展 bitmap，分配独立的 MSI IOVA 窗口，按窗口约束安装映射，引入 iommu_dma_prepare_msi_list() 准备物理地址列表，并让 RISCV IOMMU 报告缓存一致性以配合 VFIO。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1184,6 +1322,8 @@
     "version": 2,
     "summary": "该系列围绕 amd_iommu: Do not create duplicate MSI capability，具体包括Define MMIO register masks、避免 latch unsupported GA log status bits、避免 create duplicate MSI capability、调整 extended feature register read-only、改用 full BDF（当 reporting page faults 时）。",
     "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260724223216.108667-4-dongli.zhang@oracle.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1134238/mbox/",
     "is_cover_letter": true,
     "series_id": 1134238,
     "patch_count": 5,
@@ -1203,7 +1343,9 @@
       "[v2,4/5] amd_iommu: Make extended feature register read-only",
       "[v2,2/5] amd_iommu: Use full BDF when reporting page faults"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "修订 AMD IOMMU 驱动：定义 MMIO 寄存器掩码，不锁存不支持的 GA 日志状态位，避免重复创建 MSI capability，将扩展特性寄存器设为只读，并在页错误报告中输出完整 BDF。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1217,8 +1359,10 @@
     "state": "series",
     "submitter": "Pranjal Shrivastava",
     "version": 9,
-    "summary": "本补丁集为arm-smmu-v3驱动引入运行时与系统睡眠电源管理能力，涉及中断配置重构、命令队列终止与恢复、MSI状态缓存及gerror处理等改动，最终通过pm_runtime及睡眠操作确保硬件访问前正确管理电源状态。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Implement Runtime/System Sleep ops，具体包括Refactor arm_smmu_setup_irqs、新增用于 drain cmd queues 的 helper、iommu/tegra241-cmdqv 中新增用于 drain VCMDQs 的 helper、新增 CMDQ_PROD_STOP_FLAG to gate CMDQ submissions、iommu/tegra241-cmdqv 中新增用于 quiesce VCMDQs 的 helper。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260728210928.1050849-2-praan@google.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1136194/mbox/",
     "is_cover_letter": true,
     "series_id": 1136194,
     "patch_count": 12,
@@ -1245,7 +1389,9 @@
       "[v9,12/12] iommu/arm-smmu-v3: Add KUnit unit tests for Runtime PM",
       "[v9,11/12] iommu/arm-smmu-v3: Invoke pm_runtime before hw access"
     ],
-    "qualified_has_more": true
+    "qualified_has_more": true,
+    "table_summary": "为 arm-smmu-v3 和 tegra241-cmdqv 实现运行时及系统睡眠 PM：重构中断设置、增加 cmdq/VCMDQ 排空与静止辅助函数，用 CMDQ_PROD_STOP_FLAG 暂停提交，恢复后还原 PROD/CONS，缓存并恢复 MSI 配置，挂起时处理 gerror，启用 pm_runtime 并设置 devlinks，所有硬件访问前先触发 pm_runtime，并新增 KU",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1259,8 +1405,10 @@
     "state": "series",
     "submitter": "Dmitry Baryshkov",
     "version": 2,
-    "summary": "该补丁集修复ARM32平台使用MSM IOMMU时GPU与显示异常，通过为每个设备和IOMMU跟踪上下文主控，并改用IOMMU设备分配页表，以正确管理地址空间。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 Fix GPU and display on ARM32 platforms using the MSM IOMMU，具体包括iommu/msm 中track a context master per device and IOMMU、iommu/msm 中为 page table allocation 改用 the IOMMU device。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260730-fix-qcom-smmu-v2-1-18e0daf2d836@oss.qualcomm.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1137561/mbox/",
     "is_cover_letter": true,
     "series_id": 1137561,
     "patch_count": 2,
@@ -1288,8 +1436,10 @@
     "state": "series",
     "submitter": "Duan, Zhenzhong",
     "version": 5,
-    "summary": "本补丁系列为透传设备启用Intel IOMMU的PRQ支持，通过修改intel_iommu_accel模块，在底半部释放故障队列资源，并添加PRQ响应接收与注入机制，使直通设备能够利用页请求队列服务。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 intel_iommu: Enable PRQ support for passthrough device，具体包括intel_iommu_accel 中teardown FAULTQ resources in bottom half、intel_iommu_accel 中Guard VTDAccelPASIDCacheEntry definition、intel_iommu_accel 中Accept PRQ response for passthrough device、intel_iommu_accel 中新增 PRQ injection for passthrough device。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260831095200.1279366-7-zhenzhong.duan@intel.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154373/mbox/",
     "is_cover_letter": true,
     "series_id": 1154373,
     "patch_count": 4,
@@ -1307,7 +1457,9 @@
       "[v5,5/6] intel_iommu_accel: Accept PRQ response for passthrough device",
       "[v5,4/6] intel_iommu_accel: Add PRQ injection for passthrough device"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "为 Intel IOMMU 加速路径实现 passthrough 设备的 PRQ 支持：在 bottom half 中拆解 FAULTQ 资源，为 VTDAccelPASIDCacheEntry 添加定义保护，接收 passthrough 设备的 PRQ 响应并新增 PRQ 注入。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1321,8 +1473,10 @@
     "state": "series",
     "submitter": "Sairaj Kodilkar",
     "version": 2,
-    "summary": "该补丁系列重构并清理QEMU中AMD IOMMU的IVRS ACPI表构建逻辑，通过让存根调用返回空EFR、更新地址与VA大小宏，并移除不支持的PPR和HE特性标记来简化代码。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 acpi_build: Refactor and cleanup AMD IVRS build，具体包括amd_iommu 中Return empty efr for stub call、amd_iommu: acpi-build 中update PA, GVA and VA size macros、amd_iommu: acpi-build 中移除 unsupported PPR and HE feature。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260807061250.27739-2-sarunkod@amd.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1141941/mbox/",
     "is_cover_letter": true,
     "series_id": 1141941,
     "patch_count": 3,
@@ -1350,8 +1504,10 @@
     "state": "series",
     "submitter": "Samiullah Khawaja",
     "version": 4,
-    "summary": "此补丁集为IOMMU子系统引入设备热更新状态保存机制，通过新增页表保留与恢复回调及域重连操作，使设备在固件热更新期间不中断地保留地址映射并恢复硬件状态。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu: Add live update state preservation，具体包括实现 IOMMU Live update FLB callbacks、iommu/pages 中新增 APIs to preserve/unpreserve/restore iommu pages、iommupt 中实现 preserve/unpreserve/restore callbacks、实现 IOMMU domain preservation、实现 device and IOMMU HW preservation。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-3-skhawaja@google.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1142491/mbox/",
     "is_cover_letter": true,
     "series_id": 1142491,
     "patch_count": 16,
@@ -1382,7 +1538,9 @@
       "[v4,18/18] iommufd/selftest: Add test to verify iommufd preservation",
       "[v4,15/18] iommufd: Persist iommu hardware pagetables for live update"
     ],
-    "qualified_has_more": true
+    "qualified_has_more": true,
+    "table_summary": "为 IOMMU live update 添加状态保存/恢复框架：在 iommu 层实现 FLB 回调、domain/device/IOMMU 硬件状态保存与恢复，在 VT-d 中实现 context entry 清理、PASID 表保存及 domain id 恢复，并新增 iommufd 的 preserve/unpreserve ioctl 与 vfio cdev 持久化支持。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1396,13 +1554,15 @@
     "state": "series",
     "submitter": "Dmitry Baryshkov",
     "version": 1,
-    "summary": "此补丁系列为MSM8974平台的QCOM IOMMU驱动补齐实例支持，新增SMMU全局寄存器与短描述符页表格式处理，并实现对非TZ管理实例的编程、上下文保存恢复及故障终止等能力。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu: qcom_iommu: implement support for instances on MSM8974，具体包括iommu: arm-smmu 中新增 global register definitions used by the QSMMU、extract context bank programming into a helper、支持 the short-descriptor pagetable format、handle the SMMU global register space、支持 non-TZ-managed instances。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260809-msm8974-iommu-upstream-v1-2-87f5cd492560@oss.qualcomm.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1142993/mbox/",
     "is_cover_letter": true,
     "series_id": 1142993,
     "patch_count": 10,
     "series_total": 12,
-    "qualified_count": 8,
+    "qualified_count": 9,
     "qualified_titles": [
       "[03/12] iommu: qcom_iommu: extract context bank programming into a helper",
       "[04/12] iommu: qcom_iommu: support the short-descriptor pagetable format",
@@ -1422,7 +1582,9 @@
       "[11/12] iommu: qcom_iommu: add the MSM8974 instances",
       "[10/12] iommu: qcom_iommu: program BFP (prefetch) settings"
     ],
-    "qualified_has_more": true
+    "qualified_has_more": true,
+    "table_summary": "为 MSM8974 上的 qcom_iommu 实例补全支持：从 arm-smmu 抽出全局寄存器定义，提取 context bank 编程辅助函数，支持短描述符页表格式及 SMMU 全局寄存器空间，处理非 TZ 管理实例，电源崩溃后恢复 context bank 状态，允许终止故障事务，编程 context bank 前暂停 micro-MMU，添加 MSM8974 设备实例并写入 BFP 预取",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1436,8 +1598,10 @@
     "state": "series",
     "submitter": "Pranjal Shrivastava",
     "version": 3,
-    "summary": "该补丁集重构AMD IOMMU设备探测与能力初始化流程，修复DTE清除逻辑，并在ATS配置失败时终止探测，同时拆分错误路径以保留中断重映射功能，从而提升ATS机制的稳健性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/amd: Refactors for ATS robustness，具体包括Refactor device probe and capability initialization、修复 DTE clearing and rename iommu_ignore_device()、Fail probe on ATS configuration failure、拆分 probe error paths to preserve IRQ remapping。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260824122347.1588592-2-praan@google.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1150877/mbox/",
     "is_cover_letter": true,
     "series_id": 1150877,
     "patch_count": 4,
@@ -1466,8 +1630,10 @@
     "state": "series",
     "submitter": "yu fangyu",
     "version": 2,
-    "summary": "该补丁集通过为RISC-V IOMMU命令队列增加锁并序列化发布过程，同时避免入队失败后的无效等待，修复了命令下发中的竞态条件，提升了命令队列操作的稳定性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/riscv: Fix command queue publishing races，具体包括Serialize command queue publishing、避免 waiting on failed command enqueue、新增 command queue lock。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260901133920.14550-3-fangyu.yu@linux.alibaba.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1155392/mbox/",
     "is_cover_letter": true,
     "series_id": 1155392,
     "patch_count": 3,
@@ -1495,8 +1661,10 @@
     "state": "series",
     "submitter": "Rik van Riel",
     "version": 1,
-    "summary": "此补丁集将 IOMMU IOVA 管理从红黑树改为 maple tree，并处理 GFP_ATOMIC 分配失败时延迟擦除，同时新增 KUnit 测试来验证新实现。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/iova: convert from rbtree to maple tree，具体包括defer maple tree erase on GFP_ATOMIC failure、将 from rbtree 转换为 maple tree、新增 KUnit test suite。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-mm/patch/20260818152505.1057922-3-riel@surriel.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1147958/mbox/",
     "is_cover_letter": true,
     "series_id": 1147958,
     "patch_count": 3,
@@ -1526,8 +1694,10 @@
     "state": "series",
     "submitter": "Markuss Broks",
     "version": 1,
-    "summary": "该补丁集改进了现代Exynos SysMMU的IOMMU驱动，针对无BLOCK模式的设备修正使能顺序与TLB失效逻辑，并新增v7故障事务信息解码能力。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 IOMMU driver improvements for modern Exynos SysMMUs，具体包括iommu/exynos 中detect SysMMUs without BLOCK mode、iommu/exynos 中修复 the enable sequence for no-block SysMMUs、iommu/exynos 中修复 TLB invalidation for no-block SysMMUs、iommu/exynos 中decode the v7 fault transaction info。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260820-exynos-iommu-fixes-v1-1-6bbcd673bb15@gmail.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1149284/mbox/",
     "is_cover_letter": true,
     "series_id": 1149284,
     "patch_count": 4,
@@ -1543,7 +1713,9 @@
       "[3/4] iommu/exynos: fix TLB invalidation for no-block SysMMUs",
       "[4/4] iommu/exynos: decode the v7 fault transaction info"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "在 exynos IOMMU 驱动中检测不支持 BLOCK 模式的新款 SysMMU，为这类无 BLOCK 设备调整使能序列和 TLB 失效操作，并解码 v7 缺页事务中的访问信息。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1557,8 +1729,10 @@
     "state": "series",
     "submitter": "yu fangyu",
     "version": 3,
-    "summary": "该补丁集为RISC-V IOMMU二级阶段域引入硬件脏页跟踪功能，新增GSCID/GVMA命令、脏页PTE操作及GADE预启用支持，提升DMA设备内存回收效率。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/riscv: Add hardware dirty tracking for second-stage domains，具体包括改用 data structure instead of individual values、iommupt 中新增 RISC-V Second-stage (iohgatp) page table support、iommupt 中新增 RISC-V dirty tracking PTE ops、支持 GSCID and GVMA invalidation command、新增 domain_alloc_paging_flags for second-stage domain。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260821132749.82070-5-fangyu.yu@linux.alibaba.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1149819/mbox/",
     "is_cover_letter": true,
     "series_id": 1149819,
     "patch_count": 7,
@@ -1579,7 +1753,9 @@
       "[RFC,v3,09/10] iommu/riscv: Add dirty tracking support for second-stage domains",
       "[RFC,v3,08/10] iommu/riscv: Pre-enable GADE for second-stage domains"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "为 RISC-V 二级域增加硬件 dirty tracking：用结构替代分散变量，添加 RISC-V iohgatp 二级页表和 dirty PTE 操作，支持 GSCID/GVMA 失效命令，新增 domain_alloc_paging_flags，实现 dirty tracking 并预使能 GADE。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1593,8 +1769,10 @@
     "state": "series",
     "submitter": "Simon Xue",
     "version": 1,
-    "summary": "该补丁集将rk_iommu_ops从含函数指针的结构精简为纯数据，并拒绝不支持的物理地址，以提升Rockchip IOMMU驱动的可维护性与安全性。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/rockchip: turn rk_iommu_ops into data，具体包括拒绝 unsupported physical addresses、Reduce rk_iommu_ops to pure data。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260825092132.154150-3-xxm@rock-chips.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1151391/mbox/",
     "is_cover_letter": true,
     "series_id": 1151391,
     "patch_count": 2,
@@ -1622,8 +1800,10 @@
     "state": "series",
     "submitter": "Mostafa Saleh",
     "version": 1,
-    "summary": "该补丁集修复arm-smmu-v3及iommufd路径中的多处缺陷：纠正缓存失效错误处理、确保L2页表先于L1指针可见、防止重复流损坏红黑树，并修正测试代码中的越界与UBSAN等问题。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Fixes reported by Sashiko，具体包括iommu/arm-smmu-v3-iommufd 中修复 error path in arm_vsmmu_cache_invalidate()、确保 L2 tables are visible（在 L1 ptrs 前）、iommu/arm-smmu-v3-test 中修复 arm_smmu_v3_test_debug_print_used_bits()、阻止 rbtree corruption from duplicate streams、iommu/arm-smmu-v3-test 中修复 UBSAN error。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260828125409.1921538-4-smostafa@google.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1153243/mbox/",
     "is_cover_letter": true,
     "series_id": 1153243,
     "patch_count": 7,
@@ -1642,7 +1822,9 @@
       "[5/7] iommu/arm-smmu-v3-test: Add missing error checks for inv array",
       "[6/7] iommu/arm-smmu-v3-test: Fix OOB in arm_smmu_v3_invs_test_verify()"
     ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "该系列围绕 iommu/arm-smmu-v3: Fixes reported by Sashiko，具体包括iommu/arm-smmu-v3-iommufd 中修复 error path in arm_vsmmu_cache_invalidate()、确保 L2 tables are visible（在 L1 ptrs 前）、iommu/arm-smmu-v3-test 中修复 arm_smmu_v3_test_debug_print_used_bits()、阻止 rbtree corruption from duplicate streams、iommu/arm-smmu-v3-test 中修复 UBSAN error。",
+    "table_summary_source": "fallback"
   },
   {
     "id": null,
@@ -1656,8 +1838,10 @@
     "state": "series",
     "submitter": "Nicolin Chen",
     "version": 3,
-    "summary": "本补丁系列为arm-smmu-v3驱动新增PRI页请求支持，通过宏定义、IOPF队列分配与故障事件处理，以及为PCI设备启用PRI，并确保域分离时排空故障及正确禁用队列中断。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Add PRI support，具体包括新增 Q_POS() macro、新增 arm_smmu_attach_release()、Drain in-flight fault events on domain detach、Flush in-flight fault work on domain detach、禁用 the queue IRQs（在 disabling the SMMU 前）。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/4aede16c4e2b68b280793a927fe32b6bd8ef457a.1788222485.git.nicolinc@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154914/mbox/",
     "is_cover_letter": true,
     "series_id": 1154914,
     "patch_count": 11,
@@ -1697,8 +1881,10 @@
     "state": "series",
     "submitter": "Kiryl Shutsemau",
     "version": 5,
-    "summary": "本补丁集使Arm SMMUv3的队列深度可调，并新增模块参数控制命令队列条目数，同时在kdump内核中默认将队列深度缩减为一页，以降低内存占用。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 iommu/arm-smmu-v3: Make the queue depths tunable, and shrink them in a kdump kernel，具体包括Default queue depths to one page in a kdump kernel、新增 a cmdq_max_entries module parameter。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907095835.1233352-3-kas@kernel.org/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1159603/mbox/",
     "is_cover_letter": true,
     "series_id": 1159603,
     "patch_count": 2,
@@ -1725,8 +1911,10 @@
     "state": "series",
     "submitter": "Clément MATHIEU--DRIF",
     "version": 1,
-    "summary": "该补丁系列修复英特尔IOMMU页表标志处理缺陷：确保所有传入标志均被写入PTE，并仅在页表项具备写权限时设置脏位，避免错误标记脏状态。",
-    "summary_source": "llm",
+    "summary": "该系列围绕 intel_iommu: Fixes for FSTS，具体包括Always write all the flags passed to vtd_set_flag_in_pte、Only set dirty bit（当 PTE exposes write permission 时）。",
+    "summary_source": "fallback",
+    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260903150649.2281104-3-clement.mathieu--drif@bull.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1157206/mbox/",
     "is_cover_letter": true,
     "series_id": 1157206,
     "patch_count": 2,
