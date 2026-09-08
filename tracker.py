@@ -20,6 +20,7 @@ import sys
 import hashlib
 import requests
 import argparse
+import time
 from datetime import datetime, date
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
@@ -75,6 +76,7 @@ ORG_MAP = {
 # Supported providers:
 #   - Anthropic:    LLM_API_KEY=sk-ant-...  (default)
 #   - OpenAI:       LLM_API_KEY=sk-...   +  LLM_API_BASE=https://api.openai.com
+#   - DeepSeek:     LLM_API_KEY=sk-...   +  LLM_API_BASE=https://api.deepseek.com + LLM_MODEL=deepseek-chat
 #   - Ollama(local): LLM_API_KEY=sk-dummy  +  LLM_API_BASE=http://localhost:11434
 LLM_API_KEY = os.environ.get('LLM_API_KEY', '')
 LLM_MODEL = os.environ.get('LLM_MODEL', 'claude-sonnet-4-20250514')
@@ -1469,6 +1471,26 @@ def _fmt_cover(p):
 # Data Fetching & Saving
 # ============================================================
 
+def _request_get_with_retries(url, timeout=45, max_retries=5):
+    last_error = None
+    for attempt in range(1, max_retries + 1):
+        try:
+            resp = requests.get(url, timeout=timeout)
+            resp.raise_for_status()
+            return resp
+        except requests.RequestException as exc:
+            last_error = exc
+            if attempt == max_retries:
+                break
+            sleep_seconds = min(60, 5 * attempt)
+            print(
+                f"      请求失败，{sleep_seconds}s 后重试 "
+                f"({attempt}/{max_retries}): {exc}"
+            )
+            time.sleep(sleep_seconds)
+    raise RuntimeError(f"请求 patchwork 失败: {url}\n{last_error}")
+
+
 def fetch_patches(config, since_date):
     """Fetch all patches for a module from patchwork."""
     pw = config['patchwork']
@@ -1485,8 +1507,7 @@ def fetch_patches(config, since_date):
     while url:
         page += 1
         print(f"    第 {page} 页... (已获取 {len(all_patches)} 个 patch)")
-        resp = requests.get(url, timeout=30)
-        resp.raise_for_status()
+        resp = _request_get_with_retries(url)
         data = resp.json()
         all_patches.extend(data)
         link = resp.headers.get('Link', '')

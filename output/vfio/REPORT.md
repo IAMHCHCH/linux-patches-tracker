@@ -7,8 +7,8 @@
 | 项目 | 内容 |
 |------|------|
 | 数据来源 | patchwork.kernel.org |
-| 生成日期 | 2026-07-11 |
-| 报告区间 | 2026-05-01 至 2026-06-30 |
+| 生成日期 | 2026-09-08 |
+| 报告区间 | 2026-07-01 至 2026-08-31 |
 | 仓库 | [https://github.com/IAMHCHCH/linux-patches-tracker](https://github.com/IAMHCHCH/linux-patches-tracker) |
 
 ---
@@ -19,309 +19,345 @@
 
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| 社区讨论中 | 28 | 100.0% |
+| 社区讨论中 | 24 | 100.0% |
 | 已合入 | 0 | 0.0% |
-| **总计** | **28** | **100%** |
+| **总计** | **24** | **100%** |
 
 ### 按组织分类（TOP 15）
 
 | 组织 | 数量 | 占比 |
 |------|------|------|
-| Google | 7 | 25.0% |
-| NVIDIA | 5 | 17.9% |
-| Individual Contributor | 5 | 17.9% |
-| Meta | 4 | 14.3% |
-| IBM | 3 | 10.7% |
-| Huawei | 2 | 7.1% |
-| Kernel.org | 1 | 3.6% |
-| Qualcomm | 1 | 3.6% |
+| Google | 8 | 33.3% |
+| IBM | 6 | 25.0% |
+| Individual Contributor | 4 | 16.7% |
+| NVIDIA | 4 | 16.7% |
+| Huawei | 2 | 8.3% |
 
 ### 按子系统分类
 
 | 子系统 | 数量 | 占比 |
 |--------|------|------|
-| VFIO PCI | 15 | 53.6% |
-| VFIO Core | 6 | 21.4% |
-| VFIO Selftests | 3 | 10.7% |
-| VFIO IOMMUFD | 3 | 10.7% |
-| VFIO MLX5 Variant | 1 | 3.6% |
+| VFIO PCI | 10 | 41.7% |
+| VFIO Core | 3 | 12.5% |
+| VFIO Selftests | 3 | 12.5% |
+| VFIO IOMMUFD | 2 | 8.3% |
+| VFIO CCW (s390) | 2 | 8.3% |
+| VFIO Migration | 1 | 4.2% |
+| VFIO CDX | 1 | 4.2% |
+| VFIO AP (s390) | 1 | 4.2% |
+| VFIO MLX5 Variant | 1 | 4.2% |
+
+## 重点 Patch Top20 清单
+
+### 已合入
+
+暂无。
+
+### 社区讨论
+
+| 厂商 | 简介 |
+|------|------|
+| NVIDIA | [PATCH v4 00/27] vfio/pci: Add CXL Type-2 device passthrough support ------为 VFIO PCI 补充 CXL Type-2 设备直通所需的 UAPI、区域暴露和配置裁剪逻辑，使用户态能够管理 CXL 加速设备资源。 |
+| Google | [PATCH v5 00/20] vfio/pci: Base Live Update support for VFIO ------为 live update 场景保存和恢复设备、IOMMU 或 VFIO 状态，减少内核切换期间设备上下文丢失对虚拟化工作负载的影响。 |
+| Huawei | [PATCH v19 00/18] vfio/pci: Add PCIe TPH support ------围绕 PCIe TPH 能力在 VFIO/IOMMU 路径中的发现、配置、转发表编程和状态复位展开，使用户态能够安全控制设备 TPH 行为。 |
+| IBM | [PATCH v9 00/10] s390/vfio_ccw fixes ------集中修复 s390/vfio_ccw fixes 相关的错误处理、生命周期或并发问题，降低异常路径触发崩溃和资源泄漏的风险。 |
+| Individual Contributor | [PATCH v5 00/9] vfio/pci: Add mmap() for DMABUFs ------完善 DMA-BUF 相关映射、导出和权限控制流程，增强用户态共享设备内存时的资源管理和安全边界。 |
+| NVIDIA | [PATCH v4 00/10] mlx5 support for VFIO self test ------补充 MLX5 设备在 VFIO 自测试中的模拟和 DMA 覆盖，验证变体驱动与 IOMMU 映射路径的协同。 |
+| Google | [PATCH v2 00/4] Introduce vfio_dma_mapping_perf_test ------围绕 Introduce vfio_dma_mapping_perf_test 增加新的硬件、UAPI 或框架能力，扩展子系统可支持的设备和虚拟化使用场景。 |
+| IBM | [PATCH v1 00/23] s390/vfio_ccw: Free all memory if cp_init() fails ------集中修复 s390/vfio_ccw 相关的错误处理、生命周期或并发问题，降低异常路径触发崩溃和资源泄漏的风险。 |
+| Google | [PATCH v4 00/9] vfio: selftests: Add driver for Intel Ethernet Gigabit Controller (IGB) ------围绕 vfio 增加新的硬件、UAPI 或框架能力，扩展子系统可支持的设备和虚拟化使用场景。 |
+| Google | [PATCH v4 00/18] iommu: Add live update state preservation ------为 live update 场景保存和恢复设备、IOMMU 或 VFIO 状态，减少内核切换期间设备上下文丢失对虚拟化工作负载的影响。 |
+| Huawei | [PATCH v3 00/3] hisi_acc_vfio_pci: fix three driver issues ------改进 HiSilicon 加速器驱动的复位、隔离、队列或错误处理路径，提升设备管理和虚拟化场景稳定性。 |
+| NVIDIA | [PATCH v1 00/5] PCI/vfio-pci: Guard resets against active SR-IOV VFs ------补充 SR-IOV 相关 VFIO 流程和自测试覆盖，验证 PF/VF 生命周期、资源暴露和用户态接口行为。 |
+| IBM | [v5,1/4] s390/vfio-ap: Fix leak of pinned NIB and registered NISC in vfio_ap_irq_enable/disable() ------修复leak of pinned nib and registered nisc，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险 |
+| Individual Contributor | [v4,10/10] vfio/pci: Add mmap() attributes to DMABUF feature ------新增mmap() attributes，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求 |
+| NVIDIA | [rdma-next,09/15] vfio/mlx5: Enable relaxed ordering on the live migration data mkey ------启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性 |
+| Google | [v8,2/6] vfio: selftests: igb: Use PHY internal loopback on 82576 ------添加测试用例，验证关键功能的正确性和稳定性，增强框架的功能完整性和适用范围，满足更多使用场景的需求 |
+| IBM | [v7,01/23] vfio: Use file-based reference counting for KVM ------修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性 |
+| IBM | [v4,01/27] VFIO: take reference to the KVM module ------修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性 |
+| Individual Contributor | [PATCH] vfio/cdx: prevent read-only region mappings from becoming writable ------修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性 |
+| Google | [RFC,v1,1/1] vfio/pci: Revoke BARs and DMABUFs during sysfs-triggered PCI reset ------修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性 |
+
+---
+
 ## 已合入 Patches
 
 暂无。
 
 ## 社区讨论中 Patches
 
-### ◆ 子系统：VFIO PCI（15 patches）
+### ◆ 子系统：VFIO PCI（10 patches）
 
 **▸ 组织：Google**（3 patches）
 
-**[SERIES] vfio/pci: Support ZONE_DEVICE-backed P2P Registration** （cover letter，2/4 个 patch 达到代码量阈值）
+**[RFC,v1,1/1] vfio/pci: Revoke BARs and DMABUFs during sysfs-triggered PCI reset**
 
-- 日期：2026-06-10
+- 日期：2026-08-07
 - 状态：社区讨论中
 - 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
-- 达到阈值的 patches（2 个，显示前 5）：
-  - vfio/pci: Block mmap & dmabuf export for ZONE_DEVICE-registered BARs
-  - vfio/pci: Block ZONE_DEVICE registration for BARs with active DMABUFs
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260610151853.3608948-2-praan@google.com/
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260807201405.3717430-2-praan@google.com/
 
-**[v2] vfio/pci: Use a private flag to prevent power state change with VFs**
+**[RFC,1/1] vfio/pci: Disable sriov on PF device close**
 
-- 日期：2026-05-14
+- 日期：2026-08-05
 - 状态：社区讨论中
-- 概括：引入私有标志 `sriov_active` 来跟踪 VF 是否激活，取代直接调用 `pci_num_vf()` 检查，以避免在设置电源状态时出现锁竞争。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260514173449.3282188-1-rananta@google.com/
+- 概括：禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260805003355.728299-2-skhawaja@google.com/
 
-**[SERIES] vfio/pci: Base Live Update support for VFIO** （cover letter，4/15 个 patch 达到代码量阈值）
+**[SERIES] vfio/pci: Base Live Update support for VFIO** （cover letter，7/18 个 patch 达到代码量阈值）
 
-- 日期：2026-05-11
+- 日期：2026-07-14
 - 状态：社区讨论中
-- 概括：更新相关的配置或实现以反映最新的内核标准，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向
-- 达到阈值的 patches（4 个，显示前 5）：
+- 概括：为 live update 场景保存和恢复设备、IOMMU 或 VFIO 状态，减少内核切换期间设备上下文丢失对虚拟化工作负载的影响。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - vfio/pci: Factor out the reset logic in VFIO PCI device close path
+  - vfio: Export various helpers from VFIO
+  - vfio/pci: Export vfio_pci_dma_buf_move for vfio-pci module
   - vfio/pci: Register a file handler with Live Update Orchestrator
   - vfio/pci: Preserve vfio-pci device files across Live Update
-  - vfio/pci: Retrieve preserved device files after Live Update
-  - vfio: selftests: Add continuous DMA to vfio_pci_liveupdate_kexec_test
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260511234802.2280368-2-vipinsh@google.com/
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260714151505.3466855-2-vipinsh@google.com/
 
-**▸ 组织：Meta**（3 patches）
+**▸ 组织：Individual Contributor**（2 patches）
 
-**[v7,4/5] vfio/pci: implement get_tph and DMA_BUF_TPH feature**
+**[SERIES] vfio/pci: Add mmap() for DMABUFs** （cover letter，7/7 个 patch 达到代码量阈值）
 
-- 日期：2026-06-11
+- 日期：2026-07-15
 - 状态：社区讨论中
-- 概括：为VFIO导出的dma-buf增加TPH（TLP处理提示）支持，实现get_tph回调及VFIO_DEVICE_FEATURE_DMA_BUF_TPH设置接口，允许用户配置direct tag与处理提示。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260611161546.4075580-5-zhipingz@meta.com/
+- 概括：完善 DMA-BUF 相关映射、导出和权限控制流程，增强用户态共享设备内存时的资源管理和安全边界。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - vfio/pci: Add a helper to look up PFNs for DMABUFs
+  - vfio/pci: Add a helper to create a DMABUF for a BAR-map VMA
+  - vfio/pci: Convert BAR mmap() to use a DMABUF
+  - vfio/pci: Provide a user-facing name for BAR mappings
+  - vfio/pci: Clean up BAR zap and revocation
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260715174737.15287-4-matt@ozlabs.org/
 
-**vfio/pci: Make VFIO_PCI_OFFSET_TO_INDEX() return unsigned**
+**[v4,10/10] vfio/pci: Add mmap() attributes to DMABUF feature**
 
-- 日期：2026-05-11
+- 日期：2026-07-01
 - 状态：社区讨论中
-- 概括：将 VFIO_PCI_OFFSET_TO_INDEX 宏中的偏移参数强制转换为 u64，确保右移后返回无符号整型，避免有符号类型可能导致的符号扩展问题。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260511144642.2926799-1-mattev@meta.com/
-
-**[SERIES] vfio/pci: Request resources and map BARs at enable time** （cover letter，2/3 个 patch 达到代码量阈值）
-
-- 日期：2026-05-11
-- 状态：社区讨论中
-- 概括：启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性
-- 达到阈值的 patches（2 个，显示前 5）：
-  - vfio/pci: Set up BAR resources and maps in vfio_pci_core_enable()
-  - vfio/pci: Check BAR resources before exporting a DMABUF
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260511145829.2993601-2-mattev@meta.com/
-
-**▸ 组织：IBM**（2 patches）
-
-**[v5,4/4] vfio-pci/zdev: Add VFIO FMB device features**
-
-- 日期：2026-06-26
-- 状态：社区讨论中
-- 概括：为 VFIO zPCI 设备增加 FMB 功能，支持通过 ioctl 启用/禁用 FMB 并读取其数据。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260626175525.37370-5-oelghoul@linux.ibm.com/
-
-**[v2,2/3] vfio-pci/zdev: Add VFIO FMB device feature**
-
-- 日期：2026-05-19
-- 状态：社区讨论中
-- 概括：我们需要分析patch，用一句话概括核心改动（不超过200字符），直接说明做了什么改动，保持技术准确性，不使用修饰性词语。
-
-从patch内容来看，标题是“vfio-pci/zdev: Add VFIO FMB device feature”。主要改动：
-
-- 在vfio_pci_core.c的ioctl feature处理中添加了case VFIO_DEVICE_FEATURE_ZPCI_FMB
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260519224204.19154-3-oelghoul@linux.ibm.com/
+- 概括：新增mmap() attributes，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260701171245.90111-11-matt@ozlabs.org/
 
 **▸ 组织：Huawei**（2 patches）
 
-**[v16,10/12] vfio/pci: Add TPH_CPU_ST to query CPU's TPH steering tag**
+**[SERIES] hisi_acc_vfio_pci: fix three driver issues** （cover letter，2/3 个 patch 达到代码量阈值）
 
-- 日期：2026-06-04
+- 日期：2026-08-31
 - 状态：社区讨论中
-- 概括：添加 VFIO_DEVICE_FEATURE_TPH_CPU_ST 控制特性，允许用户空间通过指定 CPU 列表、内存类型和请求类型查询 TPH steering tag。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260604132804.28678-11-fengchengwen@huawei.com/
+- 概括：改进 HiSilicon 加速器驱动的复位、隔离、队列或错误处理路径，提升设备管理和虚拟化场景稳定性。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - hisi_acc_vfio_pci: reject live migration on 64KB page with QM_HW_V3 hardware
+  - hisi_acc_vfio_pci: clear set_reset_flag after reset completed
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260831090951.844569-2-liulongfang@huawei.com/
 
-**hisi_acc_vfio_pci: simplify the command for reading device information.**
+**[SERIES] vfio/pci: Add PCIe TPH support** （cover letter，4/10 个 patch 达到代码量阈值）
 
-- 日期：2026-05-14
+- 日期：2026-07-02
 - 状态：社区讨论中
-- 概括：该补丁重构驱动中对设备队列配置信息的读取路径，用封装好的hisi_qm_mb_read函数替换手动读取邮箱寄存器的组合操作，并删除已无用的qm_get_sqc/qm_get_cqc辅助函数。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260514092026.2018844-1-liulongfang@huawei.com/
-
-**▸ 组织：Individual Contributor**（2 patches）
-
-**vfio/pci: make nointxmask and disable_idle_d3 module params read-only**
-
-- 日期：2026-06-10
-- 状态：社区讨论中
-- 概括：将 vfio-pci 驱动的 nointxmask 和 disable_idle_d3 模块参数的权限改为只读，禁止运行时修改。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260610054734.3591169-1-kanie@linux.alibaba.com/
-
-**[RFC,06/12] PCI: Convert vfio_pci_core.c to pci_is_sriov_* helpers**
-
-- 日期：2026-06-04
-- 状态：社区讨论中
-- 概括：将 vfio_pci_core.c 中 direct access `pdev->is_virtfn` 和 `pdev->is_physfn` 的代码改为使用 `pci_is_sriov_virtfn()` 和 `pci_is_sriov_physfn()` 辅助函数。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260604150153.3619662-7-dimitri.daskalakis1@gmail.com/
+- 概括：围绕 PCIe TPH 能力在 VFIO/IOMMU 路径中的发现、配置、转发表编程和状态复位展开，使用户态能够安全控制设备 TPH 行为。
+- 达到阈值的 patches（4 个，显示前 5）：
+  - vfio/pci: Hide TPH capability when TPH is unsupported
+  - vfio/pci: Virtualize PCIe TPH capability registers
+  - vfio/pci: Implement TPH_ST feature for batch ST table programming
+  - vfio/pci: Reset hardware TPH state on device enable/disable
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260702124224.57168-10-fengchengwen@huawei.com/
 
 **▸ 组织：NVIDIA**（2 patches）
 
-**[SERIES] vfio/pci: Add CXL Type-2 device passthrough support** （cover letter，5/5 个 patch 达到代码量阈值）
+**[SERIES] vfio/pci: Add CXL Type-2 device passthrough support** （cover letter，18/22 个 patch 达到代码量阈值）
 
-- 日期：2026-06-25
+- 日期：2026-08-13
 - 状态：社区讨论中
-- 概括：新增cxl type-2 device passthrough support，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
-- 达到阈值的 patches（5 个，显示前 5）：
-  - vfio: UAPI for CXL Type-2 device passthrough
-  - vfio/pci: Add CONFIG_VFIO_PCI_CXL with bind-time CXL Type-2 acquisition
-  - vfio/pci/cxl: Add HDM + COMP_REGS regions and DVSEC clipping shim
-  - docs: vfio-pci: Document CXL Type-2 device passthrough
-  - vfio/pci: Provide opt-out for CXL Type-2 extensions
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260625165407.1769572-6-mhonap@nvidia.com/
+- 概括：为 VFIO PCI 补充 CXL Type-2 设备直通所需的 UAPI、区域暴露和配置裁剪逻辑，使用户态能够管理 CXL 加速设备资源。
+- 达到阈值的 patches（18 个，显示前 5）：
+  - vfio/cxl: Create the CXL memory device at bind
+  - vfio/pci: Detect CXL devices and load vfio-cxl on demand
+  - vfio/cxl: Own the whole component register BAR
+  - vfio/cxl: Reject unsupported decoder topologies at bind
+  - vfio/pci: Let a provider exclude a BAR sub-range from mmap
+  - ... 及其他 13 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260813093631.2288172-6-mhonap@nvidia.com/
 
-**[SERIES] vfio/pci: Latch module params, fix bitfield use and VGA unwind** （cover letter，2/7 个 patch 达到代码量阈值）
+**[SERIES] PCI/vfio-pci: Guard resets against active SR-IOV VFs** （cover letter，2/2 个 patch 达到代码量阈值）
 
-- 日期：2026-06-15
+- 日期：2026-08-12
 - 状态：社区讨论中
-- 概括：修复bitfield use and vga unwind，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险
+- 概括：补充 SR-IOV 相关 VFIO 流程和自测试覆盖，验证 PF/VF 生命周期、资源暴露和用户态接口行为。
 - 达到阈值的 patches（2 个，显示前 5）：
-  - vfio/pci: Latch disable_idle_d3 per device
-  - vfio/pci: Latch all module parameters per device
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260615191241.688297-4-alex.williamson@nvidia.com/
-
-**▸ 组织：Qualcomm**（1 patches）
-
-**[SERIES] vfio/pci: Hide and optionally override the PCIe Device Serial Number** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-06-13
-- 状态：社区讨论中
-- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
-- 达到阈值的 patches（2 个，显示前 5）：
-  - vfio/pci: Virtualize and scrub Device Serial Number from guests
-  - vfio/pci: Allow userspace to set a virtual Device Serial Number
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260613-pcie_vfio-v1-1-09168188f3f2@oss.qualcomm.com/
-
----
-
-### ◆ 子系统：VFIO Core（6 patches）
-
-**▸ 组织：Individual Contributor**（2 patches）
-
-**[v3,23/32] vfio: use iova_to_phys_length for efficient unmap**
-
-- 日期：2026-06-03
-- 状态：社区讨论中
-- 概括：将vfio的unmap操作改用iommu_iova_to_phys_length一次性获取物理地址和页表项大小，以更高效地合并连续物理块并减少硬件缓存刷新调用。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260603151804.1963871-24-guanghuifeng@linux.alibaba.com/
-
-**vfio: prevent infinite loop in vfio_mig_get_next_state() on blocked arc**
-
-- 日期：2026-06-02
-- 状态：社区讨论中
-- 概括：在vfio_mig_get_next_state()的状态查找循环中增加对VFIO_DEVICE_STATE_ERROR的跳出判定，避免因迁移弧被阻塞而陷入无限循环。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/SYBPR01MB7881290BBDE79B61AE6A017FAF122@SYBPR01MB7881.ausprd01.prod.outlook.com/
-
-**▸ 组织：Meta**（1 patches）
-
-**[v4,1/3] vfio: add dma-buf get_tph callback and DMA_BUF_TPH feature**
-
-- 日期：2026-05-19
-- 状态：社区讨论中
-- 概括：为 VFIO 设备的 dma-buf 添加 get_tph 回调和 VFIO_DEVICE_FEATURE_DMA_BUF_TPH 特性，支持用户空间设置 dma-buf 的 TPH 转向标签和处理提示。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260519201401.1558410-2-zhipingz@meta.com/
-
-**▸ 组织：Kernel.org**（1 patches）
-
-**[v5,1/5] vfio: cache KVM VM file references instead of raw struct kvm pointers**
-
-- 日期：2026-05-25
-- 状态：社区讨论中
-- 概括：将 VFIO 中缓存的 KVM 引用从裸 struct kvm 指针改为 struct file 文件引用，通过文件引用安全获取 KVM 指针。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260525154816.1029642-2-aneesh.kumar@kernel.org/
-
-**▸ 组织：NVIDIA**（1 patches）
-
-**[v8,1/1] vfio/nvgrace-gpu: Add Blackwell-Next GPU readiness check via CXL DVSEC**
-
-- 日期：2026-06-02
-- 状态：社区讨论中
-- 概括：添加基于CXL DVSEC的GPU内存就绪检查，用CXL规范的就绪状态轮询取代传统BAR0寄存器轮询，并在页面错误和内存访问路径中集成CXL状态等待，以支持Blackwell-Next GPU。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260602063015.3915-1-ankita@nvidia.com/
+  - vfio/pci: Refuse to reset an SR-IOV PF with enabled VFs
+  - vfio/pci: Use pci_reset_supported() in place of reset_works
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260812045325.2733631-4-alex.williamson@nvidia.com/
 
 **▸ 组织：IBM**（1 patches）
 
-**[v3,01/27] VFIO: take reference to the KVM module**
+**[v1] vfio/pci: Avoid mapping BARs for devices with non-mappable BARs**
 
-- 日期：2026-05-29
+- 日期：2026-07-29
 - 状态：社区讨论中
-- 概括：为 VFIO 获取 KVM 引用时增加对 KVM 模块的引用计数，避免 KVM 模块在使用中被卸载。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260529155050.2902245-2-seiden@linux.ibm.com/
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260729181116.1373-1-alifm@linux.ibm.com/
+
+---
+
+### ◆ 子系统：VFIO Core（3 patches）
+
+**▸ 组织：IBM**（2 patches）
+
+**[v7,01/23] vfio: Use file-based reference counting for KVM**
+
+- 日期：2026-08-31
+- 状态：社区讨论中
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260831144802.834315-2-seiden@linux.ibm.com/
+
+**[v4,01/27] VFIO: take reference to the KVM module**
+
+- 日期：2026-07-06
+- 状态：社区讨论中
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260706085229.979525-2-seiden@linux.ibm.com/
+
+**▸ 组织：Individual Contributor**（1 patches）
+
+**vfio/type1: conditional rescheduling while unpinning**
+
+- 日期：2026-07-23
+- 状态：社区讨论中
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260723-vfio-v1-1-3b59579916c6@gmail.com/
 
 ---
 
 ### ◆ 子系统：VFIO Selftests（3 patches）
 
-**▸ 组织：Google**（2 patches）
+**▸ 组织：Google**（3 patches）
 
-**vfio: selftests: Add driver for IGB QEMU device**
+**[SERIES] Introduce vfio_dma_mapping_perf_test** （cover letter，3/4 个 patch 达到代码量阈值）
 
-- 日期：2026-05-11
+- 日期：2026-08-04
 - 状态：社区讨论中
-- 概括：为VFIO自测试框架新增Intel IGB网卡驱动，实现对QEMU虚拟IGB设备的初始化、链路协商和收发队列配置。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260511211839.2781731-1-jrhilke@google.com/
+- 概括：围绕 Introduce vfio_dma_mapping_perf_test 增加新的硬件、UAPI 或框架能力，扩展子系统可支持的设备和虚拟化使用场景。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - vfio: selftests: Introduce vfio_dma_mapping_perf_test
+  - vfio: selftests: Add memfd test to vfio_dma_mapping_perf_test
+  - vfio: selftests: Allow a size for vfio_dma_mapping_perf_test
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260804165748.1060476-3-aaronlewis@google.com/
 
-**[SERIES] vfio: selftest: Add SR-IOV UAPI test** （cover letter，2/8 个 patch 达到代码量阈值）
+**[v8,2/6] vfio: selftests: igb: Use PHY internal loopback on 82576**
 
-- 日期：2026-05-05
+- 日期：2026-07-29
 - 状态：社区讨论中
-- 概括：新增sr-iov uapi test，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 概括：添加测试用例，验证关键功能的正确性和稳定性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260729-igb_v3_b4-v8-2-3ed236272b4e@google.com/
+
+**[SERIES] vfio: selftests: Add driver for Intel Ethernet Gigabit Controller (IGB)** （cover letter，2/5 个 patch 达到代码量阈值）
+
+- 日期：2026-07-10
+- 状态：社区讨论中
+- 概括：围绕 vfio 增加新的硬件、UAPI 或框架能力，扩展子系统可支持的设备和虚拟化使用场景。
 - 达到阈值的 patches（2 个，显示前 5）：
-  - vfio: selftests: Introduce a sysfs lib
-  - vfio: selftests: Add tests to validate SR-IOV UAPI
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260505212838.1698034-2-rananta@google.com/
-
-**▸ 组织：NVIDIA**（1 patches）
-
-**[SERIES] vfio: selftest: Add NVIDIA GPU Falcon DMA test driver** （cover letter，1/4 个 patch 达到代码量阈值）
-
-- 日期：2026-06-09
-- 状态：社区讨论中
-- 概括：新增nvidia gpu falc，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
-- 达到阈值的 patches（1 个，显示前 5）：
-  - vfio: selftests: Add NVIDIA Falcon driver for DMA testing
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260609232855.3808971-2-rubind@nvidia.com/
+  - vfio: selftests: igb: Add driver for IGB QEMU device
+  - vfio: selftests: igb: Disable PCIe completion timeout retries
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260710-igb_v3_b4-v4-1-56e7e2576cc1@google.com/
 
 ---
 
-### ◆ 子系统：VFIO IOMMUFD（3 patches）
+### ◆ 子系统：VFIO IOMMUFD（2 patches）
 
 **▸ 组织：Google**（2 patches）
 
 **[SERIES] iommu: Add live update state preservation** （cover letter，2/2 个 patch 达到代码量阈值）
 
-- 日期：2026-06-14
+- 日期：2026-08-08
 - 状态：社区讨论中
-- 概括：新增live update state preservation，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 概括：为 live update 场景保存和恢复设备、IOMMU 或 VFIO 状态，减少内核切换期间设备上下文丢失对虚拟化工作负载的影响。
 - 达到阈值的 patches（2 个，显示前 5）：
   - vfio/pci: Preserve the iommufd state of the vfio cdev
   - iommufd: Add APIs to preserve/unpreserve a vfio cdev
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260614233728.2212104-18-skhawaja@google.com/
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-18-skhawaja@google.com/
 
-**[SERIES] vfio: selftests: Add support of creating multiple iommus from iommufd** （cover letter，1/2 个 patch 达到代码量阈值）
+**[1/2] vfio/type1: Periodically try rescheduling when unmapping**
 
-- 日期：2026-05-05
+- 日期：2026-07-14
 - 状态：社区讨论中
-- 概括：新增support of creating multiple iommus from iommufd，扩展功能特性
-- 达到阈值的 patches（1 个，显示前 5）：
-  - vfio: selftests: Add iommufd multi iommu test
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260505221518.619123-2-skhawaja@google.com/
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-2-aaronlewis@google.com/
+
+---
+
+### ◆ 子系统：VFIO CCW (s390)（2 patches）
+
+**▸ 组织：IBM**（2 patches）
+
+**[SERIES] s390/vfio_ccw: Free all memory if cp_init() fails** （cover letter，6/10 个 patch 达到代码量阈值）
+
+- 日期：2026-08-03
+- 状态：社区讨论中
+- 概括：集中修复 s390/vfio_ccw 相关的错误处理、生命周期或并发问题，降低异常路径触发崩溃和资源泄漏的风险。
+- 达到阈值的 patches（6 个，显示前 5）：
+  - s390/vfio_ccw: Limit the number of channel program segments
+  - s390/vfio_ccw: Calculate idal length based on idaw type
+  - s390/vfio_ccw: Cancel existing workqueues
+  - s390/vfio_ccw: Ensure index for read/write regions are within range
+  - s390/vfio_ccw: Selectively expand io_mutex
+  - ... 及其他 1 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260803160924.236807-3-imbrenda@linux.ibm.com/
+
+**[SERIES] s390/vfio_ccw fixes** （cover letter，6/10 个 patch 达到代码量阈值）
+
+- 日期：2026-07-28
+- 状态：社区讨论中
+- 概括：集中修复 s390/vfio_ccw fixes 相关的错误处理、生命周期或并发问题，降低异常路径触发崩溃和资源泄漏的风险。
+- 达到阈值的 patches（6 个，显示前 5）：
+  - s390/vfio_ccw: limit the number of channel program segments
+  - s390/vfio_ccw: ensure index for read/write regions are within range
+  - s390/vfio_ccw: ensure first IDAW remains constant
+  - s390/vfio_ccw: calculate idal length based on idaw type
+  - s390/vfio_ccw: cancel existing workqueues
+  - ... 及其他 1 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260728033022.2658232-3-farman@linux.ibm.com/
+
+---
+
+### ◆ 子系统：VFIO Migration（1 patches）
+
+**▸ 组织：NVIDIA**（1 patches）
+
+**[rdma-next,09/15] vfio/mlx5: Enable relaxed ordering on the live migration data mkey**
+
+- 日期：2026-07-26
+- 状态：社区讨论中
+- 概括：启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260726092943.2880176-10-michaelgur@nvidia.com/
+
+---
+
+### ◆ 子系统：VFIO CDX（1 patches）
 
 **▸ 组织：Individual Contributor**（1 patches）
 
-**[v2,23/30] vfio/iommufd: use iova_to_phys_length for efficient unmap**
+**vfio/cdx: prevent read-only region mappings from becoming writable**
 
-- 日期：2026-06-02
+- 日期：2026-08-19
 - 状态：社区讨论中
-- 概括：该补丁将 `iommu_iova_to_phys` 替换为 `iommu_iova_to_phys_length`，通过单次页表遍历同时获取物理地址和页表项页大小，批量处理连续物理页面，从而减少页表遍历次数，提升 unmap 效率。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260602104637.1219810-24-guanghuifeng@linux.alibaba.com/
+- 概括：修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260819083943.1391-1-suruurism@gmail.com/
+
+---
+
+### ◆ 子系统：VFIO AP (s390)（1 patches）
+
+**▸ 组织：IBM**（1 patches）
+
+**[v5,1/4] s390/vfio-ap: Fix leak of pinned NIB and registered NISC in vfio_ap_irq_enable/disable()**
+
+- 日期：2026-08-31
+- 状态：社区讨论中
+- 概括：修复leak of pinned nib and registered nisc，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260831171443.222225-2-akrowiak@linux.ibm.com/
 
 ---
 
@@ -331,14 +367,14 @@
 
 **[SERIES] mlx5 support for VFIO self test** （cover letter，3/5 个 patch 达到代码量阈值）
 
-- 日期：2026-05-15
+- 日期：2026-08-12
 - 状态：社区讨论中
-- 概括：添加测试用例，验证关键功能的正确性和稳定性，增强框架的功能完整性和适用范围，满足更多使用场景的需求
+- 概括：补充 MLX5 设备在 VFIO 自测试中的模拟和 DMA 覆盖，验证变体驱动与 IOMMU 映射路径的协同。
 - 达到阈值的 patches（3 个，显示前 5）：
-  - vfio: selftests: mlx5 driver - add send_msi support
   - vfio: selftests: Add mlx5 driver - data path and memcpy ops
+  - vfio: selftests: mlx5 driver - add send_msi support
   - vfio: selftests: Add mlx5 driver - HW init and command interface
-- 来源：https://patchwork.kernel.org/project/kvm/patch/8-v2-72e9640932fd+2c64-mlx5st_jgg@nvidia.com/
+- 来源：https://patchwork.kernel.org/project/kvm/patch/6-v4-021df3fb5a3f+98e-mlx5st_jgg@nvidia.com/
 
 ---
 
@@ -389,4 +425,4 @@ python3 tracker.py 子系统 --start 2026-03-01 --end 2026-04-30
 
 ---
 
-*报告由 Linux Patches Tracker 自动生成 | 2026-07-11 11:36:43*
+*报告由 Linux Patches Tracker 自动生成 | 2026-09-08 15:00:08*
