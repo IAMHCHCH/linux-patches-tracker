@@ -328,5 +328,167 @@
     "E18": "重构 arm-smmu-v3 的 CMDQ 批处理强制同步条件判定，新增 CFGI/TLBI-repeat 硬件缺陷 workaround 并在 Tegra264 上启用，同时在 iommufd 接口中向用户空间报告该 erratum。",
     "E19": "修正 AMD IOMMU 无效命令处理中上报的 opcode，以非位域方式解码 XT 中断控制寄存器和 IRTE，修正命令缓冲区条目大小端问题，让页表遍历状态辅助函数返回 int 以传播错误；同时修正 Intel IOMMU 扩展 capability 寄存器中 pt 位的设置。",
     "E20": "在 exynos IOMMU 驱动中检测不支持 BLOCK 模式的新款 SysMMU，为这类无 BLOCK 设备调整使能序列和 TLB 失效操作，并解码 v7 缺页事务中的访问信息。"
+  },
+  "batch-table-v4:dce05fa3045d8a2cb7176e1c1494a3b8": {
+    "E01": "在 iommu 核心、页表及 iommufd 中新增 preserve/unpreserve/restore 回调和 ioctl，并在 VT-d 上实现上下文条目、PASID 表、域 ID 的清除与恢复，使内核 live update 期间能够保存并恢复设备和 IOMMU 硬件状态。",
+    "E02": "在 pKVM 的 hypervisor 中加入 arm-smmu-v3-kvm 驱动，对主机的 SMMUv3 MMIO、CMDQ、stream table、STE 以及 CPU stage-2 页表进行捕获与影子化，并模拟 CMDQ 与 GBPA，同时复用 io-pgtable-arm 构建嵌套页表。",
+    "E03": "为 kdump 的 arm-smmu-v3 增加接管崩溃内核 stream table 的 ARM_SMMU_OPT_KDUMP_ADOPT，在 probe 阶段解析现存 strtab 和 CD table，保留崩溃内核占用的 ASID/VMID，并在 kdump 内核中禁用 EVTQ/PRIQ 与 RMR bypass。",
+    "E04": "把 iommufd 的软件 MSI 映射改为可增长 bitmap，支持按地址列表原子的安装与查找，并为 RISC-V 的 IOMMU_DMA 开启 64 位地址、保留 MSI IOVA 窗口并上报 cache coherency，以便 VFIO 使用 MSI 重映射。",
+    "E05": "为 arm-smmu-v3 添加 pm_runtime 和系统睡眠操作，通过 CMDQ_PROD_STOP_FLAG 门控提交、tegra241-cmdqv 恢复 PROD/CONS，并缓存 MSI 配置、处理 gerror，确保所有硬件访问前执行 pm_runtime 唤醒。",
+    "E07": "用 MMIO 寄存器掩码修正 AMD IOMMU 对 GA log 状态位的读取，停止在已被 BIOS/固件暴露的 MSI cap 上重复创建 MSI capability，将扩展特性寄存器以只读处理，并在页故障日志中使用完整 BDF。",
+    "E08": "在 intel_iommu_accel 中为直通设备启用 PRQ 响应接收和向 guest 注入 PRQ 页请求，将 FAULTQ 资源拆除转移到底半部执行，并以条件编译保护 VTDAccelPASIDCacheEntry 结构定义。"
+  },
+  "batch-table-v4:c26310aedf1124761636a04e3607c26e": {},
+  "batch-table-v4:395295e85b888b1b15cf0999c1229d15": {
+    "E09": "为 RK3576 NPU accel 准备的 rockchip-iommu 准备，其实 patch list 中的主题是 accel/rocket: RK3576 NPU (RKNN) enablement，但它包含两个 patch. 那么主题聚焦于为 RKNN enablement 设置 iommu。",
+    "E10": "\"exynos-iommu 的 v7 SysMMU 错误路径现在把 raw fault 的 info 存入 fault->info，按 FAULT_INFO_WRITE 区分 IOMMU_FAULT_WRITE/READ 并在 show_fault_information() 中解码 AXID/AXLEN。",
+    "E11": "基于补丁列表的众多工作。可以构造："
+  },
+  "batch-table-v4:5e790417eb0fb38760fd8ffc824399c6": {
+    "E17": "在 arm-smmu-v3 驱动中新增 IDR5_DS 寄存器位定义，并读取该位设置 ARM_SMMU_FEAT_DS 特性标志；将 TLBI 命令的 CMDQ_TLBI_0_SCALE 掩码从 bits[24:20] 扩宽至 bits[25:20]，同时更新 iommufd UAPI 注释以标明 idr[5] 的 DS 位。"
+  },
+  "batch-table-v4-retry:5ba4583a6a1cb79707fa99052e0f54a9": {
+    "E01": "在 kdump 内核沿用崩溃内核 stream table 的路径中，引入 CONFIG_ARM_SMMU_V3_KEXEC/arm-smmu-v3-kexec.c 和 CONFIG_CRASH_DUMP 下的 arm-smmu-v3-kdump.c，把 ARM_SMMU_OPT_KDUMP_ADOPT 加入 smmu options。",
+    "E02": "在 QEMU 的 hw/i386/intel_iommu_accel.c 中为直通设备启用 PRQ 支持：把 fault queue 的后端 fd/id 连同 vtd_prq_list 装入新 IOMMUFaultQueue 并改为 bottom half 异步释放，避免在 vtd_destroy_old_fs_faultq() 中直接释放。",
+    "E03": "在 Xen ipmmu-vmsa.c 中实现 CONFIG_SYSTEM_SUSPEND 下的 suspend/resume：为每个 IPMMU 域上下文备份 IMTTLBR0/IMTTUBR0/IMTTBCR/IMCTR，为挂载设备按 fwspec->ids 备份 micro-TLB 的 IMUASID/IMUCTR。",
+    "E04": "在 arm-smmu 的 context/global fault 中断入口先调用新增的 arm_smmu_rpm_get_if_active()，运行时 PM 未激活时直接返回 IRQ_NONE；激活时统一经 arm_smmu_context_fault()/arm_smmu_global_fault() 先分发到 smmu->impl 的 context。"
+  },
+  "batch-table-v4-retry:8f685902da2860aa2ec4ce6438a32b25": {
+    "E05": "在arm-smmu-v3驱动中添加Runtime PM支持，重构出arm_smmu_enable_irqs/disable_irqs用于中断寄存器操作，并在tegra241-cmdqv恢复时写回PROD/CONS软件值防止残留命令，同时新增KUnit测试覆盖运行时电源管理路径。",
+    "E06": "为Tegra264 SMMU的CFGI/TLBI重复失效问题添加变通处理，在arm_smmu_hw_info中向iommufd上报IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI标志，缓存失效路径改调__arm_smmu_cmdq_issue_cmdlist以重复下发TLBI/CFGI命令。",
+    "E07": "在QEMU的amd_iommu设备模型中删除pci_add_capability(PCI_CAP_ID_MSI)调用以避免重复MSI capability，同时定义完整的MMIO状态寄存器W1C/RO掩码并新增GALOG溢出与中断位，扩展特性寄存器改为只读。",
+    "E08": "在kdump内核下跳过arm-smmu-v3的EVTQ/PRIQ队列初始化和对应中断注册（is_kdump_kernel判断），防止崩溃内核遗留的CD/页表损坏引发事件洪泛；同时将vmid_map的ida_destroy通过devm_add_action_or_reset注册，移除arm_smmu_device_remove中的重复销毁。"
+  },
+  "batch-table-v4-retry:c6d504986d8e5b6bc1fd99741fade4ed": {
+    "E12": "在 rockchip-iommu 的 rk_iommu_is_stall_active() 中跳过满足 PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 RK_MMU_STATUS_IDLE 置位的孤立法错误 bank（固件遗留在分页配置前的 fault），将其视为已经静止。",
+    "E13": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中改为逐 bank 写 RK_MMU_CMD_ENABLE_STALL 到 RK_MMU_COMMAND，跳过同一孤儿条件（PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 IDLE 置位）的 bank。",
+    "E14": "在 KVM nvhe/hyp 为 pKVM 新增 ARM_SMMU_V3_PKVM SMMUv3 驱动：hypervisor 侧 pkvm/arm-smmu-v3.c trap 并模拟 SMMUv3 MMIO（含 CMDQ、GBPA、流表和 STE），host 侧 arm-smmu-v3-kvm.c 探测硬件并发起注册。",
+    "E15": "iommufd 核心开始自行遍历 struct iommu_user_data_array 中的 cache invalidation 请求，驱动可在 cache_invalidate op 中只处理一个请求并通过 entry_num 上报，核心随后按剩余数量续调。"
+  },
+  "batch-table-v4-retry:176ef67b65f262ebaac54c1f8ced32b0": {
+    "E16": "将 iommu_dma_msi_page 扩展 range_size 字段以记录首个映射的 IOVA 范围大小，并用 kzalloc_obj 初始化；新增 iommu_dma_msi_range_matches() 按 IOVA 偏移和物理地址列表逐页校验既有 MSI 映射。"
+  },
+  "batch-table-v5:2b435b69ee5dcb42e37bc9af3290ae57": {
+    "E01": "为kdump内核实现arm-smmu-v3流表接管，新增arm-smmu-v3-kdump.c并引入ARM_SMMU_OPT_KDUMP_ADOPT，通过arm_smmu_kexec_scan_and_resv_ids扫描并预留崩溃内核正在使用的ASID/VMID。",
+    "E02": "在intel_iommu_accel中为passthrough设备增加PRQ支持，将FAULTQ拆除改为通过faultq_teardown_bh延迟到底半部执行，新增IOMMUFaultQueue管理fd与id，扩展VTDAccelPASIDCacheEntry加入fault_id/fault_fd和vtd_prq_list。",
+    "E03": "为Xen的ipmmu-vmsa驱动实现suspend/resume回调，新增ipmmu_reg_ctx和ipmmu_vmsa_backup，将每个utlb的IMUASID/IMUCTR以及根上下文的IMTTLBR0/IMTTUBR0/IMTTBCR/IMCTR保存到全局ipmmu_devices_backup链表。",
+    "E04": "在arm_smmu的context_fault和global_fault中断处理中先调用arm_smmu_rpm_get_if_active检查runtime PM状态，设备未激活时返回IRQ_NONE，impl->context_fault/impl->global_fault回调和默认寄存器读取逻辑都纳入pm_runtime引用计数保护。"
+  },
+  "batch-table-v5:fc915f610f7b71bbbc25f8b67248cba2": {},
+  "batch-table-v5:35bbc46aaab16f7409297b4c52e26ac4": {
+    "E09": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中先检查各 bank 的 RK_MMU_STATUS 是否有 PAGE_FAULT_ACTIVE，若置位则向 RK_MMU_COMMAND 写 RK_MMU_CMD_PAGE_FAULT_DONE 以清除 bootloader 遗留的 stale fault。",
+    "E10": "在 exynos-iommu 中为 SysMMU v7 fault 解析加入 FAULT_INFO_AXID/AXLEN/WRITE 位域，将原始 info 存入 struct sysmmu_fault 并在 show_fault_information() 中打印事务的 AXI ID、AXLEN 与读写方向。",
+    "E11": "在 qcom_iommu 驱动中加入 per-instance 配置与 MSM8974 GPU 实例数据，为这些非安全 SMMU 启用 ARM_V7S 短描述符页表、SMR/SID 映射、通过清除 ARM_SMMU_SCTLR_CFCFG 使 faulting 事务终止而非 stall、编程 ACTLR 的 BPRC/预取寄存器。",
+    "E12": "在 rockchip-iommu 的 rk_iommu_is_stall_active() 中，对 status 同时含有 PAGE_FAULT_ACTIVE 但不含 STALL_ACTIVE 且 IDLE 置位的 bank 视为已静止并跳过，不再将这种 bootloader 遗留的孤儿 fault 视为未 stall。"
+  },
+  "batch-table-v5:2d4a7c75cd8c5055aa2afb0d52668385": {
+    "E13": "在 rockchip-iommu 的 rk_iommu_enable_stall 中，逐 bank 读取 RK_MMU_STATUS，跳过 PAGE_FAULT_ACTIVE 且无 STALL_ACTIVE 且 IDLE 的孤儿 fault bank。",
+    "E14": "为 pKVM nvhe 增加 ARM_SMMU_V3_PKVM 的 SMMUv3 trap/emulate 驱动：在 nvhe Makefile 加入 pkvm/arm-smmu-v3.o 与 arm-smmu-v3-common-lib.o，新增 arm-smmu-v3-kvm.c。",
+    "E15": "iommufd 核心接手缓存失效数组的迭代，驱动每次 op 可只处理部分请求并由 array->entry_num 报告剩余，核心对剩余请求反复调用；同时 arm-vsmmu 新增 arm_vsmmu_validate_range 校验 CMDQ_TLBI_0/1 的 NUM/SCALE/TTL/TG 字段。",
+    "E16": "将 iommufd 的 sw_msi_maps 从固定 bitmap 改为可增长 bitmap，并在 pgoff==UINT_MAX 时返回 -EOVERFLOW；riscv-iommu 新增 get_resv_regions。"
+  },
+  "batch-table-v5-retry:fc915f610f7b71bbbc25f8b67248cba2": {
+    "E05": "在arm-smmu-v3添加arm_smmu_rpm_get/put/get_if_active辅助函数，在硬件访问前调用pm_runtime_resume_and_get，将arm_smmu_setup_irqs拆成arm_smmu_enable_irqs/disable_irqs，缓存恢复MSI配置。",
+    "E06": "在arm_smmu_hw_info()向iommufd报告IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI标志，并将arm_vsmmu_cache_invalidate改用__arm_smmu_cmdq_issue_cmdlist以执行重复TLBI/CFGI命令。",
+    "E07": "在QEMU的amd_iommu设备模型中移除第二次添加的PCI_CAP_ID_MSI capability，只保留HT capability，定义MMIO_STATUS掩码并将GA log溢出/中断位加入W1C_MASK，将EXT_FEATURES寄存器改为按AMDVI_MMIO_EXT_FEATURE_RO_MASK只读。",
+    "E08": "kdump内核中在arm_smmu_device_reset跳过EVTQ_BASE/PROD/CONS写入及CR0_EVTQEN使能，setup_unique_irqs中仅请求gerror irq，组合handler在kdump下不再返回IRQ_WAKE_THREAD。"
+  },
+  "batch-table-v6:13d8a491ddd53b21aa6c874ab63e3e40": {
+    "E01": "为arm-smmu-v3 kdump接管崩溃内核stream table：新增ARM_SMMU_OPT_KDUMP_ADOPT选项，由arm_smmu_kdump_adopt_strtab调用arm_smmu_kexec_scan_and_resv_ids/resv扫描并保留正在使用的ASID/VMID。",
+    "E02": "在QEMU intel_iommu_accel中为passthrough设备启用PRQ支持：VTDAccelPASIDCacheEntry新增fault_id/fault_fd与vtd_prq_list链表，把旧fault queue销毁移到bottom half。",
+    "E03": "为Xen的ipmmu-vmsa驱动实现suspend/resume回调：遍历已注册IPMMU设备，将per-context的IMTTLBR0/IMTTUBR0/IMTTBCR/IMCTR存入reg_backup，恢复时回写并置IMCTR_FLUSH，同时保存/恢复每个设备微TLB的IMUASID和IMUCTR值。",
+    "E04": "在arm-smmu中断fault路径加入pm_runtime_get_if_active门控：新增arm_smmu_rpm_get_if_active()，若设备未激活则context/global fault直接返回IRQ_NONE。"
+  },
+  "batch-table-v6:ec809acda14181f0075f6a0f07f31ea7": {
+    "E05": "为 arm-smmu-v3 实现运行时电源管理与系统睡眠操作：新增 arm_smmu_rpm_get/put/if_active 辅助函数并在硬件访问前调用 pm_runtime_resume_and_get，拆分出 arm_smmu_enable_irqs/disable_irqs 以便挂起时写 ARM_SMMU_IRQ_CTRL 关闭中断。"
+  },
+  "batch-table-v6:ec3f327cef8f1a84d94d88bdf88a5e93": {
+    "E09": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中对每个 MMU bank 先写 RK_MMU_CMD_PAGE_FAULT_DONE 清除固件遗留的 PAGE_FAULT_ACTIVE，并在 probe 中改用 devm_clk_bulk_get_all() 获取 DT 中全部时钟（而非仅 aclk/iface）。",
+    "E10": "在 exynos-iommu 的 v7 fault 路径中新增 FAULT_INFO_AXID/AXLEN/WRITE 位域定义并将原始 info 存入 sysmmu_fault，show_fault_information() 解码事务主 ID、长度与读写类型。",
+    "E11": "为 qcom_iommu 驱动增加 MSM8974 实例支持：引入 qcom_iommu_cfg/sid 使 no_stall（清 SCTLR_CFCFG）、no_afe、ARM_V7S 短描述符页表、非安全全局寄存器空间、context bank 掉电后恢复与编程前 halt micro-MMU 等按实例可配。",
+    "E12": "在 rockchip-iommu 的 rk_iommu_is_stall_active() 中，将 PAGE_FAULT_ACTIVE 但无 STALL_ACTIVE 且 IDLE 的 bank 判定为固件遗留孤立 fault，跳过该 bank 的 stall 等待，以避免其导致 enable stall 轮询超时。"
+  },
+  "batch-table-v6:c3ea278d8944952cceadc7bdda81ebed": {
+    "E13": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中逐个读取各 bank 的 RK_MMU_STATUS，若状态满足 PAGE_FAULT_ACTIVE 且无 STALL_ACTIVE 且 IDLE（孤儿故障 bank）则跳过对该 bank 写 RK_MMU_COMMAND 的 RK_MMU_CMD_ENABLE_STAL。",
+    "E14": "在 KVM nvhe hypervisor 新增 CONFIG_ARM_SMMU_V3_PKVM 对应的 SMMUv3 trap-and-emulate 驱动，将 arm-smmu-v3 公共代码编译进 hyp（pkvm/arm-smmu-v3.c 与 arm-smmu-v3-common-lib.o）。",
+    "E15": "将 iommufd 的 cache invalidation 数组遍历逻辑从各驱动上移到核心层，iommu_user_data_array 驱动的 op 每轮只处理部分请求并更新 entry_num，核心对剩余请求重申 invalidation。",
+    "E16": "为启用 RISC-V MSI 重映射，将 iommufd 的 struct iommufd_sw_msi_maps 由固定 bitmap 改为可增长 bitmap（iommufd_sw_msi_maps_test_bit）。"
+  },
+  "batch-table-v6-retry:f16285d453123a44d717c5ceb6a80361": {
+    "E06": "为 Tegra264 的 SMMU 启用 CFGI/TLBI-repeat erratum：在识别 nvidia,tegra264-smmu 兼容节点后，于 arm_smmu_hw_info() 向 iommufd 上报 IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI 标志。",
+    "E07": "在 QEMU amd_iommu 设备模拟中删除重复添加的 MSI capability（pci_add_capability PCI_CAP_ID_MSI），使用完整 BDF 的 devid 汇报 page fault，把 GALOG_OVF/GALOG_INT 加入 MMIO status 寄存器 W1C 掩码以解除不支持的 GA log 状态锁存。",
+    "E08": "在 arm-smmu-v3 中，kdump 内核跳过 EVTQ/PRIQ 队列的寄存器写入、CR0_EVTQEN 使能及其中断请求（仅注册 gerror 中断），避免崩溃内核的 CD/页表损坏触发事件洪泛；同时将 vmid_map 的 ida 初始化移入 arm_smmu_init_strtab()。"
+  },
+  "batch-table-v7:f89d3185255b8749379232a4500151fa": {
+    "E01": "让kdump内核通过arm_smmu_kdump_adopt_strtab接管崩溃内核的stream table，先扫描并预留正在使用的ASID/VMID，在arm_smmu_init_strtab时提前初始化vmid_map/asid_map，增加ARM_SMMU_OPT_KDUMP_ADOPT决定是否启用。",
+    "E02": "在Intel vIOMMU accel路径中为passthrough设备增加PRQ支持：将FAULTQ释放改为bottom half执行，新增IOMMUFaultQueue延迟清理fd和iommufd id；用VTDAccelPASIDCacheEntry保存fault_id/fault_fd和vtd_prq_list。",
+    "E03": "在Xen的ipmmu-vmsa驱动中实现suspend/resume回调：在CONFIG_SYSTEM_SUSPEND下保存各context的IMTTLBR0/IMTTUBR0/IMTTBCR/IMCTR和每设备micro-TLB的IMUASID/IMUCTR寄存器，通过ipmmu_devices_backup链表按IPMMU遍历恢复。",
+    "E04": "在arm-smmu的context/global fault中断入口新增arm_smmu_rpm_get_if_active检查，设备处于runtime suspend时立即返回IRQ_NONE，处理完统一经arm_smmu_rpm_put解除引用。"
+  },
+  "batch-table-v7:343351c524bc43dba13f53e313b37027": {},
+  "batch-table-v7:3555371ac87eca5973c45d11b5795326": {
+    "E09": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中对处于 PAGE_FAULT_ACTIVE 状态的 MMU 写 RK_MMU_CMD_PAGE_FAULT_DONE 以清除固件遗留的缺页，并将时钟获取从固定 rk_iommu_clocks[]（\"aclk\"/\"iface\"）改为 device tree 提供的全部时钟。",
+    "E10": "在 exynos-iommu 的 v7 fault 处理中增加 FAULT_INFO_AXID/AXLEN/WRITE 位域解析，把原始 transaction info 存入 sysmmu_fault.info 并在 show_fault_information() 中打印。",
+    "E11": "为启用 MSM8974 上的 qcom_iommu 实例，在 per-instance 配置中加入 no_stall 标志以清除 context bank SCTLR 的 ARM_SMMU_SCTLR_CFCFG 使 fault 终止而非 stall。",
+    "E12": "在 rockchip-iommu 的 rk_iommu_is_stall_active() 中，当某 MMU bank 的 RK_MMU_STATUS 同时出现 PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 IDLE 置位时，将该 bank 视为固件遗留的孤儿 fault 而跳过，不把它计入 stall 未生效。"
+  },
+  "batch-table-v7:8eec8f12117df46b80e1cea53f02fcb0": {
+    "E13": "在 rk_iommu_enable_stall() 中逐 bank 读取 RK_MMU_STATUS，当某 bank 处于 PAGE_FAULT_ACTIVE 且未 STALL_ACTIVE 且 IDLE 的 orphaned-fault 状态时跳过，不向其写 RK_MMU_CMD_ENABLE_STALL。",
+    "E14": "为 pKVM 的 nVHE hypervisor 新增 SMMUv3 trap-and-emulate 驱动：通过 Kconfig ARM_SMMU_V3_PKVM 和 Makefile 将 drivers/iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c 编入 hyp。",
+    "E15": "把 iommufd 缓存无效化数组的遍历逻辑从各驱动上收到核心层，回调每次只处理一条并由核心对剩余条目重入调用；arm-smmu-v3-iommufd 改为单条处理，并对无效化命令中 NUM/SCALE/TTL/TG 等保留字段或硬件不支持位返回 -EIO，vt-d 也转换为该核心数组循环。",
+    "E16": "为 RISC-V IOMMU 开启 MSI 重映射与 IOMMU_DMA/VFIO 支持：riscv_iommu_get_resv_regions() 对带 IMSIC MSI parent 的设备添加从 RISCV_IOMMU_MSI_IOVA_BASE 起按 num_possible_cpus()*PAGE_SIZE 计算的。"
+  },
+  "batch-table-v7-retry:343351c524bc43dba13f53e313b37027": {},
+  "batch-table-v8:1ab860998f3d92dbec369dd8e46a9854": {
+    "E01": "在 arm-smmu-v3 驱动中为 kdump 增加 ARM_SMMU_OPT_KDUMP_ADOPT 及 arm-smmu-v3-kdump.c/kexec.c，kdump 内核 adopt_crash 的 strtab 时通过 arm_smmu_kexec_scan_and_resv_ids() 保留崩溃内核正在使用的 ASID/VMID。",
+    "E02": "在 QEMU 的 intel_iommu_accel 中为 passthrough 设备增加 PRQ 支持，在 VTDAccelPASIDCacheEntry 中加入 fault_id/fault_fd 与 vtd_prq_list，新增 IOMMUFaultQueue，用 bottom half 异步注销 fault_fd 并释放残留 PRQ 条目。",
+    "E03": "在 Xen 的 ipmmu-vmsa.c 中实现 IPMMU 的 suspend/resume 备份恢复，新增 ipmmu_reg_ctx/ipmmu_vmsa_backup 及备份链表，通过 ipmmu_utlbs_backup/restore() 保存/恢复各 UTLB 的 IMUASID/IMUCTR。",
+    "E04": "在 arm-smmu 的 context_fault/global_fault 中断处理中引入 pm_runtime 管理，新增 arm_smmu_rpm_get_if_active() 检查设备 active，非 active 时返回 IRQ_NONE。"
+  },
+  "batch-table-v8:27724a232023cb9075ba67732a7a47c6": {
+    "E05": "在 arm-smmu-v3 中新增 arm_smmu_rpm_get/arm_smmu_rpm_put/arm_smmu_rpm_get_if_active 辅助函数并在硬件访问前调用 pm_runtime_resume_and_get，实现 pm_runtime 与系统 sleep 操作。",
+    "E06": "为 arm-smmu-v3 的 Tegra264 启用 T264-SMMU-3 CFGI/TLBI-repeat erratum workaround：在兼容 nvidia,tegra264-smmu 的 DT 探测路径使能 static branch。",
+    "E07": "在 QEMU amd_iommu 设备中移除重复的 pci_add_capability(PCI_CAP_ID_MSI) 以避免生成重复 MSI capability，新增 amdvi_get_devid() 用 PCI_BUILD_BDF(pci_bus_num, devfn) 构造完整 devid 用于页错误报告。",
+    "E08": "在 arm-smmu-v3 的 arm_smmu_device_reset 中当 is_kdump_kernel() 时跳过 EVTQ 的 BASE/PROD/CONS 写入和 CR0_EVTQEN 置位，并在 arm_smmu_setup_unique_irqs 的 kdump 路径跳过 EVTQ/PRIQ 线程中断请求、仅注册 gerror IRQ。"
+  },
+  "batch-table-v8:b275788e654387684986e9de758b8e0e": {
+    "E09": "在 rockchip-iommu.c 的 rk_iommu_enable_stall() 中，若 RK_MMU_STATUS 的 PAGE_FAULT_ACTIVE 置位则先写 RK_MMU_CMD_PAGE_FAULT_DONE 清除固件遗留错误再发 CMD_ENABLE_STALL。"
+  },
+  "batch-table-v8:e4f54ebf55208465af0243ce8e93781b": {
+    "E13": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中逐个读取 iommu->bases[i] 的 RK_MMU_STATUS，对 PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 IDLE 置位的 orphaned-fault bank 跳过写入 RK_MMU_CMD_ENABLE_STALL。",
+    "E14": "为 pKVM 建立 SMMUv3 trap-and-emulate 驱动：nvhe 构建加入 pkvm/arm-smmu-v3.c 与 arm-smmu-v3-common-lib，smmu_init_device() 初始化 hyp_spinlock 并通过 __pkvm_host_donate_hyp_mmio() 让出 MMIO。",
+    "E15": "将缓存失效数组的遍历收到 iommufd 核心处理：iommu_user_data_array 允许驱动一次只处理部分条目，核心用剩余条目再次回调该 op；selftest、arm-smmu-v3-iommufd 与 VT-d 相应改为适配该循环。",
+    "E16": "iommufd 将软件 MSI 映射位图改为可增长 bitmap 并支持按地址列表原子安装、拆分映射；dma-iommu.c 中 struct iommu_dma_msi_page 增加 range_size 字段并新增 iommu_dma_prepare_msi_list()。"
+  },
+  "batch-table-v8-retry:b204da7776d3da24a3a570e5dc05ba1d": {
+    "E10": "在 exynos-iommu 驱动中读取 CAPA1 的 CAPA1_NO_BLOCK_MODE 位，将不支持 BLOCK 模式的 SysMMU 标记到 sysmmu_drvdata.no_block，并扩展 v7 缺页错误保存 raw fault->info。",
+    "E11": "在 qcom_iommu 驱动中新增 per-instance qcom_iommu_cfg 配置，为 MSM8974 GPU 实例加入 qcom_iommu_sid 流映射、选择 ARM_V7S 短描述符页表格式，对 non-secure 实例跳过写 SMMU_INTR_SEL_NS。",
+    "E12": "在 rockchip-iommu 的 rk_iommu_is_stall_active() 中，当某一 bank 的 RK_MMU_STATUS 同时满足 PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 IDLE 置位时，视为固件遗留的孤儿页错误，跳过该 bank 而不把它当作未进入 stall 状态。"
+  },
+  "batch-table-v8:fbe9a5fe118c7bcabdb44d487c908791": {
+    "E01": "在 arm-smmu-v3 驱动中新增 CONFIG_CRASH_DUMP 下的 arm-smmu-v3-kdump.c，通过 arm_smmu_kdump_adopt_strtab 接管崩溃内核的 stream table，并用 arm_smmu_kexec_scan_and_resv_ids/arm_smmu_kexec_unresv_ids 预留崩溃内核仍在使用的 ASID/VMID，失败时释放预留并回退 full reset。",
+    "E02": "在 QEMU intel_iommu_accel.c 中引入 IOMMUFaultQueue 和 faultq_teardown_bh，将 VTDAccelPASIDCacheEntry 的 fault_id/fault_fd/PRQ 列表延迟到底半部统一释放，并为 passthrough 设备新增 vtd_pri_request_page 与 vtd_accel_propagate_page_group_response。",
+    "E03": "在 Xen 的 ipmmu-vmsa 驱动中实现 CONFIG_SYSTEM_SUSPEND 下的 ipmmu_suspend/ipmmu_resume，遍历 ipmmu_devices_backup 链表把各设备 UTLB 的 IMUASID/IMUCTR 和 domain context 的 IMTTLBR0/IMTTUBR0/IMTTBCR/IMCTR 保存到 ipmmu_reg_ctx。",
+    "E04": "在 arm-smmu.c 的 arm_smmu_context_fault 和 arm_smmu_global_fault 中断入口先调用 arm_smmu_rpm_get_if_active，SMMU 处于 runtime suspend 时直接返回 IRQ_NONE，只在持有运行时 PM 引用后读取/清除 CB FSR 或 GR0 sGFSR/sGFSYNR 并调用 impl->context_fault/global_fault。"
+  },
+  "batch-table-v8:685f0abbade060789b1414d0e9d0f825": {
+    "E05": "为arm-smmu-v3实现runtime PM与系统睡眠操作：新增arm_smmu_rpm_get/put辅助并调用pm_runtime_resume_and_get，任何硬件访问前先唤醒设备；KUnit测试使用自消费mock cmdq；重构arm_smmu_setup_irqs为通过写IRQ_CTRL/IRQ_CTRLACK的enable/disable接口；tegra241-cmdqv恢复后回写VCMDQ PROD/CONS。",
+    "E06": "在arm_smmu_hw_info()中根据arm_smmu_erratum_repeat_tlbi_cfgi()置位IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI，vSMMU的cache_invalidate改用__arm_smmu_cmdq_issue_cmdlist。",
+    "E07": "在QEMU的amd_iommu模拟中新增amdvi_get_devid/amdvi_get_as_devid用完整BDF查询AS并上报page fault，将GALOG_OVF/GALOG_INT并入STATUS的W1C掩码，使MMIO_EXT_FEATURES通过AMDVI_MMIO_EXT_FEATURE_RO_MASK保持只读，并移除pci_add_capability重复添加MSI capability的调用。",
+    "E08": "在kdump内核下arm_smmu_device_reset跳过EVTQ_BASE/PROD/CONS的写入及CR0_EVTQEN使能，setup_unique_irqs仅注册gerr_irq，combined_irq_handler在kdump时直接返回不再唤醒线程；另外将vmid_map的ida_destroy改为devm_add_action_or_reset注册的devres动作。"
+  },
+  "batch-table-v8:1796d0e70b2013763a341953c7a5c847": {
+    "E09": "为 RK3576 NPU 的 rockchip IOMMU 在 rk_iommu_enable_stall 中先向 RK_MMU_COMMAND 写 RK_MMU_CMD_PAGE_FAULT_DONE 清除 PAGE_FAULT_ACTIVE 遗留 fault，再将固定 \"aclk\"/\"iface\" 时钟列表改为 devm_clk_bulk_get_all 获取 DT 中全部时钟（包含 CBUF/DSU）。",
+    "E10": "在 exynos-iommu.c 的 v7 fault 处理中将原始事务信息存入 sysmmu_fault.info 并按 FAULT_INFO_AXID/AXLEN/WRITE 宏解码，同时从 REG_V7_CAPA1 读取 CAPA1_NO_BLOCK_MODE 存入 sysmmu_drvdata.no_block，以识别不支持 BLOCK 模式的 SysMMU。",
+    "E11": "在 qcom_iommu 驱动中为 MSM8974 GPU 实例增加 per-device cfg：Kconfig 选择 IOMMU_IO_PGTABLE_ARMV7S 以启用 ARM_V7S 短描述符页表，no_stall 实例清除 ARM_SMMU_SCTLR_CFCFG 使 fault 终止，非安全实例按 sid/cbndx 表配置 SMR。",
+    "E12": "修改 rk_iommu_is_stall_active：当 bank 的 RK_MMU_STATUS 为 PAGE_FAULT_ACTIVE 且未置 STALL_ACTIVE 但置 IDLE 时，将遗留 fault 视为已无事务在飞，跳过该 bank 而不将其计入 stall 未激活。"
+  },
+  "batch-table-v8:51ae900c22ebb13484370a43357803a9": {
+    "E13": "在 rockchip-iommu 的 rk_iommu_enable_stall() 中按 num_mmu 遍历各 bank，读取 RK_MMU_STATUS，跳过满足 PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 IDLE 的孤儿故障 bank，不再向其写 RK_MMU_CMD_ENABLE_STALL。",
+    "E15": "将缓存失效数组的遍历改在 iommufd 核心实现：核心根据驱动更新后的 array->entry_num 对剩余失效请求再次调用回调，驱动不再自行完整遍历；arm-smmu-v3-iommufd 新增 arm_vsmmu_validate_range()，对 CMDQ_TLBI_0_NUM/SCALE、TTL/TG 等保留或硬件未实现字段返回 -EIO，并在 UAPI 注释中明确该 -EIO 语义。",
+    "E16": "为在 RISC-V 上启用 MSI remapping、IOMMU_DMA 与 VFIO 支持，将 iommufd 的软件 MSI 映射从固定 bitmap 改为可增长 bitmap 并支持按物理地址列表原子安装；在 dma-iommu 的 iommu_dma_msi_page 中新增 range_size 和 iommu_dma_msi_range_matches()/iommu_dma_prepare_msi_list() 等逻辑。"
+  },
+  "batch-table-v8-retry:b23917cde28a39fea3c62ec495bd2f9a": {
+    "E14": "为 pKVM 新增基于 trap-and-emulate 的 SMMUv3 hypervisor 驱动（pkvm/arm-smmu-v3.c），在 nVHE 侧模拟主机 MMIO、CMDQ、GBPA 等寄存器访问，并影子化 stream table/STE 与 CPU stage-2 页表。"
   }
 }

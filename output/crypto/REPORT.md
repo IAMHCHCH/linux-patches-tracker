@@ -69,51 +69,48 @@
 
 | 厂商 | 简介 |
 |------|------|
-| Red Hat | [PATCH v5 00/10] crypto: Provide a function for zeroizing crypto_aes_ctx ------该系列围绕 crypto: Provide a function for zeroizing crypto_aes_ctx，具体包括aspeed - clear the crypto_aes_ctx（当 done 时）、padlock-aes - clear the crypto_aes_ctx（当 done 时）。 |
-| Canonical | [PATCH v2 00/2] crypto: asymmetric_keys - fix OOB read in pefile_parse_binary ------该系列围绕 crypto: asymmetric_keys - fix OOB read in pefile_parse_binary，具体包括asymmetric_keys - fix OOB read in pefile_parse_binary、asymmetric_keys - add KUnit tests for the PE parser。 |
-| Intel | [PATCH v2 00/5] crypto: iaa - Fixes for multi entry SG lists ------在 Intel IAA crypto 驱动中，对含多 scatterlist entry 的解压输入使用 bounce buffer，并在软件回退解压前先解除 dst DMA 映射，同时使解压字节统计不再计入回退到软件实现的数据。 |
-| Kernel.org | [PATCH v1 00/3] crypto: af_alg_restrict cleanups ------在 AF_ALG 算法白名单中将 cbc(paes) 设为仅特权可用，用 flags 位替换原有 privileged bool，并使白名单查询在找到目标名称后立刻停止遍历。 |
-| Linux Community | [PATCH v1 00/4] crypto: atmel-tdes - simplify fast path in crypt_start ------在 atmel-tdes 驱动中重构 crypt_start 快速路径，移除 crypt_pdc_stop 与 crypt_dma_stop 内冗余的返回变量和 if 检查，并将 buff_init 的缓冲页分配改为 __get_free_page()。 |
-| Linux Community | [PATCH v1 00/2] crypto: atmel-ecc - simplify control flow in atmel_ecdh_set_secret ------在 atmel-ecc 驱动的 atmel_ecdh_set_secret() 中删除冗余 ret 返回变量，将错误处理改为直接返回各步调用结果并合并重复分支，以简化 ECDH 私钥设置的控制流。 |
-| Individual Contributor | [PATCH v1 00/2] crypto: keembay - use crypto_memneq() to compare GCM AEAD tags ------在 keembay 驱动的 AEAD 完成路径中，将 GCM 和 CCM 两种模式的认证 tag 比较从 memcmp() 替换为常数时间 crypto_memneq()，消除认证标签比较时间侧信道风险。 |
-| Linux Community | [PATCH v1 00/2] crypto: qce - simplify devm_qce_register_algs ------该补丁系列简化 crypto/qce：将 qce_handle_request() 中分算法处理的公共判断提前到函数入口，并把 devm_qce_register_algs() 对多个算法的注册错误改为集中返回，去除重复的注册/清理分支。 |
-| Kernel.org | [PATCH] crypto: af_alg - Allow additional ciphers for cryptsetup ------在 crypto/af_alg.c 的算法 allowlist 中加入 cryptsetup 所需的额外 cipher 名称，使非特权 cryptsetup 进程能通过 AF_ALG socket 完成这些算法的认证与初始化。 |
-| Bootlin | [v5] hwrng: core - Stop/start hwrng_fillfn() kthread before/after suspend-resume ------在 hwrng 核心的电源管理回调中，suspend 时调用 kthread_stop() 停止 hwrng_fillfn 填充线程，resume 后再重新启动该线程，避免挂起期间继续搬运熵数据。 |
-| Bootlin | [v2,2/2] hwrng: omap: Enable on Renesas RZ/N1D ------在 omap-rng 驱动的设备匹配表中加入 Renesas RZ/N1D 对应的 compatible 项，使该 SoC 的硬件随机数发生器能够被 omap hwrng 驱动 probe 并注册。 |
-| Linux Community | [PATCH] crypto: qce - simplify control flow in register functions ------重构 crypto/qce 驱动的寄存器注册函数控制流，删除重复的错误分支，使多个算法注册失败时统一走同一个返回路径，减少缩进层级。 |
-| Individual Contributor | [PATCH] crypto: octeontx2 - use crypto_memneq() to check HMAC for cipher_null authenc ------在 octeontx2 的 authenc(cipher_null,hmac) 路径中，将计算出的 HMAC 与入 tag 的匹配由 memcmp() 改为 crypto_memneq()，防止按内容早退造成时序侧信道。 |
-| Individual Contributor | [PATCH] crypto: octeontx - use crypto_memneq() to check HMAC ------在 octeontx 的 HMAC 认证路径中，将 tag 比较从 memcmp() 换成 crypto_memneq()，使比较时间不依赖明文/摘要内容。 |
-| Individual Contributor | [PATCH] crypto: ccree - use crypto_memneq() to compare AEAD tag ------在 ccree 驱动的 AEAD tag 校验时改用 crypto_memneq() 比较解密获得的 tag 与原始 tag，以常数时间比较避免认证失败路径泄露数据。 |
-| Individual Contributor | [PATCH] crypto: amcc: pass core_dev to request_irq ------在 amcc crypto4xx 驱动的 request_irq() 调用中传入 core_dev 作为中断处理函数上下文，使 ISR 的 data 参数指向真正包含硬件状态与锁的 core_dev 结构体。 |
-| Individual Contributor | [PATCH] crypto: s5p-sss: pass s5p_aes_dev to irq handler ------在 crypto: s5p-sss 中传递 s5p_aes_dev to irq handler。 |
-| Individual Contributor | [PATCH] crypto: rockchip: pass crypto_info to irq handler ------在 crypto: rockchip 中传递 crypto_info to irq handler。 |
-| Individual Contributor | [PATCH] crypto: sa2ul - use crypto_memneq() to compare AEAD tag ------在 crypto 中sa2ul - use crypto_memneq() to compare AEAD tag。 |
-| Individual Contributor | [PATCH] crypto/krb5: use kfree_sensitive() for derived key buffers ------在 crypto/krb5 中为 derived key buffers 改用 kfree_sensitive()。 |
+| Red Hat | [PATCH v5 00/10] crypto: Provide a function for zeroizing crypto_aes_ctx ------新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。 |
+| Intel | [PATCH v2 00/5] crypto: iaa - Fixes for multi entry SG lists ------在 IAA crypto 驱动中修复多 entry SG 列表：新增 deflate_generic_compress() 用于多 SG 压缩的软件回退，解压输入经 iaa_req_ctx.bounce_src 申请 iaa_bounce_pool 页拷贝为单 SG 后再提交硬件，并把解压字节统计移入非回退的硬件完成分支，软件回退前调用 iaa_unmap_src() 等解除 src/dst 的 DMA 映射。 |
+| Kernel.org | [PATCH v1 00/3] crypto: af_alg_restrict cleanups ------清理 AF_ALG 限制列表逻辑：将 cbc(paes) 标记为非特权可用，并调整 af_alg_check_restriction() 的同名条目匹配流程，避免无特权时继续遍历后续 allowlist 项造成权限判断歧义。 |
+| Individual Contributor | [PATCH v1 00/2] crypto: keembay - use crypto_memneq() to compare GCM AEAD tags ------keembay OCS 的 GCM 解密路径将 rctx->in_tag 与 rctx->out_tag 的比较改用 crypto_memneq，CCM 的 ccm_compare_tag_to_yr 函数中 tag 与 yr 的比较也改用 crypto_memneq，两者均在标签不匹配时返回 -EBADMSG，替代 memcmp 以消除时序泄露。 |
+| Linux Community | [PATCH v1 00/2] crypto: qce - simplify devm_qce_register_algs ------在 Qualcomm crypto engine (qce) 驱动中简化两处逻辑：qce_handle_request() 遍历 qce_ops 时发现 type 匹配就直接 return ops->async_req_handle(async_req)，否则返回 -EINVAL。 |
+| Canonical | [v2,2/2] crypto: asymmetric_keys - add KUnit tests for the PE parser ------为 asymmetric_keys 的 PE parser 增加 KUnit 覆盖，验证安全目录和 section 边界处理等异常输入，防止 pefile_parse_binary() 越界读问题回归。 |
+| Kernel.org | [PATCH] crypto: af_alg - Allow additional ciphers for cryptsetup ------在 AF_ALG skcipher allowlist 中加入 cryptsetup 使用的 xts(camellia)、xts(serpent)、xts(twofish) 等算法条目，让用户态磁盘加密工具继续通过 AF_ALG socket 调用这些 cipher。 |
+| Bootlin | [v5] hwrng: core - Stop/start hwrng_fillfn() kthread before/after suspend-resume ------在 hwrng core 中注册 PM notifier，系统 suspend/hibernate 前停止 hwrng_fillfn kthread 并记录停止状态，resume/restore 后再重新启动，避免休眠阶段后台线程继续触碰 RNG 设备。 |
+| Bootlin | [v2,2/2] hwrng: omap: Enable on Renesas RZ/N1D ------在 drivers/char/hw_random/Kconfig 中将 HW_RANDOM_OMAP 的依赖列表加入 ARCH_RZN1，使 OMAP RNG 驱动可以在 Renesas RZ/N1D 平台上被配置和编译。 |
+| Linux Community | [PATCH] crypto: qce - simplify control flow in register functions ------在 qce 的 aead.c、sha.c、skcipher.c 注册函数中，将寄存器循环内失败后的 goto err 分支改为立即调用 qce_aead_unregister()/qce_ahash_unregister()/qce_skcipher_unregister() 并 return ret，去掉共享的 err 标签和末尾回滚路径。 |
+| Individual Contributor | [PATCH] crypto: octeontx2 - use crypto_memneq() to check HMAC for cipher_null authenc ------在 octeontx2 CPT 驱动的 validate_hmac_cipher_null() 中，将比较 rctx->fctx.hmac.s.hmac_calc 与 hmac_recv 的 memcmp 改为 crypto_memneq()，认证失败仍返回 -EBADMSG，以避免 HMAC 校验的时间侧信道泄漏。 |
+| Individual Contributor | [PATCH] crypto: octeontx - use crypto_memneq() to check HMAC ------在 octeontx CPT 驱动的 validate_hmac_cipher_null() 中，把 memcmp 比较 hmac_calc 与 hmac_recv 替换为 crypto_memneq()，防止非恒定时间比较泄露 HMAC 信息。 |
+| Individual Contributor | [PATCH] crypto: ccree - use crypto_memneq() to compare AEAD tag ------在 ccree 驱动 cc_aead_complete() 的解密分支中，将 mac_buf 与 icv_virt_addr 的 memcmp 比较改为 crypto_memneq()，认证失败时按原路径处理，消除标签校验的时序差异。 |
+| Individual Contributor | [PATCH] crypto: amcc: pass core_dev to request_irq ------在 crypto4xx 驱动 probe/remove 的 request_irq/free_irq 中，把中断上下文数据由 struct device *dev 改为 struct crypto4xx_core_device *core_dev，中断处理函数 crypto4xx_interrupt_handler 直接使用 data 作为 core_dev 并去掉 dev_get_drvdata 转换。 |
+| Individual Contributor | [PATCH] crypto: s5p-sss: pass s5p_aes_dev to irq handler ------在 s5p-sss 驱动中将 s5p_aes_interrupt 的 dev_id 参数由 platform_device 改为 s5p_aes_dev，并在 devm_request_threaded_irq 调用点直接传入 pdata，使中断回调不再通过 platform_get_drvdata 间接获取设备结构。 |
+| Individual Contributor | [PATCH] crypto: rockchip: pass crypto_info to irq handler ------在 rk3288_crypto 驱动中将 rk_crypto_irq_handle 的 dev_id 参数由 platform_device 改为 rk_crypto_info，并在 devm_request_irq 调用点传入 crypto_info 而非 pdev，去掉中断处理中的 platform_get_drvdata 调用。 |
+| Individual Contributor | [PATCH] crypto: sa2ul - use crypto_memneq() to compare AEAD tag ------在 sa2ul 驱动的 sa_aead_dma_in_callback 中，用 crypto_memneq 替换 memcmp 比较 AEAD 认证标签与 mdptr 偏移处的收尾 tag，标签不一致时返回 -EBADMSG 以避免时间侧信道。 |
+| Individual Contributor | [PATCH] crypto/krb5: use kfree_sensitive() for derived key buffers ------在 crypto_krb5_prepare_encryption() 与 crypto_krb5_prepare_checksum() 的成功及错误路径中，将释放派生密钥缓冲区 keys.data 的 kfree() 改为 kfree_sensitive()，使缓冲区释放前被清零，避免敏感密钥数据残留。 |
+| Individual Contributor | [PATCH] crypto: eip93 - use struct_size() and flexible array for ring allocation ------为 eip93 驱动把 struct eip93_device 末尾的 ring 指针改为灵活的 struct eip93_ring ring[] 数组成员，移除单独 devm_kcalloc() 分配 ring 的代码，在 eip93_crypto_probe() 中用 devm_kzalloc(... struct_size(eip93, ring, 1) ...) 一次性分配设备结构与单个 ring 对象。 |
+| Individual Contributor | [PATCH] crypto: ccp - don't abuse kernel-doc comment format ------在 include/uapi/linux/psp-sfs.h 中把描述 AMD Seamless Firmware Support (SFS) 接口及 IOCTL 的注释起始符从 /** 改为 /*，避免被内核文档工具误当 kernel-doc 解析，注释内容本身不变。 |
 
 ### 社区讨论
 
 | 厂商 | 简介 |
 |------|------|
-| Individual Contributor | [PATCH v4 00/19] crypto: cmh - add Rambus CryptoManager Hub driver ------该系列围绕 crypto: cmh - add Rambus CryptoManager Hub driver，具体包括cmh - add HMAC ahash、cmh - add ML-KEM/ML-DSA (QSE)、cmh - add DRBG hwrng、cmh - add CSHAKE/KMAC ahash。 |
-| Qualcomm | [PATCH v24 00/14] crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O ------该系列围绕 crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O，具体包括qce - Cancel work on device detach、qce - Include algapi.h in the core.h header。 |
-| Kernel.org | [PATCH v2 00/13] Library APIs for AES encryption modes ------该系列围绕 Library APIs for AES encryption modes，具体包括crypto 中xts - Split out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support。 |
-| Individual Contributor | [PATCH v2 00/7] Fix several issues in DTHEv2 driver ------该系列围绕 Fix several issues in DTHEv2 driver，具体包括crypto 中ti - Trim scatterlists to correct length in AES、crypto 中ti - Fix use-after-free of dev_data on DTHEv2 driver removal。 |
-| Qualcomm | [PATCH v6 00/8] crypto: qce - Fix crypto self-test failures ------"在 QCE 驱动中修复 crypto 自测失败：空消息 HMAC 改为能产生正确结果，空消息 AES-XTS 请求被拒绝，AES-CTR 部分块请求的计数/长度处理被修正，并将部分末块/分片负载的 AES-CTR、CCM、弱 XTS 密钥和分片 skcipher 负载移交软件实现。" |
-| Individual Contributor | [PATCH v1 00/3] crypto: caam: Fix DMA mapping leak in the cbc(paes) job path ------"将 CAAM 的 cbc(paes) 路径改为按每个 tfm 只映射一次 paes 受保护密钥，并在 setkey 时校验该密钥的头部格式，修复每次加解密作业重复映射导致的 DMA 映射泄漏。" |
-| Individual Contributor | [PATCH v2 00/5] crypto: eip93: fix request lifetime and completion handling ------"在 EIP93 加密驱动中修复请求生命周期与完成处理：DMA 清理时跳过未初始化映射，未 setkey 的 HMAC 请求被拒绝，加密请求改用 request-local SA 记录，待 PE_READY 后再读结果描述符，并处理 request ID 耗尽情况。" |
-| Red Hat | [PATCH v1 00/11] libcrypto: Provide more __cleanup functions for zeroizing data ------"为 lib/crypto 的 AES 密钥结构以及 HMAC 的 MD5/SHA1/SHA2 上下文新增清零封装函数以替代直接 memzero_explicit()，使这些上下文可通过 __cleanup 属性在作用域结束时自动清除。" |
-| Individual Contributor | [PATCH v3 00/5] crypto: talitos - fix rename first/last to first_desc/last_desc ------"在 talitos 驱动中停用 crypto_ahash::init 回调，解决 SEC1 每个 ahash 请求超过 32k 条描述符时的限制，并将区分首个/末个描述符的 first/last 改名为 first_desc/last_desc。" |
-| Individual Contributor | [PATCH v1 00/4] crypto: introduce generic dynamic software fallback and EIP93 support ------"从 tcrypt 移出 cycle 计数基准辅助函数，在 crypto 核心提供通用软件动态回退机制并将 EIP93 驱动接入，关闭回退时不再执行代理层调用以便消除额外开销。" |
-| Individual Contributor | [PATCH v7 00/2] Add support for hashing algorithms in TI DTHE V2 ------"在 TI DTHE V2 驱动中增加 SHA-224/256/384/512 算法支持，并基于这些摘要流程补充 HMAC 处理，使相应 ahash/HMAC 请求可由该硬件完成。" |
-| Red Hat | [PATCH v2 00/6] crypto: Add __cleanup functions for zeroizing aes_cmac_key & aes_cmac_ctx ------"为 aes_cmac_key 和 aes_cmac_ctx 提供清零封装函数，并在 lib/crypto/aes 中把 aes_cmac_key 的显式 memzero_explicit() 改为 __cleanup() 变量声明，使其在离开作用域时自动归零。" |
-| Individual Contributor | [PATCH v1 00/5] lib/crypto: add HKDF and convert fscrypt and NVMe ------在 lib/crypto 新增 HKDF-SHA256/384/512 实现及 KUnit 测试，并让 fscrypt 和 NVMe 改用该 HKDF 接口进行密钥派生。 |
-| Individual Contributor | [PATCH v1 00/2] crypto: rsassa-pkcs1: fix undersized key handling ------在 crypto/rsassa-pkcs1 的签名与验证路径中增加对过小 RSA 密钥的拒绝检查，避免因密钥长度不足产生错误结果。 |
-| Kernel.org | [PATCH v2 00/5] lib/crypto: KUnit tests for AES-CCM and AES-GCM ------该系列围绕 lib/crypto: KUnit tests for AES-CCM and AES-GCM，具体包括lib/crypto: tests 中Create test-utils.h、lib/crypto: tests 中改用 per-test-case buffers in hash tests。 |
-| Individual Contributor | [PATCH v1 00/3] Add X.509 CRL support ------在 X.509 解析中新增 CRL 解析器，支持间接 CRL，并增加 CRL 签名验证功能。 |
-| Kernel.org | [PATCH v1 00/2] More padata cleanups ------在 padata 中当 padata_work 不再需要时立即释放，并将剩余函数和数据标记为 __init 与 __initdata。 |
-| Kernel.org | [PATCH v1 00/3] lib/crypto: FIPS self-tests for AES encryption modes ------在 lib/crypto 中将 fips.h 拆分为 fips-aes.h 与 fips-sha.h，并为 AES 未认证模式和 GCM/CCM 增加 FIPS 自测试。 |
-| Individual Contributor | [PATCH v1 00/2] crypto: img-hash: clean up probe ------该系列围绕 crypto: img-hash: clean up probe，具体包括fetch resources into locals（在 probe body 前）、修复 IRQ teardown ordering and fetch clocks early。 |
-| Linux Community | [PATCH v1 00/2] crypto: zstd - avoid initializing the workspace twice ------在 crypto/zstd 中避免对压缩流和解压流工作区进行重复初始化，移除冗余的 ZSTD_CStream/DStream 初始化操作。 |
+| Individual Contributor | [PATCH v4 00/19] crypto: cmh - add Rambus CryptoManager Hub driver ------新增 Rambus CryptoManager Hub 平台驱动，向 crypto API 注册 HMAC-SHA2/SHA3、CSHAKE/KMAC、SHA-2/3/SM3、AES/SM4、ChaCha20-Poly1305、RSA、ECDH/X25519、ML-KEM/ML-DSA 以及 DRBG hwrng 能力。 |
+| Kernel.org | [PATCH v2 00/13] Library APIs for AES encryption modes ------在 lib/crypto 中新增 AES 的 ECB、CBC/CBC-CTS、CTR/XCTR、XTS、GCM、CCM 库接口，并新增 include/crypto/aes-*.h 头文件和文档，同时让 crypto 层的对应算法模板改为调用这些库实现，并从 crypto/xts 中拆分出 __xts_verify_key() 辅助函数。 |
+| Qualcomm | [PATCH v24 00/14] crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O ------QCE crypto 驱动将寄存器访问改为 BAM DMA：qce_write 改用新增 qce_write_dma() 命令码下发，probe 记录 base_phys/dma_size 并 dma_map_resource，devm_qce_dma_request() 为 BAM 配置 lock_scratchpad_addr=base_phys+REG_VERSION。 |
+| Individual Contributor | [PATCH v3 00/5] crypto: talitos - fix rename first/last to first_desc/last_desc ------清理 talitos ahash 请求上下文字段命名，将 first/last 改为 first_desc/last_desc，并同步调整 ahash digest/init/finup 路径及 sha224 软件初始化处理。 |
+| Individual Contributor | [PATCH v1 00/4] crypto: introduce generic dynamic software fallback and EIP93 support ------为 Crypto API 新增 CONFIG_CRYPTO_DYNAMIC_FALLBACK 与 crypto/fallback.c，提供依据 benchmark 结果动态切换软回退的机制；EIP93 驱动在 Kconfig 中 select CRYPTO_DYNAMIC_FALLBACK 及 AES/CBC/CTR/DES/ECB/HMAC 并新增 eip93-fallback.c。 |
+| Individual Contributor | [PATCH v7 00/2] Add support for hashing algorithms in TI DTHE V2 ------TI DTHEV2 crypto 驱动新增哈希算法支持：Kconfig 选入 CRYPTO_SHA256/SHA512/CRYPTO_HMAC，Makefile 增加 dthev2-hash.o，新文件实现 SHA224/256/384/512 与 HMAC 的 ahash 注册。 |
+| Individual Contributor | [PATCH v1 00/5] lib/crypto: add HKDF and convert fscrypt and NVMe ------在 lib/crypto 中新增 HKDF-SHA256/384/512 extract/expand 库接口和 KUnit 覆盖，并把 fscrypt 与 NVMe 的密钥派生逻辑迁移到统一 HKDF helper。 |
+| Kernel.org | [PATCH v2 00/5] lib/crypto: KUnit tests for AES-CCM and AES-GCM ------为 lib/crypto 的 AES-CCM 与 AES-GCM 库接口新增 KUnit 测试，抽出 aead-test-template.h/test-utils.h 复用测试模板，并让 hash 测试改为每个用例独立分配缓冲区。 |
+| Kernel.org | [PATCH v1 00/3] lib/crypto: FIPS self-tests for AES encryption modes ------为 lib/crypto/aes.c 增加 AES 模式 FIPS 启动自检，覆盖 ECB、GCM、CCM 等加解密向量校验，并将 fips.h 拆分为 fips-aes.h 与 fips-sha.h；自检失败时触发 panic。 |
+| Individual Contributor | [RFC,RESEND,v6,1/1] crypto: atmel-ecc - fix multi-device use-after-free and registration races ------在 atmel-ecc.c 中引入 atmel_ecc_kpp_lock、kpp_refcnt 和 completion，让 atmel_ecc_remove() 等待 tfm_count 归零后才释放 i2c 客户端，而 atmel_ecc_probe() 在注册 kpp 前等待旧实例注销完成（超时返回 -ETIMEDOUT），修复多设备并发注册/注销时 i2c_priv 被释放后仍被 TFM 访问的 use-after-free。 |
+| Kernel.org | [2/2] padata: Remove serialized job support ------从 padata 中删除 serialized job 支持，移除对应文档、serial cpumask 回调和 padata_do_parallel() 的串行作业路径，只保留并行 multithreaded job 机制。 |
+| Individual Contributor | [v5,3/3] crypto: ti - Add support for HMAC in DTHEv2 Hashing Engine driver ------在 TI DTHEv2 hash 驱动的 Kconfig 中 select CRYPTO_HMAC，将 dthe_tfm_ctx 的 DTHE_MAX_KEYSIZE 由 AES-XTS 的 64 字节改为 SHA512_BLOCK_SIZE，并在 dthe_hash_req_ctx 增加 odigest 缓冲。 |
+| Individual Contributor | [v3,2/4] crypto: rockchip: Add RK356x/RK3588 cryptographic offloader driver ------为 Rockchip RK356x/RK3588 新增加密 offloader 驱动，加入 CRYPTO_DEV_ROCKCHIP2 Kconfig/Makefile 条目和 rk2_crypto.c 平台驱动，接入这些 SoC 的硬件加密加速器。 |
+| Individual Contributor | [2/3] x509: add CRL parser with indirect CRL support ------在 crypto/asymmetric_keys 的 X.509 解析器中新增 CRL 解析，加入 x509_crl.asn1 和 x509_idp.asn1，处理 IssuingDistributionPoint、certificateIssuer 与 CRLReason 扩展以支持 indirect CRL。 |
+| Individual Contributor | [RFC] crypto: qat - zero the VF migration state buffer on save ------在 QAT gen4 VF 迁移保存路径中，adf_gen4_vfmig_save_setup() 使用 memset(mdev->state, 0, mdev->state_size) 清零整个状态缓冲，adf_gen4_vfmig_save_state() 再清零 setup 区之后的部分，然后才初始化 mstate_mgr，避免未初始化迁移状态被保存。 |
+| Individual Contributor | [PATCH] crypto: talitos: pass talitos_private to irq handlers ------将 talitos1/2 中断处理程序的 request_irq() dev_id 从 struct device *dev 改为 struct talitos_private *priv，使回调宏直接以 data 作为 priv 使用，并在错误路径调用 talitos_error(priv->dev, ...)，替换原先的 dev_get_drvdata(dev) 间接查找。 |
+| Individual Contributor | [PATCH] lib/crypto: x86/chacha: Add a 16-block AVX-512 variant ------在 lib/crypto/x86 中新增 chacha-avx512-x86_64.S 和 chacha_16block_xor_avx512()，利用 AVX-512 zmm 寄存器一次并行处理 16 个 ChaCha block 的加解密异或。 |
 
 ---
 
@@ -127,14 +124,14 @@
 
 - 日期：2026-08-15
 - 状态：已合入
-- 概括：在 octeontx 的 HMAC 认证路径中，将 tag 比较从 memcmp() 换成 crypto_memneq()，使比较时间不依赖明文/摘要内容。
+- 概括：在 crypto 中改用 crypto_memneq() to check HMAC。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/aoCdOiyhQZZsFm5S@david.gall/
 
 **crypto: amcc: pass core_dev to request_irq**
 
 - 日期：2026-08-12
 - 状态：已合入
-- 概括：在 amcc crypto4xx 驱动的 request_irq() 调用中传入 core_dev 作为中断处理函数上下文，使 ISR 的 data 参数指向真正包含硬件状态与锁的 core_dev 结构体。
+- 概括：在 crypto: amcc 中传递 core_dev to request_irq。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260812191555.93423-1-rosenp@gmail.com/
 
 **crypto: s5p-sss: pass s5p_aes_dev to irq handler**
@@ -155,21 +152,21 @@
 
 - 日期：2026-08-03
 - 状态：已合入
-- 概括：在 crypto 中eip93 - use struct_size() and flexible array for ring allocation。
+- 概括：在 crypto 中为 ring allocation 改用 struct_size() and flexible array。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260803224028.87631-1-rosenp@gmail.com/
 
 **crypto: ccp - don't abuse kernel-doc comment format**
 
 - 日期：2026-07-30
 - 状态：已合入
-- 概括：在 crypto 中ccp - don't abuse kernel-doc comment format。
+- 概括：在 crypto 中避免 abuse kernel-doc comment format。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260730051710.1412969-1-rdunlap@infradead.org/
 
 **crypto: ccm - Set rfc4309 maxauthsize from child**
 
 - 日期：2026-07-20
 - 状态：已合入
-- 概括：在 crypto 中ccm - Set rfc4309 maxauthsize from child。
+- 概括：在 crypto 中设置 rfc4309 maxauthsize from child。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/al17HaL8wNd_fuDc@gondor.apana.org.au/
 
 **crypto: hisilicon/sec: use devm_platform_ioremap_resource in sec_map_io**
@@ -197,14 +194,14 @@
 
 - 日期：2026-07-14
 - 状态：已合入
-- 概括：在 crypto 中keembay - Initialize completion（在 requesting IRQ 前）。
+- 概括：在 crypto 中Initialize completion（在 requesting IRQ 前）。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260714033015.367735-1-lilinmao@kylinos.cn/
 
 **crypto: keembay - publish OF module alias for OCS AES/SM4**
 
 - 日期：2026-07-14
 - 状态：已合入
-- 概括：在 crypto 中keembay - publish OF module alias for OCS AES/SM4。
+- 概括：在 crypto 中publish OF module alias for OCS AES/SM4。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260714131442.153699-1-pengcan@kylinos.cn/
 
 **▸ 组织：Linux Community**（6 patches）
@@ -213,42 +210,42 @@
 
 - 日期：2026-08-15
 - 状态：已合入
-- 概括：重构 crypto/qce 驱动的寄存器注册函数控制流，删除重复的错误分支，使多个算法注册失败时统一走同一个返回路径，减少缩进层级。
+- 概括：在 crypto 中simplify control flow in register functions。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260815150946.12142-3-thorsten.blum@linux.dev/
 
 **crypto: starfive - use scatterlist length before DMA mapping**
 
 - 日期：2026-07-25
 - 状态：已合入
-- 概括：在 crypto 中starfive - use scatterlist length（在 DMA mapping 前）。
+- 概括：在 crypto 中改用 scatterlist length（在 DMA mapping 前）。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260725090609.315812-2-thorsten.blum@linux.dev/
 
 **crypto: octeontx - simplify get_{eng,ucode}_type_str helpers**
 
 - 日期：2026-07-23
 - 状态：已合入
-- 概括：在 crypto 中octeontx - simplify get_{eng,ucode}_type_str helpers。
+- 概括：在 crypto 中simplify get_{eng,ucode}_type_str helpers。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260723163326.163043-2-thorsten.blum@linux.dev/
 
 **crypto: powerpc/aes - use bool for encryption/decryption flag**
 
 - 日期：2026-07-11
 - 状态：已合入
-- 概括：在 crypto 中powerpc/aes - use bool for encryption/decryption flag。
+- 概括：在 crypto 中为 encryption/decryption flag 改用 bool。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260711145216.747128-3-thorsten.blum@linux.dev/
 
 **crypto: atmel-sha204a - clear RNG data from memory**
 
 - 日期：2026-07-08
 - 状态：已合入
-- 概括：在 crypto 中atmel-sha204a - clear RNG data from memory。
+- 概括：在 crypto 中清除 RNG data from memory。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260708150359.545852-2-thorsten.blum@linux.dev/
 
 **[SERIES] crypto: atmel-tdes - simplify fast path in crypt_start** （cover letter，2/4 个 patch 达到代码量阈值）
 
 - 日期：2026-07-06
 - 状态：已合入
-- 概括：在 atmel-tdes 驱动中重构 crypt_start 快速路径，移除 crypt_pdc_stop 与 crypt_dma_stop 内冗余的返回变量和 if 检查，并将 buff_init 的缓冲页分配改为 __get_free_page()。
+- 概括：simplify fast path in crypt_start、改用 __get_free_page in buff_init、删除 redundant return variable in crypt_pdc_stop，并删除 redundant if check in crypt_dma_stop。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: atmel-tdes - simplify fast path in crypt_start
   - crypto: atmel-tdes - use __get_free_page in buff_init
@@ -260,7 +257,7 @@
 
 - 日期：2026-08-05
 - 状态：已合入
-- 概括：在 Intel IAA crypto 驱动中，对含多 scatterlist entry 的解压输入使用 bounce buffer，并在软件回退解压前先解除 dst DMA 映射，同时使解压字节统计不再计入回退到软件实现的数据。
+- 概括：避免 counting fallback decompression bytes、fall back to software for multi-entry scatterlists、为 multi-sg decompress input 改用 bounce buffer，并unmap dst（在 software fallback on decompress 前）。
 - 达到阈值的 patches（4 个，显示前 5）：
   - crypto: iaa - avoid counting fallback decompression bytes
   - crypto: iaa - fall back to software for multi-entry scatterlists
@@ -274,7 +271,7 @@
 
 - 日期：2026-08-10
 - 状态：已合入
-- 概括：该系列围绕 crypto: Provide a function for zeroizing crypto_aes_ctx，具体包括aspeed - clear the crypto_aes_ctx（当 done 时）、padlock-aes - clear the crypto_aes_ctx（当 done 时）。
+- 概括：新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。
 - 达到阈值的 patches（8 个，显示前 5）：
   - crypto: aspeed - clear the crypto_aes_ctx when done
   - crypto: padlock-aes - clear the crypto_aes_ctx when done
@@ -294,7 +291,7 @@
 
 - 日期：2026-08-02
 - 状态：已合入
-- 概括：在 AF_ALG 算法白名单中将 cbc(paes) 设为仅特权可用，用 flags 位替换原有 privileged bool，并使白名单查询在找到目标名称后立刻停止遍历。
+- 概括：清理 AF_ALG 限制列表逻辑：将 cbc(paes) 标记为非特权可用，并调整 af_alg_check_restriction() 的同名条目匹配流程，避免无特权时继续遍历后续 allowlist 项造成权限判断歧义。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: af_alg - Make cbc(paes) privileged-only
   - crypto: af_alg - Stop after finding name in allowlist
@@ -304,7 +301,7 @@
 
 - 日期：2026-07-05
 - 状态：已合入
-- 概括：在 crypto/af_alg.c 的算法 allowlist 中加入 cryptsetup 所需的额外 cipher 名称，使非特权 cryptsetup 进程能通过 AF_ALG socket 完成这些算法的认证与初始化。
+- 概括：在 AF_ALG skcipher allowlist 中加入 cryptsetup 使用的 xts(camellia)、xts(serpent)、xts(twofish) 等算法条目，让用户态磁盘加密工具继续通过 AF_ALG socket 调用这些 cipher。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260705184419.40762-1-ebiggers@kernel.org/
 
 **▸ 组织：Individual Contributor**（1 patches）
@@ -326,21 +323,21 @@
 
 - 日期：2026-08-15
 - 状态：已合入
-- 概括：在 ccree 驱动的 AEAD tag 校验时改用 crypto_memneq() 比较解密获得的 tag 与原始 tag，以常数时间比较避免认证失败路径泄露数据。
+- 概括：在 crypto 中改用 crypto_memneq() to compare AEAD tag。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/aoCdZiqJjb5XDHHz@david.gall/
 
 **crypto: sa2ul - use crypto_memneq() to compare AEAD tag**
 
 - 日期：2026-08-07
 - 状态：已合入
-- 概括：在 crypto 中sa2ul - use crypto_memneq() to compare AEAD tag。
+- 概括：在 crypto 中改用 crypto_memneq() to compare AEAD tag。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/anX9UKJ66Aak4ICV@fudgebox/
 
 **[SERIES] crypto: keembay - use crypto_memneq() to compare GCM AEAD tags** （cover letter，2/2 个 patch 达到代码量阈值）
 
 - 日期：2026-08-07
 - 状态：已合入
-- 概括：在 keembay 驱动的 AEAD 完成路径中，将 GCM 和 CCM 两种模式的认证 tag 比较从 memcmp() 替换为常数时间 crypto_memneq()，消除认证标签比较时间侧信道风险。
+- 概括：改用 crypto_memneq() to compare GCM AEAD tags，并改用 crypto_memneq() to compare CCM AEAD tags。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: keembay - use crypto_memneq() to compare GCM AEAD tags
   - crypto: keembay - use crypto_memneq() to compare CCM AEAD tags
@@ -356,14 +353,14 @@
 
 - 日期：2026-08-04
 - 状态：已合入
-- 概括：在 hwrng 核心的电源管理回调中，suspend 时调用 kthread_stop() 停止 hwrng_fillfn 填充线程，resume 后再重新启动该线程，避免挂起期间继续搬运熵数据。
+- 概括：在 hwrng core 中注册 PM notifier，系统 suspend/hibernate 前停止 hwrng_fillfn kthread 并记录停止状态，resume/restore 后再重新启动，避免休眠阶段后台线程继续触碰 RNG 设备。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260804-hw-random-fix-hwrng-fillfn-crash-suspend-resume-v5-1-c4769b3c007b@bootlin.com/
 
 **[v2,2/2] hwrng: omap: Enable on Renesas RZ/N1D**
 
 - 日期：2026-07-10
 - 状态：已合入
-- 概括：在 omap-rng 驱动的设备匹配表中加入 Renesas RZ/N1D 对应的 compatible 项，使该 SoC 的硬件随机数发生器能够被 omap hwrng 驱动 probe 并注册。
+- 概括：在 hwrng: omap 中启用 on Renesas RZ/N1D。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260710-schneider-v7-2-rc1-eip76-upstream-v2-2-4eab557b0e70@bootlin.com/
 
 ---
@@ -376,7 +373,7 @@
 
 - 日期：2026-07-05
 - 状态：已合入
-- 概括：在 crypto 中qat - use strscpy_pad to simplify adf_service_string_to_mask。
+- 概括：在 crypto 中改用 strscpy_pad to simplify adf_service_string_to_mask。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260705133842.241401-3-thorsten.blum@linux.dev/
 
 ---
@@ -402,7 +399,7 @@
 
 - 日期：2026-07-20
 - 状态：已合入
-- 概括：在 crypto 中bcm - use memcpy_and_pad in ahash_hmac_setkey。
+- 概括：在 crypto 中改用 memcpy_and_pad in ahash_hmac_setkey。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260720232249.117992-3-thorsten.blum@linux.dev/
 
 ---
@@ -441,7 +438,7 @@
 
 - 日期：2026-08-15
 - 状态：已合入
-- 概括：在 octeontx2 的 authenc(cipher_null,hmac) 路径中，将计算出的 HMAC 与入 tag 的匹配由 memcmp() 改为 crypto_memneq()，防止按内容早退造成时序侧信道。
+- 概括：在 crypto 中为 cipher_null authenc 改用 crypto_memneq() to check HMAC。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/aoCdBZ-kLQ0rciFi@david.gall/
 
 ---
@@ -454,7 +451,7 @@
 
 - 日期：2026-07-28
 - 状态：已合入
-- 概括：在 atmel-ecc 驱动的 atmel_ecdh_set_secret() 中删除冗余 ret 返回变量，将错误处理改为直接返回各步调用结果并合并重复分支，以简化 ECDH 私钥设置的控制流。
+- 概括：simplify control flow in atmel_ecdh_set_secret，并删除 redundant return variable。
 - 达到阈值的 patches（1 个，显示前 5）：
   - crypto: atmel-ecc - simplify control flow in atmel_ecdh_set_secret
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260728205825.471233-3-thorsten.blum@linux.dev/
@@ -469,7 +466,7 @@
 
 - 日期：2026-07-31
 - 状态：已合入
-- 概括：该补丁系列简化 crypto/qce：将 qce_handle_request() 中分算法处理的公共判断提前到函数入口，并把 devm_qce_register_algs() 对多个算法的注册错误改为集中返回，去除重复的注册/清理分支。
+- 概括：simplify qce_handle_request，并simplify devm_qce_register_algs。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: qce - simplify qce_handle_request
   - crypto: qce - simplify devm_qce_register_algs
@@ -485,7 +482,7 @@
 
 - 日期：2026-08-15
 - 状态：已合入
-- 概括：该系列围绕 crypto: asymmetric_keys - fix OOB read in pefile_parse_binary，具体包括asymmetric_keys - fix OOB read in pefile_parse_binary、asymmetric_keys - add KUnit tests for the PE parser。
+- 概括：修复 asymmetric_keys 中 pefile_parse_binary() 对 PE 安全目录和 section 范围校验不足导致的越界读，并补充 PE parser KUnit 用例覆盖异常输入。
 - 达到阈值的 patches（1 个，显示前 5）：
   - crypto: asymmetric_keys - add KUnit tests for the PE parser
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/fcbc6b4d5855ba42a0fccf335b2604ef0b36f092.1786802052.git.fabrice.derepas@canonical.com/
@@ -516,14 +513,14 @@
 
 - 日期：2026-08-29
 - 状态：社区讨论中
-- 概括：在 crypto 中atmel-tdes - zero-initialize device state。
+- 概括：在 crypto 中zero-initialize device state。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260829035821.67220-1-kmehltretter@gmail.com/
 
 **[SERIES] Add support for hashing algorithms in TI DTHE V2** （cover letter，2/2 个 patch 达到代码量阈值）
 
 - 日期：2026-08-27
 - 状态：社区讨论中
-- 概括："在 TI DTHE V2 驱动中增加 SHA-224/256/384/512 算法支持，并基于这些摘要流程补充 HMAC 处理，使相应 ahash/HMAC 请求可由该硬件完成。"
+- 概括：crypto 中增加 SHA224/256/384/512 in DTHEv2 driver 支持，并crypto 中增加 HMAC in DTHEv2 driver 支持。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: ti - Add support for SHA224/256/384/512 in DTHEv2 driver
   - crypto: ti - Add support for HMAC in DTHEv2 driver
@@ -533,7 +530,7 @@
 
 - 日期：2026-08-27
 - 状态：社区讨论中
-- 概括：该系列围绕 Fix several issues in DTHEv2 driver，具体包括crypto 中ti - Trim scatterlists to correct length in AES、crypto 中ti - Fix use-after-free of dev_data on DTHEv2 driver removal。
+- 概括：crypto 中Trim scatterlists to correct length in AES、crypto 中修复 use-after-free of dev_data on DTHEv2 driver removal、crypto 中改用 list_first_entry_or_null() in dthe_get_dev()。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: ti - Trim scatterlists to correct length in AES
   - crypto: ti - Use list_first_entry_or_null() in dthe_get_dev()
@@ -543,7 +540,7 @@
 
 - 日期：2026-08-25
 - 状态：社区讨论中
-- 概括：该系列围绕 crypto: cmh - add Rambus CryptoManager Hub driver，具体包括cmh - add HMAC ahash、cmh - add ML-KEM/ML-DSA (QSE)、cmh - add DRBG hwrng、cmh - add CSHAKE/KMAC ahash。
+- 概括：新增 Rambus CryptoManager Hub 平台驱动，向 crypto API 注册 HMAC-SHA2/SHA3、CSHAKE/KMAC、SHA-2/3/SM3、AES/SM4、ChaCha20-Poly1305、RSA、ECDH/X25519、ML-KEM/ML-DSA 以及 DRBG hwrng 能力。
 - 达到阈值的 patches（15 个，显示前 5）：
   - crypto: cmh - add HMAC ahash
   - crypto: cmh - add ML-KEM/ML-DSA (QSE)
@@ -557,7 +554,7 @@
 
 - 日期：2026-08-22
 - 状态：社区讨论中
-- 概括：在 X.509 解析中新增 CRL 解析器，支持间接 CRL，并增加 CRL 签名验证功能。
+- 概括：x509 中新增 CRL parser（携带 indirect CRL support），并x509 中新增 CRL signature verification support。
 - 达到阈值的 patches（1 个，显示前 5）：
   - x509: add CRL parser with indirect CRL support
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260822082642.48936-3-tnovikov@astralinux.ru/
@@ -566,14 +563,14 @@
 
 - 日期：2026-08-17
 - 状态：社区讨论中
-- 概括：在 crypto 中qat - zero the VF migration state buffer on save。
+- 概括：在 crypto 中zero the VF migration state buffer on save。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260817042613.19855-1-kmehltretter@gmail.com/
 
 **[v3,2/4] crypto: rockchip: Add RK356x/RK3588 cryptographic offloader driver**
 
 - 日期：2026-08-16
 - 状态：社区讨论中
-- 概括：在 crypto: rockchip 中新增 RK356x/RK3588 cryptographic offloader driver。
+- 概括：为 Rockchip RK356x/RK3588 新增加密 offloader 驱动，加入 CRYPTO_DEV_ROCKCHIP2 Kconfig/Makefile 条目和 rk2_crypto.c 平台驱动，接入这些 SoC 的硬件加密加速器。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260816194112.552100-3-dawidro@gmail.com/
 
 **crypto: amcc: trng: use devm_of_iomap()**
@@ -587,14 +584,14 @@
 
 - 日期：2026-08-11
 - 状态：社区讨论中
-- 概括：在 crypto 中api - wipe tfm contexts（在 kdump 前）。
+- 概括：在 crypto 中wipe tfm contexts（在 kdump 前）。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260811-crash-zeroize-rework-v2-12-9561d13c2340@jaseg.de/
 
 **[SERIES] crypto: img-hash: clean up probe** （cover letter，1/2 个 patch 达到代码量阈值）
 
 - 日期：2026-08-11
 - 状态：社区讨论中
-- 概括：该系列围绕 crypto: img-hash: clean up probe，具体包括fetch resources into locals（在 probe body 前）、修复 IRQ teardown ordering and fetch clocks early。
+- 概括：fetch resources into locals（在 probe body 前），并修复 IRQ teardown ordering and fetch clocks early。
 - 达到阈值的 patches（1 个，显示前 5）：
   - crypto: img-hash: fetch resources into locals before probe body
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260811212030.20057-2-rosenp@gmail.com/
@@ -610,7 +607,7 @@
 
 - 日期：2026-07-28
 - 状态：社区讨论中
-- 概括："从 tcrypt 移出 cycle 计数基准辅助函数，在 crypto 核心提供通用软件动态回退机制并将 EIP93 驱动接入，关闭回退时不再执行代理层调用以便消除额外开销。"
+- 概括：move cycle benchmark helpers out of tcrypt、引入 dynamic software fallback、新增 dynamic software fallback support，并eliminate fallback proxy overhead while disabled。
 - 达到阈值的 patches（4 个，显示前 5）：
   - crypto: move cycle benchmark helpers out of tcrypt
   - crypto: introduce dynamic software fallback
@@ -622,14 +619,14 @@
 
 - 日期：2026-07-22
 - 状态：社区讨论中
-- 概括：在 lib/crypto: x86/chacha 中新增 a 16-block AVX-512 variant。
+- 概括：在 lib/crypto/x86 中新增 chacha-avx512-x86_64.S 和 chacha_16block_xor_avx512()，利用 AVX-512 zmm 寄存器一次并行处理 16 个 ChaCha block 的加解密异或。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260722153247.630519-1-martin@strongswan.org/
 
 **[SERIES] lib/crypto: add HKDF and convert fscrypt and NVMe** （cover letter，2/2 个 patch 达到代码量阈值）
 
 - 日期：2026-07-21
 - 状态：社区讨论中
-- 概括：在 lib/crypto 新增 HKDF-SHA256/384/512 实现及 KUnit 测试，并让 fscrypt 和 NVMe 改用该 HKDF 接口进行密钥派生。
+- 概括：在 lib/crypto 中新增 HKDF-SHA256/384/512 extract/expand 库接口和 KUnit 覆盖，并把 fscrypt 与 NVMe 的密钥派生逻辑迁移到统一 HKDF helper。
 - 达到阈值的 patches（2 个，显示前 5）：
   - lib/crypto: tests: add HKDF KUnit tests
   - lib/crypto: add HKDF-SHA{256,384,512}
@@ -639,14 +636,14 @@
 
 - 日期：2026-07-20
 - 状态：社区讨论中
-- 概括：在 crypto 中verify_pefile - Use constant-time digest comparison。
+- 概括：在 crypto 中改用 constant-time digest comparison。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260720031815.204237-1-yijiangshan@kylinos.cn/
 
 **[SERIES] crypto: eip93: fix request lifetime and completion handling** （cover letter，4/5 个 patch 达到代码量阈值）
 
 - 日期：2026-07-07
 - 状态：社区讨论中
-- 概括："在 EIP93 加密驱动中修复请求生命周期与完成处理：DMA 清理时跳过未初始化映射，未 setkey 的 HMAC 请求被拒绝，加密请求改用 request-local SA 记录，待 PE_READY 后再读结果描述符，并处理 request ID 耗尽情况。"
+- 概括：guard DMA cleanup on uninitialized mappings、拒绝 HMAC requests（在 setkey 前）、为 cipher requests 改用 request-local SA records、order result descriptor reads（在 PE_READY 后），并handle request ID exhaustion。
 - 达到阈值的 patches（4 个，显示前 5）：
   - crypto: eip93: reject HMAC requests before setkey
   - crypto: eip93: use request-local SA records for cipher requests
@@ -660,7 +657,7 @@
 
 - 日期：2026-08-02
 - 状态：社区讨论中
-- 概括：该系列围绕 lib/crypto: KUnit tests for AES-CCM and AES-GCM，具体包括lib/crypto: tests 中Create test-utils.h、lib/crypto: tests 中改用 per-test-case buffers in hash tests。
+- 概括：为 lib/crypto 的 AES-CCM 与 AES-GCM 库接口新增 KUnit 测试，抽出 aead-test-template.h/test-utils.h 复用测试模板，并让 hash 测试改为每个用例独立分配缓冲区。
 - 达到阈值的 patches（5 个，显示前 5）：
   - lib/crypto: tests: Create test-utils.h
   - lib/crypto: tests: Use per-test-case buffers in hash tests
@@ -673,7 +670,7 @@
 
 - 日期：2026-08-02
 - 状态：社区讨论中
-- 概括：在 lib/crypto 中将 fips.h 拆分为 fips-aes.h 与 fips-sha.h，并为 AES 未认证模式和 GCM/CCM 增加 FIPS 自测试。
+- 概括：为 lib/crypto/aes.c 增加 AES 模式 FIPS 启动自检，覆盖 ECB、GCM、CCM 等加解密向量校验，并将 fips.h 拆分为 fips-aes.h 与 fips-sha.h；自检失败时触发 panic。
 - 达到阈值的 patches（3 个，显示前 5）：
   - lib/crypto: fips: Split fips.h into fips-aes.h and fips-sha.h
   - lib/crypto: aes: Add FIPS self-tests for unauthenticated modes
@@ -691,7 +688,7 @@
 
 - 日期：2026-07-17
 - 状态：社区讨论中
-- 概括：在 padata 中当 padata_work 不再需要时立即释放，并将剩余函数和数据标记为 __init 与 __initdata。
+- 概括：Free the padata_works（当 they're no longer needed 时），并Mark remaining code as __init and data as __initdata。
 - 达到阈值的 patches（2 个，显示前 5）：
   - padata: Free the padata_works when they're no longer needed
   - padata: Mark remaining code as __init and data as __initdata
@@ -701,7 +698,7 @@
 
 - 日期：2026-07-15
 - 状态：社区讨论中
-- 概括：该系列围绕 Library APIs for AES encryption modes，具体包括crypto 中xts - Split out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support。
+- 概括：crypto 中拆分 out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support、lib/crypto: aes 中新增 CTR and XCTR support，并lib/crypto: aes 中新增 XTS support。
 - 达到阈值的 patches（12 个，显示前 5）：
   - crypto: xts - Split out __xts_verify_key() helper
   - lib/crypto: aes: Add ECB support
@@ -715,7 +712,7 @@
 
 - 日期：2026-07-13
 - 状态：社区讨论中
-- 概括：在 padata 中移除 serialized job support。
+- 概括：从 padata 中删除 serialized job 支持，移除对应文档、serial cpumask 回调和 padata_do_parallel() 的串行作业路径，只保留并行 multithreaded job 机制。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260713223234.24812-3-ebiggers@kernel.org/
 
 **lib/crypto: docs: Improve introduction sentence**
@@ -731,7 +728,7 @@
 
 - 日期：2026-08-19
 - 状态：社区讨论中
-- 概括：在 crypto 中inside-secure - Zeroize temporary arrays on stack（携带 sensitive data）。
+- 概括：在 crypto 中Zeroize temporary arrays on stack（携带 sensitive data）。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260819151845.835768-1-thuth@redhat.com/
 
 **lib/crypto: chacha20poly1305: Clear chacha_state in xchacha20poly1305_decrypt()**
@@ -745,7 +742,7 @@
 
 - 日期：2026-08-13
 - 状态：社区讨论中
-- 概括："为 lib/crypto 的 AES 密钥结构以及 HMAC 的 MD5/SHA1/SHA2 上下文新增清零封装函数以替代直接 memzero_explicit()，使这些上下文可通过 __cleanup 属性在作用域结束时自动清除。"
+- 概括：新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。
 - 达到阈值的 patches（7 个，显示前 5）：
   - lib/crypto: aes: Provide a wrapper function for zeroizing crypto_aes_ctx
   - lib/crypto: aes: Use aes_zeroize_*key() instead of memzero_explicit()
@@ -759,7 +756,7 @@
 
 - 日期：2026-08-12
 - 状态：社区讨论中
-- 概括：该系列围绕 lib/crypto: Provide a function for zeroizing hmac_sha1_ctx，具体包括提供 a wrapper for zeroizing hmac_sha1_ctx。
+- 概括：提供 a wrapper for zeroizing hmac_sha1_ctx，并lib/crypto: sha1 中改用 hmac_sha1_zeroize_ctx() instead of memzero_explicit()。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: Provide a wrapper for zeroizing hmac_sha1_ctx
   - lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of memzero_explicit()
@@ -769,7 +766,7 @@
 
 - 日期：2026-08-07
 - 状态：社区讨论中
-- 概括："为 aes_cmac_key 和 aes_cmac_ctx 提供清零封装函数，并在 lib/crypto/aes 中把 aes_cmac_key 的显式 memzero_explicit() 改为 __cleanup() 变量声明，使其在离开作用域时自动归零。"
+- 概括：提供 wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx，并lib/crypto: aes 中为 aes_cmac_key instead of memzero_explicit() 改用 __cleanup()。
 - 达到阈值的 patches（1 个，显示前 5）：
   - crypto: Provide wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260807125845.1477067-2-thuth@redhat.com/
@@ -778,7 +775,7 @@
 
 - 日期：2026-07-01
 - 状态：社区讨论中
-- 概括：在 crypto 中pcrypt - Disallow nesting of the pcrypt wrapper。
+- 概括：在 crypto 中Disallow nesting of the pcrypt wrapper。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260701143947.944593-1-thuth@redhat.com/
 
 **▸ 组织：Huawei**（2 patches）
@@ -787,14 +784,14 @@
 
 - 日期：2026-08-29
 - 状态：社区讨论中
-- 概括：在 crypto 中hisilicon/zip - enable auto clock gating for DAE。
+- 概括：在 crypto 中启用 auto clock gating for DAE。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260829094924.2191402-1-huangchenghai2@huawei.com/
 
 **[v2] crypto: hisilicon/sec - remove SEC crypto block cipher accelerator**
 
 - 日期：2026-08-19
 - 状态：社区讨论中
-- 概括：在 crypto 中hisilicon/sec - remove SEC crypto block cipher accelerator。
+- 概括：在 crypto 中移除 SEC crypto block cipher accelerator。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260819075353.94500-1-huangchenghai2@huawei.com/
 
 **▸ 组织：Qualcomm**（2 patches）
@@ -803,7 +800,7 @@
 
 - 日期：2026-07-23
 - 状态：社区讨论中
-- 概括：该系列围绕 crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O，具体包括qce - Cancel work on device detach、qce - Include algapi.h in the core.h header。
+- 概括：取消 work on device detach、Include algapi.h in the core.h header、移除 unused ignore_buf、Simplify arguments of devm_qce_dma_request()，并改用 existing devres APIs in devm_qce_dma_request()。
 - 达到阈值的 patches（7 个，显示前 5）：
   - crypto: qce - Cancel work on device detach
   - crypto: qce - Include algapi.h in the core.h header
@@ -817,7 +814,7 @@
 
 - 日期：2026-07-17
 - 状态：社区讨论中
-- 概括："在 QCE 驱动中修复 crypto 自测失败：空消息 HMAC 改为能产生正确结果，空消息 AES-XTS 请求被拒绝，AES-CTR 部分块请求的计数/长度处理被修正，并将部分末块/分片负载的 AES-CTR、CCM、弱 XTS 密钥和分片 skcipher 负载移交软件实现。"
+- 概括：修复 HMAC self-test failures for empty messages、拒绝 empty messages for AES-XTS、修复 CTR-AES for partial block requests、为 AES-CTR（携带 a partial final block 改用 a fallback），并为 CCM（携带 a partial final block 改用 a fallback）。
 - 达到阈值的 patches（5 个，显示前 5）：
   - crypto: qce - Reject empty messages for AES-XTS
   - crypto: qce - Use a fallback for AES-CTR with a partial final block
@@ -850,7 +847,7 @@
 
 - 日期：2026-08-31
 - 状态：社区讨论中
-- 概括：在 crypto 中qat - allow KPT disable（当 service is not asym 时）。
+- 概括：在 crypto 中允许 KPT disable（当 service is not asym 时）。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260831063355.668528-2-nitesh.venkatesh@intel.com/
 
 **▸ 组织：Linux Community**（1 patches）
@@ -859,7 +856,7 @@
 
 - 日期：2026-08-25
 - 状态：社区讨论中
-- 概括：在 crypto/zstd 中避免对压缩流和解压流工作区进行重复初始化，移除冗余的 ZSTD_CStream/DStream 初始化操作。
+- 概括：避免 redundant cstream initialization，并避免 redundant dstream initialization。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: zstd - Avoid redundant cstream initialization
   - crypto: zstd - Avoid redundant dstream initialization
@@ -875,7 +872,7 @@
 
 - 日期：2026-08-26
 - 状态：社区讨论中
-- 概括：在 crypto/rsassa-pkcs1 的签名与验证路径中增加对过小 RSA 密钥的拒绝检查，避免因密钥长度不足产生错误结果。
+- 概括：拒绝 undersized keys（当 signing 时），并拒绝 undersized keys（当 verifying 时）。
 - 达到阈值的 patches（2 个，显示前 5）：
   - crypto: rsassa-pkcs1: reject undersized keys when signing
   - crypto: rsassa-pkcs1: reject undersized keys when verifying
@@ -885,14 +882,14 @@
 
 - 日期：2026-07-20
 - 状态：社区讨论中
-- 概括：在 crypto 中rsassa-pkcs1 - Use constant-time digest comparison。
+- 概括：在 crypto 中改用 constant-time digest comparison。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260720021322.122784-1-yijiangshan@kylinos.cn/
 
 **crypto: pkcs7 - Use constant-time message digest comparison**
 
 - 日期：2026-07-20
 - 状态：社区讨论中
-- 概括：在 crypto 中pkcs7 - Use constant-time message digest comparison。
+- 概括：在 crypto 中改用 constant-time message digest comparison。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260720032316.210113-1-yijiangshan@kylinos.cn/
 
 **[6.1/6.6/6.12.y] crypto: rsa-pkcs1pad: Don't WARN on an empty digest**
@@ -926,14 +923,14 @@
 
 - 日期：2026-08-10
 - 状态：社区讨论中
-- 概括：在 crypto 中caam - reject overlong RSA CRT parameters。
+- 概括：在 crypto 中拒绝 overlong RSA CRT parameters。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260810154024.3178145-1-Jeremy.Jean@oss.cyber.gouv.fr/
 
 **[SERIES] crypto: caam: Fix DMA mapping leak in the cbc(paes) job path** （cover letter，1/3 个 patch 达到代码量阈值）
 
 - 日期：2026-07-26
 - 状态：社区讨论中
-- 概括："将 CAAM 的 cbc(paes) 路径改为按每个 tfm 只映射一次 paes 受保护密钥，并在 setkey 时校验该密钥的头部格式，修复每次加解密作业重复映射导致的 DMA 映射泄漏。"
+- 概括：Map the paes protected key once per tfm、Validate the protected key header in setkey，并修复 DMA mapping leak in the cbc(paes) job path。
 - 达到阈值的 patches（1 个，显示前 5）：
   - crypto: caam: Map the paes protected key once per tfm
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260726081504.2182951-2-richard@nod.at/
@@ -955,7 +952,7 @@
 
 - 日期：2026-07-09
 - 状态：社区讨论中
-- 概括："在 talitos 驱动中停用 crypto_ahash::init 回调，解决 SEC1 每个 ahash 请求超过 32k 条描述符时的限制，并将区分首个/末个描述符的 first/last 改名为 first_desc/last_desc。"
+- 概括：清理 talitos ahash 请求上下文字段命名，将 first/last 改为 first_desc/last_desc，并同步调整 ahash digest/init/finup 路径及 sha224 软件初始化处理。
 - 达到阈值的 patches（3 个，显示前 5）：
   - crypto: talitos - stop using crypto_ahash::init
   - crypto: talitos - fix SEC1 32k ahash request limitation
@@ -994,7 +991,7 @@
 
 - 日期：2026-07-01
 - 状态：社区讨论中
-- 概括：在 crypto 中af_alg - Set merge to zero early in af_alg_sendmsg。
+- 概括：在 crypto 中设置 merge to zero early in af_alg_sendmsg。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260701160121.100720-1-mdmitrichenko@astralinux.ru/
 
 ---
@@ -1007,7 +1004,7 @@
 
 - 日期：2026-07-12
 - 状态：社区讨论中
-- 概括：在 crypto 中atmel-ecc - fix multi-device use-after-free and registration races。
+- 概括：在 crypto 中修复 multi-device use-after-free and registration races。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260712200203.47764-1-l.rubusch@gmail.com/
 
 ---
@@ -1033,7 +1030,7 @@
 
 - 日期：2026-07-20
 - 状态：社区讨论中
-- 概括：在 crypto 中krb5 - Use constant-time checksum comparison。
+- 概括：在 crypto 中改用 constant-time checksum comparison。
 - 来源：https://patchwork.kernel.org/project/linux-crypto/patch/20260720031304.198172-1-yijiangshan@kylinos.cn/
 
 ---
@@ -1122,4 +1119,4 @@ python3 tracker.py 子系统 --start 2026-03-01 --end 2026-04-30
 
 ---
 
-*报告由 Linux Patches Tracker 自动生成 | 2026-09-08 19:16:32*
+*报告由 Linux Patches Tracker 自动生成 | 2026-09-08 21:26:40*

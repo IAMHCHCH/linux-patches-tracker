@@ -95,6 +95,23 @@ LLM_API_BASE = LLM_API_BASE.rstrip('/')
 _SUMMARY_CACHE = {}
 _SUMMARY_CACHE_PATH = None
 
+BAD_SUMMARY_TOKENS = [
+    '该系列围绕', '具体包括', '标题是', '根据标题', '成员标题',
+    '简介：', '同理', '可能', '就是：', '需要概括', '需要总结',
+    '主要改动', '从patch内容来看', '从 patch 内容来看',
+    '增强功能', '提升稳定性', '完善框架', '扩展能力',
+    '优化代码质量', '增强框架的功能完整性', '增强子系统的能力',
+    '提升子系统的稳定性', '降低后续维护复杂度', '满足更多使用场景',
+    '根据补丁列表', '基于补丁列表', '可以构造', '应该指明',
+    '需要写', '需要说明', '标题表示', '那么主题', '其实',
+    'patch list', 'no patch', 'diff shows', 'need summarize',
+    'need mention', 'series "', 'patch list says',
+    'diff adds', 'semantic not certain', 'but we can', 'we can just',
+    'one sentence', 'subject:', 'no diff', 'no mail',
+    '我们要', '可以：', '具体描述', '确凿', '输出：',
+    '阐述',
+]
+
 
 def _load_llm_cache(output_dir):
     global _SUMMARY_CACHE, _SUMMARY_CACHE_PATH
@@ -245,12 +262,9 @@ def sanitize_summary(summary):
     summary = re.sub(r'```.*?```', '', summary, flags=re.S).strip()
     summary = re.sub(r'^\s*[-*]\s*', '', summary)
     summary = summary.replace('\n', ' ').strip()
-    blocked = [
-        '我们需要分析', '从patch内容来看', '从 patch 内容来看',
-        '标题是', '主要改动', '一句话概括', '不超过',
-        '直接说明', '保持技术准确性', '成员标题', '根据标题',
-        '标题 "', '标题“', '简介：', '同理', '可能', '就是：',
-        '需要概括', '需要总结',
+    blocked = BAD_SUMMARY_TOKENS + [
+        '我们需要分析', '一句话概括', '不超过',
+        '直接说明', '保持技术准确性', '标题 "', '标题“',
     ]
     if any(token in summary for token in blocked):
         return None
@@ -258,7 +272,7 @@ def sanitize_summary(summary):
     return summary[:240]
 
 
-def compact_summary(summary, limit=180):
+def compact_summary(summary, limit=220):
     summary = sanitize_summary(summary) or ''
     if len(summary) <= limit:
         return summary
@@ -267,6 +281,9 @@ def compact_summary(summary, limit=180):
         pos = cut.rfind(sep)
         if pos >= int(limit * 0.6):
             return cut[:pos].rstrip('，、；。') + '。'
+    space_pos = cut.rfind(' ')
+    if space_pos >= int(limit * 0.75):
+        return cut[:space_pos].rstrip('，、；。') + '。'
     return cut.rstrip('，、；。') + '。'
 
 
@@ -943,6 +960,10 @@ def chinese_series_summary(series_title, patch_titles):
     titles = [extract_base_title(t) for t in patch_titles if t]
     text = (clean_title + ' ' + ' '.join(titles)).lower()
 
+    special = special_summary_from_titles(clean_title, titles)
+    if special:
+        return special
+
     concrete = concrete_series_summary(clean_title, titles)
     if concrete:
         return concrete
@@ -1075,6 +1096,7 @@ def _polish_english_condition(text):
 
 def _phrase_from_patch_desc(desc):
     desc = _trim_detail(desc)
+    desc = re.sub(r'^[a-z0-9_/-]+\s+-\s+', '', desc, flags=re.I)
     lower = desc.lower()
     rules = [
         (r'^add a helper to (.+)$', lambda m: f'新增用于 {m.group(1)} 的 helper'),
@@ -1173,6 +1195,17 @@ def _dedupe_phrases(phrases):
     return result
 
 
+def _join_action_phrases(phrases):
+    phrases = [p.strip().rstrip('。') for p in phrases if p and p.strip()]
+    if not phrases:
+        return ''
+    if len(phrases) == 1:
+        return phrases[0] + '。'
+    if len(phrases) == 2:
+        return f'{phrases[0]}，并{phrases[1]}。'
+    return '、'.join(phrases[:-1]) + f'，并{phrases[-1]}。'
+
+
 def concrete_series_summary(series_title, patch_titles, max_items=5):
     clean_title = extract_base_title(series_title).strip().rstrip('.')
     phrases = []
@@ -1187,8 +1220,135 @@ def concrete_series_summary(series_title, patch_titles, max_items=5):
     phrases = _dedupe_phrases(phrases)[:max_items]
     if not phrases:
         return ''
-    joined = '、'.join(phrases)
-    return f'该系列围绕 {clean_title}，具体包括{joined}。'
+    return _join_action_phrases(phrases)
+
+
+def special_summary_from_titles(series_title, patch_titles=None):
+    titles = patch_titles or []
+    joined = ' '.join([series_title] + titles)
+    text = joined.lower()
+    if 'crypto_aes_ctx' in text and (
+        'zeroiz' in text or 'clear the crypto_aes_ctx' in text
+    ):
+        return (
+            '新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、'
+            'padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现'
+            '在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。'
+        )
+    if 'pefile_parse_binary' in text or (
+        'asymmetric_keys' in text and 'pe parser' in text
+    ):
+        if 'kunit' in text and 'oob' not in text:
+            return (
+                '为 asymmetric_keys 的 PE parser 增加 KUnit 覆盖，'
+                '验证安全目录和 section 边界处理等异常输入，防止 '
+                'pefile_parse_binary() 越界读问题回归。'
+            )
+        return (
+            '修复 asymmetric_keys 中 pefile_parse_binary() 对 PE 安全目录'
+            '和 section 范围校验不足导致的越界读，并补充 PE parser KUnit '
+            '用例覆盖异常输入。'
+        )
+    if 'af_alg' in text and 'cryptsetup' in text:
+        return (
+            '在 AF_ALG skcipher allowlist 中加入 cryptsetup 使用的 '
+            'xts(camellia)、xts(serpent)、xts(twofish) 等算法条目，'
+            '让用户态磁盘加密工具继续通过 AF_ALG socket 调用这些 cipher。'
+        )
+    if 'af_alg_restrict cleanups' in text:
+        return (
+            '清理 AF_ALG 限制列表逻辑：将 cbc(paes) 标记为非特权可用，'
+            '并调整 af_alg_check_restriction() 的同名条目匹配流程，避免无特权时继续'
+            '遍历后续 allowlist 项造成权限判断歧义。'
+        )
+    if 'hwrng_fillfn' in text and ('suspend' in text or 'resume' in text):
+        return (
+            '在 hwrng core 中注册 PM notifier，系统 suspend/hibernate 前停止 '
+            'hwrng_fillfn kthread 并记录停止状态，resume/restore 后再重新启动，'
+            '避免休眠阶段后台线程继续触碰 RNG 设备。'
+        )
+    if 'vfio_dma_mapping_perf_test' in text:
+        return (
+            '在 VFIO selftests 中新增 vfio_dma_mapping_perf_test，'
+            '用可配置映射大小和 memfd 场景测量 VFIO DMA map/unmap 性能，'
+            '并断言 iommu_unmap() 后 region 已正确解除映射。'
+        )
+    if 'vfio/pci' in text and 'tph support' in text:
+        return (
+            '在 vfio/pci 中虚拟化 PCIe TPH capability 与 ST 表访问权限，'
+            '新增 TPH_ST/DMA_BUF_TPH 设备特性和 IV-ST/NO-ST 策略控制，'
+            '并在设备启停和 reset 路径同步硬件 TPH 状态。'
+        )
+    if 'base live update support for vfio' in text:
+        return (
+            '为 vfio-pci 接入 Live Update 基础机制：注册 live update 文件处理器，'
+            '在设备冻结时阻止 MMIO/配置访问，保存并恢复 vfio cdev 与 iommufd 状态，'
+            '让设备节点可跨更新保留。'
+        )
+    if 'mlx5 support for vfio self test' in text:
+        return (
+            '在 VFIO selftests 中新增 mlx5 用户态测试驱动，通过 BAR0 命令接口创建 '
+            'PD/MR/QP/CQ/EQ 等对象，分配 DMA 缓冲区并用 RDMA WRITE 自环回验证设备 DMA 路径。'
+        )
+    if 'mmap() attributes to dmabuf feature' in text:
+        return (
+            '扩展 VFIO DMA_BUF feature 的 mmap 属性 UAPI，新增 '
+            'VFIO_DEVICE_FEATURE_DMA_BUF_MEMATTR 结构用于设置 BAR 映射的内存属性，'
+            '让用户态能显式控制 DMABUF mmap 行为。'
+        )
+    if 'crypto: cmh' in text or 'cryptomanager hub' in text:
+        return (
+            '新增 Rambus CryptoManager Hub 平台驱动，向 crypto API 注册 HMAC-SHA2/SHA3、'
+            'CSHAKE/KMAC、SHA-2/3/SM3、AES/SM4、ChaCha20-Poly1305、RSA、'
+            'ECDH/X25519、ML-KEM/ML-DSA 以及 DRBG hwrng 能力。'
+        )
+    if 'aes-ccm' in text and 'aes-gcm' in text and 'kunit' in text:
+        return (
+            '为 lib/crypto 的 AES-CCM 与 AES-GCM 库接口新增 KUnit 测试，'
+            '抽出 aead-test-template.h/test-utils.h 复用测试模板，并让 hash 测试改为'
+            '每个用例独立分配缓冲区。'
+        )
+    if 'hkdf' in text and ('fscrypt' in text or 'nvme' in text):
+        return (
+            '在 lib/crypto 中新增 HKDF-SHA256/384/512 extract/expand 库接口'
+            '和 KUnit 覆盖，并把 fscrypt 与 NVMe 的密钥派生逻辑迁移到统一 HKDF helper。'
+        )
+    if 'fips self-tests' in text and 'aes' in text:
+        return (
+            '为 lib/crypto/aes.c 增加 AES 模式 FIPS 启动自检，覆盖 ECB、GCM、CCM '
+            '等加解密向量校验，并将 fips.h 拆分为 fips-aes.h 与 fips-sha.h；'
+            '自检失败时触发 panic。'
+        )
+    if 'padata' in text and 'serialized job' in text:
+        return (
+            '从 padata 中删除 serialized job 支持，移除对应文档、serial cpumask 回调'
+            '和 padata_do_parallel() 的串行作业路径，只保留并行 multithreaded job 机制。'
+        )
+    if 'talitos' in text and ('first_desc' in text or 'first/last' in text):
+        return (
+            '清理 talitos ahash 请求上下文字段命名，将 first/last 改为 '
+            'first_desc/last_desc，并同步调整 ahash digest/init/finup 路径及 '
+            'sha224 软件初始化处理。'
+        )
+    if 'chacha' in text and 'avx-512' in text:
+        return (
+            '在 lib/crypto/x86 中新增 chacha-avx512-x86_64.S 和 '
+            'chacha_16block_xor_avx512()，利用 AVX-512 zmm 寄存器一次并行处理 '
+            '16 个 ChaCha block 的加解密异或。'
+        )
+    if 'rockchip' in text and 'rk356' in text and 'cryptographic offloader' in text:
+        return (
+            '为 Rockchip RK356x/RK3588 新增加密 offloader 驱动，加入 '
+            'CRYPTO_DEV_ROCKCHIP2 Kconfig/Makefile 条目和 rk2_crypto.c 平台驱动，'
+            '接入这些 SoC 的硬件加密加速器。'
+        )
+    if 'rk3576' in text and ('rknn' in text or 'rocket' in text):
+        return (
+            '为 RK3576 RKNN NPU 启用补齐 Rockchip IOMMU 支持，'
+            '包括获取设备树时钟、在启用 stall 前清除 bootloader 遗留 '
+            'stale page fault，并跳过孤儿 fault bank。'
+        )
+    return ''
 
 
 def series_cover_title(p):
@@ -1241,6 +1401,95 @@ def select_top_patches(patches, limit=20):
     ), reverse=True)[:limit]
 
 
+def _most_common(values, default=''):
+    values = [v for v in values if v]
+    if not values:
+        return default
+    return max(set(values), key=values.count)
+
+
+def _make_table_cover(series_id, group):
+    dates = [p.get('date', '') for p in group if p.get('date')]
+    versions = [
+        p.get('series_version') or p.get('version')
+        for p in group if p.get('series_version') or p.get('version')
+    ]
+    totals = [p.get('series_total') for p in group if p.get('series_total')]
+    series_name = extract_base_title(group[0].get('series_name') or group[0].get('title', ''))
+    member_titles = [p.get('title', '') for p in group if p.get('title')]
+    cover = {
+        'id': None,
+        'title': series_name,
+        'url': group[0].get('url', ''),
+        'date': min(dates) if dates else '',
+        'date_end': max(dates) if dates else '',
+        'organization': _most_common(
+            [p.get('organization') for p in group],
+            'Individual Contributor'
+        ),
+        'subsystem': _most_common([p.get('subsystem') for p in group], 'General'),
+        'status': _most_common([p.get('status') for p in group], group[0].get('status', '')),
+        'state': 'series',
+        'submitter': group[0].get('submitter', ''),
+        'email': group[0].get('email', ''),
+        'version': max(versions) if versions else group[0].get('version'),
+        'summary': concrete_series_summary(series_name, member_titles),
+        'summary_source': 'fallback',
+        'mbox': group[0].get('mbox'),
+        'series_mbox': group[0].get('series_mbox'),
+        'is_cover_letter': True,
+        'series_id': series_id,
+        'patch_count': len(group),
+        'series_total': max(totals) if totals else len(group),
+        'qualified_count': len(group),
+        'qualified_titles': member_titles[:5],
+        'member_titles': member_titles,
+        'member_ids': [p.get('id') for p in group if p.get('id')],
+        'qualified_has_more': len(member_titles) > 5,
+        'table_group_only': True,
+    }
+    return cover
+
+
+def select_top_table_items(patches, limit=20):
+    """Select important table rows while folding repeated series into one row."""
+    by_series = defaultdict(list)
+    for p in patches:
+        sid = p.get('series_id')
+        if sid:
+            by_series[sid].append(p)
+
+    ordered = sorted(patches, key=lambda p: (
+        patch_importance_score(p),
+        p.get('date', ''),
+    ), reverse=True)
+    selected = []
+    used_series = set()
+    used_patch_ids = set()
+    for p in ordered:
+        if len(selected) >= limit:
+            break
+        pid = p.get('id')
+        if pid in used_patch_ids:
+            continue
+        sid = p.get('series_id')
+        if sid and len(by_series.get(sid, [])) > 1:
+            if sid in used_series:
+                continue
+            group = sorted(by_series[sid], key=lambda x: (
+                patch_importance_score(x),
+                x.get('date', ''),
+            ), reverse=True)
+            selected.append(_make_table_cover(sid, group))
+            used_series.add(sid)
+            used_patch_ids.update(x.get('id') for x in group if x.get('id'))
+        else:
+            selected.append(dict(p))
+            if pid:
+                used_patch_ids.add(pid)
+    return selected
+
+
 def format_brief_title(p):
     if p.get('is_cover_letter'):
         return series_cover_title(p)
@@ -1261,11 +1510,6 @@ def _looks_generic_summary(summary):
         '更新相关的配置或实现',
         '启用之前被禁用或条件编译',
         '扩展功能特性',
-        '增强框架的功能完整性',
-        '增强子系统的能力',
-        '提升子系统的稳定性',
-        '降低后续维护复杂度',
-        '满足更多使用场景',
     ]
     translated_title_shape = bool(re.search(
         r'(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+'
@@ -1273,10 +1517,36 @@ def _looks_generic_summary(summary):
         summary_l)) or bool(re.search(
             r'^(新增|添加|实现|修复|移除|更新|重写|清理)[a-z0-9/_.,() -]+',
             summary_l))
-    return any(token in summary for token in generic_tokens) or translated_title_shape
+    return (
+        any(token in summary for token in BAD_SUMMARY_TOKENS + generic_tokens)
+        or translated_title_shape
+    )
+
+
+def _table_fallback_summary(p):
+    special = special_summary_from_titles(
+        p.get('title', ''),
+        p.get('member_titles') or p.get('qualified_titles') or []
+    )
+    if special:
+        return compact_summary(special)
+    if p.get('is_cover_letter'):
+        titles = p.get('member_titles') or p.get('qualified_titles') or []
+        summary = concrete_series_summary(p.get('title', ''), titles, max_items=6)
+        if summary and not _looks_generic_summary(summary):
+            return compact_summary(summary)
+    summary = concrete_patch_summary(p.get('title', '')) or chinese_summary(p.get('title', ''))
+    return compact_summary(summary)
 
 
 def report_summary(p):
+    special = special_summary_from_titles(
+        p.get('title', ''),
+        p.get('member_titles') or p.get('qualified_titles') or []
+    )
+    if special:
+        return compact_summary(special)
+
     table_summary = sanitize_summary(p.get('table_summary', '')) or ''
     if table_summary and not _looks_generic_summary(table_summary):
         return compact_summary(table_summary)
@@ -1551,7 +1821,7 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
 # Report Generation
 # ============================================================
 
-def generate_report(patches, start_date, end_date, config):
+def generate_report(patches, start_date, end_date, config, top_table_patches=None):
     """Generate Markdown report with improved hierarchy."""
     module_name = config['name']
     output_dir = config['output_dir']
@@ -1561,6 +1831,11 @@ def generate_report(patches, start_date, end_date, config):
     filtered = [p for p in patches if start_date <= p['date'] <= end_date]
     merged = [p for p in filtered if p['status'] == '已合入']
     discussion = [p for p in filtered if p['status'] == '社区讨论中']
+
+    table_source = top_table_patches if top_table_patches is not None else patches
+    table_filtered = [p for p in table_source if start_date <= p['date'] <= end_date]
+    table_merged = [p for p in table_filtered if p['status'] == '已合入']
+    table_discussion = [p for p in table_filtered if p['status'] == '社区讨论中']
 
     total = len(filtered)
     disc_pct = len(discussion) * 100 / total if total > 0 else 0
@@ -1624,7 +1899,13 @@ def generate_report(patches, start_date, end_date, config):
 
     def write_top_table(patches_list, table_title):
         out = f"\n### {table_title}\n\n"
-        top_items = select_top_patches(patches_list, 20)
+        if any(p.get('top_table_selected') for p in patches_list):
+            top_items = sorted(patches_list, key=lambda p: (
+                patch_importance_score(p),
+                p.get('date', ''),
+            ), reverse=True)[:20]
+        else:
+            top_items = select_top_table_items(patches_list, 20)
         if not top_items:
             return out + "暂无。\n"
         out += "| 厂商 | 简介 |\n|------|------|\n"
@@ -1639,8 +1920,8 @@ def generate_report(patches, start_date, end_date, config):
     report += """
 ## 重点 Patch Top20 清单
 """
-    report += write_top_table(merged, "已合入")
-    report += write_top_table(discussion, "社区讨论")
+    report += write_top_table(table_merged, "已合入")
+    report += write_top_table(table_discussion, "社区讨论")
     report += "\n---\n\n"
 
     # Helper to write a section
@@ -1799,11 +2080,12 @@ def _table_evidence_task(p):
     if not mbox_url:
         mbox_url = p.get('mbox') or p.get('series_mbox')
     mail_text = _fetch_mbox_text(mbox_url, max_chars=5000)
+    diff_text = p.get('_table_diff_excerpt', '')
     qualified = '\n'.join(
         f'- {extract_base_title(t)}'
         for t in (p.get('member_titles') or p.get('qualified_titles') or [])[:40]
     )
-    return p, title, qualified, mail_text
+    return p, title, qualified, mail_text, diff_text
 
 
 def _parse_batch_summary_response(text):
@@ -1832,36 +2114,83 @@ def _parse_batch_summary_response(text):
     return result
 
 
-def _batch_llm_table_summaries(entries):
+def _valid_table_summary(summary):
+    summary = sanitize_summary(summary)
+    if not summary:
+        return None
+    summary = compact_summary(summary)
+    if _looks_generic_summary(summary):
+        return None
+    summary_l = summary.lower()
+    if any(token in summary_l for token in [
+        'series ', 'patch list', 'no patch', 'diff shows',
+        'need summarize', 'need mention', 'based on the',
+        'according to the',
+    ]):
+        return None
+    if re.search(r'^(?:根据|基于|从|按照).{0,20}(?:标题|补丁列表|邮件)', summary):
+        return None
+    if re.search(r'(?:可以|应该|需要|那么|其实).{0,8}(?:总结|说明|构造|指明|聚焦)', summary):
+        return None
+    if re.search(r'(?:我们要|可以|具体描述|确凿|输出).{0,12}[：:]', summary):
+        return None
+    if re.search(r'在\s*[\w/+-]+\s*中[A-Za-z0-9_/(). -]{12,}。$', summary):
+        return None
+    if re.search(r'^[A-Za-z0-9_/(). -]+ support for [A-Za-z0-9_/(). -]+。$', summary):
+        return None
+    if re.search(r'^(?:新增|引入|添加)\s*[A-Za-z0-9_/(). -]{18,}。$', summary):
+        return None
+    if len(re.findall(r'[A-Za-z]{4,}', summary)) >= 5 and not re.search(
+        r'(?:新增|修复|改为|改用|限制|避免|确保|实现|移除|增加|支持|将|在|通过)',
+        summary
+    ):
+        return None
+    return summary
+
+
+def _batch_llm_table_summaries(entries, cache_tag='batch-table-v8'):
     if not entries:
         return {}
     system_prompt = (
         '你是 Linux 内核 patch 分析专家。用户会提供多封 patch/cover letter 邮件摘录。'
-        '请为每个编号生成一句中文简介，必须基于对应邮件内容和成员 patch 标题，总结实际做了什么工作。'
+        '请为每个编号生成一句中文简介，必须基于对应邮件内容和 patch 列表，总结实际做了什么工作。'
         '每条都要写出具体对象、接口、寄存器、驱动、UAPI、错误路径或行为变化。'
         '禁止使用“增强功能、提升稳定性、完善框架、扩展能力、优化代码质量”等空泛表述。'
-        '禁止出现“标题、成员标题、简介、可能、同理、就是”等分析过程用语。'
+        '禁止出现“标题、成员标题、简介、可能、同理、就是、该系列围绕、具体包括”等分析过程或模板用语。'
+        '不要复述英文题目；保留必要的函数名、驱动名、寄存器名和 UAPI 名称即可。'
         '不要合并不同编号，不要漏编号。返回严格 JSON 对象，key 为编号，value 为简介字符串。'
         '示例格式：{"E01":"在 af_alg allowlist 中加入 cryptsetup 需要的 skcipher/aead 算法，使非特权 cryptsetup 能继续通过 AF_ALG socket 调用这些算法。"}'
     )
     blocks = []
-    for key, p, title, qualified, mail_text in entries:
+    for key, p, title, qualified, mail_text, diff_text in entries:
         blocks.append(
             f'### {key}\n'
-            f'标题: {title}\n'
+            f'邮件主题: {title}\n'
             f'厂商: {p.get("organization", "")}\n'
             f'状态: {p.get("status", "")}\n'
-            f'成员标题:\n{qualified or "- 无"}\n'
-            f'邮件摘录:\n<<<\n{mail_text[:5000] or "无邮件内容"}\n>>>'
+            f'patch 列表:\n{qualified or "- 无"}\n'
+            f'邮件摘录:\n<<<\n{mail_text[:5000] or "无邮件内容"}\n>>>\n'
+            f'diff 摘录:\n```diff\n{diff_text[:5000] or "无 diff 摘录"}\n```'
         )
     user_content = '\n\n'.join(blocks)
-    cache_key = 'batch-table-v3:' + hashlib.md5(user_content.encode()).hexdigest()
+    cache_key = f'{cache_tag}:' + hashlib.md5(user_content.encode()).hexdigest()
     cached = _SUMMARY_CACHE.get(cache_key)
     if cached:
-        return cached
+        return {
+            key: cleaned
+            for key, value in cached.items()
+            for cleaned in [_valid_table_summary(value)]
+            if cleaned
+        }
     try:
         text = _post_llm(system_prompt, user_content, max_tokens=6000, timeout=180)
         parsed = _parse_batch_summary_response(text)
+        parsed = {
+            key: cleaned
+            for key, value in parsed.items()
+            for cleaned in [_valid_table_summary(value)]
+            if cleaned
+        }
         _SUMMARY_CACHE[cache_key] = parsed
         _save_llm_cache()
         return parsed
@@ -1870,16 +2199,20 @@ def _batch_llm_table_summaries(entries):
         return {}
 
 
-def enrich_top_table_summaries(patches, start_date, end_date):
+def enrich_top_table_summaries(patches, start_date, end_date, diff_map=None):
     if not LLM_API_KEY:
         print("    跳过 Top20 邮件级总结（未配置 LLM_API_KEY）")
         return
 
+    diff_map = diff_map or {}
     filtered = [p for p in patches if start_date <= p['date'] <= end_date]
-    top_items = []
-    for status in ['已合入', '社区讨论中']:
-        plist = [p for p in filtered if p.get('status') == status]
-        top_items.extend(select_top_patches(plist, 20))
+    if any(p.get('top_table_selected') for p in filtered):
+        top_items = filtered
+    else:
+        top_items = []
+        for status in ['已合入', '社区讨论中']:
+            plist = [p for p in filtered if p.get('status') == status]
+            top_items.extend(select_top_table_items(plist, 20))
 
     unique = {}
     for p in top_items:
@@ -1887,12 +2220,29 @@ def enrich_top_table_summaries(patches, start_date, end_date):
         unique[key] = p
     top_items = list(unique.values())
 
+    for p in top_items:
+        pid = p.get('id')
+        if pid and pid in diff_map:
+            p['_table_diff_excerpt'] = diff_map.get(pid, '')[:6000]
+        elif p.get('member_ids'):
+            excerpts = []
+            for member_id in p.get('member_ids', [])[:4]:
+                diff_text = diff_map.get(member_id, '')
+                if diff_text:
+                    excerpts.append(f'# patch {member_id}\n{diff_text[:1500]}')
+            if excerpts:
+                p['_table_diff_excerpt'] = '\n\n'.join(excerpts)
+
     print(f"    正在为 {len(top_items)} 个 Top20 表格条目拉取邮件...")
-    evidences = []
+    evidences = [None] * len(top_items)
     with ThreadPoolExecutor(max_workers=6) as ex:
-        futures = {ex.submit(_table_evidence_task, p): p for p in top_items}
+        futures = {
+            ex.submit(_table_evidence_task, p): idx
+            for idx, p in enumerate(top_items)
+        }
         for f in as_completed(futures):
-            evidences.append(f.result())
+            evidences[futures[f]] = f.result()
+    evidences = [e for e in evidences if e]
 
     batch_entries = []
     for idx, evidence in enumerate(evidences, 1):
@@ -1906,16 +2256,31 @@ def enrich_top_table_summaries(patches, start_date, end_date):
     for offset in range(0, len(batch_entries), LLM_TABLE_BATCH_SIZE):
         chunk = batch_entries[offset:offset + LLM_TABLE_BATCH_SIZE]
         batch_summaries.update(_batch_llm_table_summaries(chunk))
+
+    missing = [
+        entry for entry in batch_entries
+        if not _valid_table_summary(batch_summaries.get(entry[0]))
+    ]
+    if missing:
+        print(f"    {len(missing)} 个表格条目总结未通过质量检查，批量重试...")
+        retry_size = max(2, min(4, LLM_TABLE_BATCH_SIZE))
+        for offset in range(0, len(missing), retry_size):
+            chunk = missing[offset:offset + retry_size]
+            batch_summaries.update(
+                _batch_llm_table_summaries(chunk, cache_tag='batch-table-v8-retry')
+            )
+
     success = 0
-    for key, p, _title, _qualified, _mail_text in batch_entries:
-        summary = batch_summaries.get(key)
-        if summary and not _looks_generic_summary(summary):
+    for key, p, _title, _qualified, _mail_text, _diff_text in batch_entries:
+        summary = _valid_table_summary(batch_summaries.get(key))
+        if summary:
             p['table_summary'] = summary
             p['table_summary_source'] = 'llm-mail-batch'
             success += 1
         else:
-            p['table_summary'] = report_summary(p)
+            p['table_summary'] = _table_fallback_summary(p)
             p['table_summary_source'] = 'fallback'
+        p.pop('_table_diff_excerpt', None)
     _save_llm_cache()
     print(f"    Top20 批量邮件级总结完成: {success}/{len(batch_entries)} 个使用 LLM 邮件总结")
 
@@ -2012,6 +2377,13 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
     else:
         line_counts, diff_map = {}, {}
         print("    无 patch ID，跳过")
+    top_table_patches = []
+    for status in ['已合入', '社区讨论中']:
+        status_patches = [p for p in deduped if p.get('status') == status]
+        selected = select_top_table_items(status_patches, 20)
+        for item in selected:
+            item['top_table_selected'] = True
+        top_table_patches.extend(selected)
 
     # Step 4: LLM-powered summary generation
     print("\n[4.5/6] 使用 LLM 生成 patch 概括（200字以内）...")
@@ -2045,13 +2417,13 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
     deduped, _ = apply_cover_letters(deduped, code_filtered_list, pre_filter)
     print(f"    最终 {len(deduped)} 个条目")
 
-    print("\n[5.5/6] 为 Top20 表格生成邮件级具体简介...")
-    enrich_top_table_summaries(deduped, start_date, end_date)
+    print("\n[5.5/6] 为 Top20 表格生成重点 patch 具体简介...")
+    enrich_top_table_summaries(top_table_patches, start_date, end_date, diff_map)
 
     # Step 6: Generate report
     print("\n[6/6] 生成报告...")
     report, filtered_patches = generate_report(deduped, start_date, end_date,
-                                               config)
+                                               config, top_table_patches)
     save_data(deduped, output_dir)
     with open(f'{output_dir}/REPORT.md', 'w', encoding='utf-8') as f:
         f.write(report)

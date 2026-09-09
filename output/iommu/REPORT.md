@@ -43,13 +43,13 @@
 
 | 子系统 | 数量 | 占比 |
 |--------|------|------|
-| IOMMU Core | 15 | 27.8% |
-| ARM SMMUv3 | 13 | 24.1% |
+| ARM SMMUv3 | 14 | 25.9% |
+| IOMMU Core | 13 | 24.1% |
 | AMD IOMMU | 7 | 13.0% |
-| RISC-V IOMMU | 4 | 7.4% |
-| IOMMUFD | 4 | 7.4% |
+| RISC-V IOMMU | 5 | 9.3% |
+| Intel VT-d | 4 | 7.4% |
 | ARM SMMU (v1/v2) | 4 | 7.4% |
-| Intel VT-d | 3 | 5.6% |
+| IOMMUFD | 3 | 5.6% |
 | ARM SMMU Acceleration | 2 | 3.7% |
 | IOMMU DMA-API | 1 | 1.9% |
 | IOMMU Page Table | 1 | 1.9% |
@@ -64,26 +64,22 @@
 
 | 厂商 | 简介 |
 |------|------|
-| Google | [PATCH v4 00/18] iommu: Add live update state preservation ------为 IOMMU live update 添加状态保存/恢复框架：在 iommu 层实现 FLB 回调、domain/device/IOMMU 硬件状态保存与恢复，在 VT-d 中实现 context entry 清理、PASID 表保存及 domain id 恢复。 |
-| Google | [PATCH v7 00/24] KVM: arm64: SMMUv3 driver for pKVM (trap and emulate) ------为 pKVM 增加 SMMUv3 trap-and-emulate 驱动：将 arm-smmu-v3 代码拆出 hyp 共用部分，新增 arm-smmu-v3-kvm 驱动来探测硬件、模拟 MMIO/CMDQ/GBPA、影子化 stream table/STE/命令队列及 CPU stage-2 页表。 |
-| NVIDIA | [PATCH v10 00/13] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump ------让 kdump 内核采纳 crashed kernel 的 stream table：保留 CR0_SMMUEN，新增 ARM_SMMU_OPT_KDUMP_ADOPT 探测选项，跳过 RMR bypass，在 kexec 辅助文件中解析 STRTAB/CD 表并预留 ASID/VMID，使 ASID 空间按 SMMU 实例独立。 |
-| Qualcomm | [PATCH v5 00/17] iommu/riscv: Enable MSI remapping, IOMMU_DMA and VFIO ------为 RISC-V 启用 MSI 重映射与 IOMMU_DMA：将 iommufd 的软件 MSI 映射表改为可扩展 bitmap，分配独立的 MSI IOVA 窗口，按窗口约束安装映射，引入 iommu_dma_prepare_msi_list() 准备物理地址列表，并让 RISCV IOMMU 报告缓存一致性以配合 VFIO。 |
-| Google | [PATCH v9 00/12] iommu/arm-smmu-v3: Implement Runtime/System Sleep ops ------为 arm-smmu-v3 和 tegra241-cmdqv 实现运行时及系统睡眠 PM：重构中断设置、增加 cmdq/VCMDQ 排空与静止辅助函数，用 CMDQ_PROD_STOP_FLAG 暂停提交，恢复后还原 PROD/CONS，缓存并恢复 MSI 配置，挂起时处理 gerror，启用 pm_runtime 并设置 devlinks。 |
-| NVIDIA | [PATCH v2 00/11] iommu/tegra241-cmdqv: Fix error-interrupt races and VINTF lifecycle bugs ------该系列围绕 iommu/tegra241-cmdqv: Fix error-interrupt races and VINTF lifecycle bugs，具体包括Publish an LVCMDQ only（在 it is fully initialized 后）。 |
-| Oracle | [PATCH v2 00/5] amd_iommu: Do not create duplicate MSI capability ------修订 AMD IOMMU 驱动：定义 MMIO 寄存器掩码，不锁存不支持的 GA 日志状态位，避免重复创建 MSI capability，将扩展特性寄存器设为只读，并在页错误报告中输出完整 BDF。 |
-| Intel | [PATCH v5 00/6] intel_iommu: Enable PRQ support for passthrough device ------为 Intel IOMMU 加速路径实现 passthrough 设备的 PRQ 支持：在 bottom half 中拆解 FAULTQ 资源，为 VTDAccelPASIDCacheEntry 添加定义保护，接收 passthrough 设备的 PRQ 响应并新增 PRQ 注入。 |
-| Qualcomm | [PATCH v1 00/12] iommu: qcom_iommu: implement support for instances on MSM8974 ------为 MSM8974 上的 qcom_iommu 实例补全支持：从 arm-smmu 抽出全局寄存器定义，提取 context bank 编程辅助函数，支持短描述符页表格式及 SMMU 全局寄存器空间，处理非 TZ 管理实例，电源崩溃后恢复 context bank 状态，允许终止故障事务，编程 context bank 前暂停 micro-MMU。 |
-| Qualcomm | [PATCH v2 00/6] iommu/qcom: Misc Fixes ------该系列围绕 iommu/qcom: Misc Fixes，具体包括修复 inverted fault report check in qcom_iommu_fault()、改用 devm_pm_runtime_enable() in qcom_iommu_device_probe()。 |
-| Google | [PATCH v1 00/7] iommu/arm-smmu-v3: Fixes reported by Sashiko ------该系列围绕 iommu/arm-smmu-v3: Fixes reported by Sashiko，具体包括iommu/arm-smmu-v3-iommufd 中修复 error path in arm_vsmmu_cache_invalidate()、确保 L2 tables are visible（在 L1 ptrs 前）。 |
-| NVIDIA | [PATCH v6 00/5] iommufd: Iterate the cache invalidation array in the core ------将缓存失效数组的迭代逻辑移到 iommufd 核心，并让 selftest、arm-smmu-v3-iommufd 与 vt-d 的嵌套缓存失效路径改用核心数组循环，同时让 arm-smmu-v3-iommufd 拒绝失效命令中不支持的位。 |
-| NVIDIA | [PATCH v2 00/9] Use the generic iommu page table for SMMUv3 ------将 ARM SMMUv3 从 io-pgtable-arm 切换到通用 iommu 页表：为 iommupt 增加 ARMv8 64 位页表格式与 DBM 支持，实现其专属组件，SMMUv3 使用通用页表并从 sva.c 移除 io-pgtable-arm。 |
-| NVIDIA | [PATCH v2 00/3] iommufd: Fix vDEVICE allocation lifecycle bugs ------该系列围绕 iommufd: Fix vDEVICE allocation lifecycle bugs，具体包括iommufd/viommu 中Release the igroup lock on the vdevice_size error path。 |
-| Individual Contributor | [PATCH v3 00/10] iommu/riscv: Add hardware dirty tracking for second-stage domains ------为 RISC-V 二级域增加硬件 dirty tracking：用结构替代分散变量，添加 RISC-V iohgatp 二级页表和 dirty PTE 操作，支持 GSCID/GVMA 失效命令，新增 domain_alloc_paging_flags，实现 dirty tracking 并预使能 GADE。 |
-| AMD | [PATCH v4 00/7] Add support for AMD IOMMU GAPPI ------为 AMD IOMMU 增加 GAPPI 支持：添加内核命令行使能选项，重命名 IOMMU 接口参数 cpu→apicid 与 ga_log_intr→wakeup_intr，增加显式 vCPU 运行状态，并在 IRTE[IsRun] 为 0 时为 GAPPI 唤醒编程 guest-mode IRTE。 |
-| Individual Contributor | [PATCH v1 00/13] Enable LPAC on a7xx series GPUs ------在 arm-smmu-qcom 驱动中为 a7xx GPU 的 LPAC 设备配置分离地址空间，并修正 GPU 与 LPAC 之间从 stream ID 到 context bank 的映射关系。 |
-| NVIDIA | [PATCH v9 00/4] iommu/arm-smmu-v3: Tegra264 invalidation workaround ------重构 arm-smmu-v3 的 CMDQ 批处理强制同步条件判定，新增 CFGI/TLBI-repeat 硬件缺陷 workaround 并在 Tegra264 上启用，同时在 iommufd 接口中向用户空间报告该 erratum。 |
-| Red Hat | [PATCH v1 00/44] amd_iommu: Fix opcode reported in invalid command handling ------修正 AMD IOMMU 无效命令处理中上报的 opcode，以非位域方式解码 XT 中断控制寄存器和 IRTE，修正命令缓冲区条目大小端问题，让页表遍历状态辅助函数返回 int 以传播错误；同时修正 Intel IOMMU 扩展 capability 寄存器中 pt 位的设置。 |
-| Individual Contributor | [PATCH v1 00/4] IOMMU driver improvements for modern Exynos SysMMUs ------在 exynos IOMMU 驱动中检测不支持 BLOCK 模式的新款 SysMMU，为这类无 BLOCK 设备调整使能序列和 TLB 失效操作，并解码 v7 缺页事务中的访问信息。 |
+| NVIDIA | [PATCH v10 00/13] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump ------在 arm-smmu-v3 驱动中新增 CONFIG_CRASH_DUMP 下的 arm-smmu-v3-kdump.c，通过 arm_smmu_kdump_adopt_strtab 接管崩溃内核的 stream table，并用 arm_smmu_kexec_scan_and_resv_ids/arm_smmu_kexec_unresv_ids 预留崩溃内核仍在使用的 ASID/VMID，失败时释放预留并回退 full reset。 |
+| Google | [PATCH v7 00/24] KVM: arm64: SMMUv3 driver for pKVM (trap and emulate) ------为 pKVM 新增基于 trap-and-emulate 的 SMMUv3 hypervisor 驱动（pkvm/arm-smmu-v3.c），在 nVHE 侧模拟主机 MMIO、CMDQ、GBPA 等寄存器访问，并影子化 stream table/STE 与 CPU stage-2 页表。 |
+| Qualcomm | [PATCH v1 00/12] iommu: qcom_iommu: implement support for instances on MSM8974 ------在 qcom_iommu 驱动中为 MSM8974 GPU 实例增加 per-device cfg：Kconfig 选择 IOMMU_IO_PGTABLE_ARMV7S 以启用 ARM_V7S 短描述符页表，no_stall 实例清除 ARM_SMMU_SCTLR_CFCFG 使 fault 终止，非安全实例按 sid/cbndx 表配置 SMR。 |
+| Qualcomm | [PATCH v5 00/17] iommu/riscv: Enable MSI remapping, IOMMU_DMA and VFIO ------为在 RISC-V 上启用 MSI remapping、IOMMU_DMA 与 VFIO 支持，将 iommufd 的软件 MSI 映射从固定 bitmap 改为可增长 bitmap 并支持按物理地址列表原子安装；在 dma-iommu 的 iommu_dma_msi_page 中新增 range_size 和 iommu_dma_msi_range_matches()/iommu_dma_prepare_msi_list() 等逻辑。 |
+| Google | [PATCH v9 00/12] iommu/arm-smmu-v3: Implement Runtime/System Sleep ops ------为arm-smmu-v3实现runtime PM与系统睡眠操作：新增arm_smmu_rpm_get/put辅助并调用pm_runtime_resume_and_get，任何硬件访问前先唤醒设备；KUnit测试使用自消费mock cmdq；重构arm_smmu_setup_irqs为通过写IRQ_CTRL/IRQ_CTRLACK的enable/disable接口；tegra241-cmdqv恢复后回写VCMDQ PROD/CONS。 |
+| Oracle | [PATCH v2 00/5] amd_iommu: Do not create duplicate MSI capability ------在QEMU的amd_iommu模拟中新增amdvi_get_devid/amdvi_get_as_devid用完整BDF查询AS并上报page fault，将GALOG_OVF/GALOG_INT并入STATUS的W1C掩码，使MMIO_EXT_FEATURES通过AMDVI_MMIO_EXT_FEATURE_RO_MASK保持只读，并移除pci_add_capability重复添加MSI capability的调用。 |
+| Intel | [PATCH v5 00/6] intel_iommu: Enable PRQ support for passthrough device ------在 QEMU intel_iommu_accel.c 中引入 IOMMUFaultQueue 和 faultq_teardown_bh，将 VTDAccelPASIDCacheEntry 的 fault_id/fault_fd/PRQ 列表延迟到底半部统一释放，并为 passthrough 设备新增 vtd_pri_request_page 与 vtd_accel_propagate_page_group_response。 |
+| NVIDIA | [PATCH v9 00/12] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump ------在kdump内核下arm_smmu_device_reset跳过EVTQ_BASE/PROD/CONS的写入及CR0_EVTQEN使能，setup_unique_irqs仅注册gerr_irq，combined_irq_handler在kdump时直接返回不再唤醒线程；另外将vmid_map的ida_destroy改为devm_add_action_or_reset注册的devres动作。 |
+| NVIDIA | [PATCH v6 00/5] iommufd: Iterate the cache invalidation array in the core ------将缓存失效数组的遍历改在 iommufd 核心实现：核心根据驱动更新后的 array->entry_num 对剩余失效请求再次调用回调，驱动不再自行完整遍历；arm-smmu-v3-iommufd 新增 arm_vsmmu_validate_range()，对 CMDQ_TLBI_0_NUM/SCALE、TTL/TG 等保留或硬件未实现字段返回 -EIO，并在 UAPI 注释中明确该 -EIO 语义。 |
+| NVIDIA | [PATCH v9 00/4] iommu/arm-smmu-v3: Tegra264 invalidation workaround ------在arm_smmu_hw_info()中根据arm_smmu_erratum_repeat_tlbi_cfgi()置位IOMMU_HW_INFO_ARM_SMMUV3_ERRATA_REPEAT_TLBI_CFGI，vSMMU的cache_invalidate改用__arm_smmu_cmdq_issue_cmdlist。 |
+| Individual Contributor | [PATCH v2 00/8] accel/rocket: RK3576 NPU (RKNN) enablement ------为 RK3576 RKNN NPU 启用补齐 Rockchip IOMMU 支持，包括获取设备树时钟、在启用 stall 前清除 bootloader 遗留 stale page fault，并跳过孤儿 fault bank。 |
+| Individual Contributor | [PATCH v1 00/4] IOMMU driver improvements for modern Exynos SysMMUs ------在 exynos-iommu.c 的 v7 fault 处理中将原始事务信息存入 sysmmu_fault.info 并按 FAULT_INFO_AXID/AXLEN/WRITE 宏解码，同时从 REG_V7_CAPA1 读取 CAPA1_NO_BLOCK_MODE 存入 sysmmu_drvdata.no_block，以识别不支持 BLOCK 模式的 SysMMU。 |
+| Individual Contributor | [v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks ------在 Xen 的 ipmmu-vmsa 驱动中实现 CONFIG_SYSTEM_SUSPEND 下的 ipmmu_suspend/ipmmu_resume，遍历 ipmmu_devices_backup 链表把各设备 UTLB 的 IMUASID/IMUCTR 和 domain context 的 IMTTLBR0/IMTTUBR0/IMTTBCR/IMCTR 保存到 ipmmu_reg_ctx。 |
+| Qualcomm | [v4] iommu/arm-smmu: Use pm_runtime in fault handlers ------在 arm-smmu.c 的 arm_smmu_context_fault 和 arm_smmu_global_fault 中断入口先调用 arm_smmu_rpm_get_if_active，SMMU 处于 runtime suspend 时直接返回 IRQ_NONE，只在持有运行时 PM 引用后读取/清除 CB FSR 或 GR0 sGFSR/sGFSYNR 并调用 impl->context_fault/global_fault。 |
+| Individual Contributor | [RFC,4/9] iommu/rockchip: skip orphaned-fault banks in rk_iommu_is_stall_active ------修改 rk_iommu_is_stall_active：当 bank 的 RK_MMU_STATUS 为 PAGE_FAULT_ACTIVE 且未置 STALL_ACTIVE 但置 IDLE 时，将遗留 fault 视为已无事务在飞，跳过该 bank 而不将其计入 stall 未激活。 |
+| Individual Contributor | [RFC,5/9] iommu/rockchip: skip orphaned-fault banks in CMD_ENABLE_STALL dispatch ------在 rockchip-iommu 的 rk_iommu_enable_stall() 中按 num_mmu 遍历各 bank，读取 RK_MMU_STATUS，跳过满足 PAGE_FAULT_ACTIVE 置位、STALL_ACTIVE 未置位且 IDLE 的孤儿故障 bank，不再向其写 RK_MMU_CMD_ENABLE_STALL。 |
 
 ---
 
@@ -93,150 +89,28 @@
 
 ## 社区讨论中 Patches
 
-### ◆ 子系统：IOMMU Core（14 patches）
+### ◆ 子系统：ARM SMMUv3（14 patches）
 
-**▸ 组织：Individual Contributor**（10 patches）
+**▸ 组织：NVIDIA**（7 patches）
 
-**[v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks**
+**[SERIES] iommufd: Iterate the cache invalidation array in the core** （cover letter，5/5 个 patch 达到代码量阈值）
 
-- 日期：2026-08-27
+- 日期：2026-08-30
 - 状态：社区讨论中
-- 概括：在 iommu/ipmmu-vmsa 中实现 suspend/resume callbacks。
-- 来源：https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/
-
-**[SERIES] iommu/rockchip: turn rk_iommu_ops into data** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-08-25
-- 状态：社区讨论中
-- 概括：该系列围绕 iommu/rockchip: turn rk_iommu_ops into data，具体包括拒绝 unsupported physical addresses、Reduce rk_iommu_ops to pure data。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/rockchip: Reject unsupported physical addresses
-  - iommu/rockchip: Reduce rk_iommu_ops to pure data
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260825092132.154150-3-xxm@rock-chips.com/
-
-**[SERIES] IOMMU driver improvements for modern Exynos SysMMUs** （cover letter，2/4 个 patch 达到代码量阈值）
-
-- 日期：2026-08-20
-- 状态：社区讨论中
-- 概括：在 exynos IOMMU 驱动中检测不支持 BLOCK 模式的新款 SysMMU，为这类无 BLOCK 设备调整使能序列和 TLB 失效操作，并解码 v7 缺页事务中的访问信息。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/exynos: detect SysMMUs without BLOCK mode
-  - iommu/exynos: decode the v7 fault transaction info
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260820-exynos-iommu-fixes-v1-1-6bbcd673bb15@gmail.com/
-
-**[SERIES] iommu/iova: convert from rbtree to maple tree** （cover letter，3/3 个 patch 达到代码量阈值）
-
-- 日期：2026-08-18
-- 状态：社区讨论中
-- 概括：该系列围绕 iommu/iova: convert from rbtree to maple tree，具体包括defer maple tree erase on GFP_ATOMIC failure、将 from rbtree 转换为 maple tree、新增 KUnit test suite。
-- 达到阈值的 patches（3 个，显示前 5）：
-  - iommu/iova: defer maple tree erase on GFP_ATOMIC failure
-  - iommu/iova: convert from rbtree to maple tree
-  - iommu/iova: add KUnit test suite
-- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20260818152505.1057922-3-riel@surriel.com/
-
-**iommu/msm: limit the per-master Machine ID list**
-
-- 日期：2026-07-22
-- 状态：社区讨论中
-- 概括：在 iommu/msm 中限制 the per-master Machine ID list。
-- 来源：https://patchwork.kernel.org/project/linux-arm-msm/patch/20260722041619.17735-1-pengpeng@iscas.ac.cn/
-
-**[SERIES] accel/rocket: RK3576 NPU (RKNN) enablement** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-07-18
-- 状态：社区讨论中
-- 概括：该系列围绕 accel/rocket: RK3576 NPU (RKNN) enablement，具体包括iommu/rockchip 中获取 all DT clocks、iommu/rockchip 中清除 stale page faults（在 enabling stall 前）。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/rockchip: take all DT clocks
-  - iommu/rockchip: clear stale page faults before enabling stall
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260718031146.3368811-5-gahing@gahingwoo.com/
-
-**[RFC,4/9] iommu/rockchip: skip orphaned-fault banks in rk_iommu_is_stall_active**
-
-- 日期：2026-07-17
-- 状态：社区讨论中
-- 概括：在 iommu/rockchip 中skip orphaned-fault banks in rk_iommu_is_stall_active。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717085220.3212274-5-gahing@gahingwoo.com/
-
-**[RFC,5/9] iommu/rockchip: skip orphaned-fault banks in CMD_ENABLE_STALL dispatch**
-
-- 日期：2026-07-17
-- 状态：社区讨论中
-- 概括：在 iommu/rockchip 中skip orphaned-fault banks in CMD_ENABLE_STALL dispatch。
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260717085220.3212274-6-gahing@gahingwoo.com/
-
-**[SERIES] riscv: iommu: Add QoS ID support for resctrl device assignment** （cover letter，3/4 个 patch 达到代码量阈值）
-
-- 日期：2026-07-14
-- 状态：社区讨论中
-- 概括：该系列围绕 riscv: iommu: Add QoS ID support for resctrl device assignment，具体包括新增 group lookup by ID、新增 checked group device update helper。
-- 达到阈值的 patches（3 个，显示前 5）：
-  - iommu: Add group lookup by ID
-  - iommu/riscv: Program QoS IDs for assigned groups
-  - iommu/riscv: Expose global QoS IDs in sysfs
-- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20260714130657.46963-2-zhangzhanpeng.jasper@bytedance.com/
-
-**[RFC,09/14] iommu: lazy-populate iommu_group reserved_regions/type attrs**
-
-- 日期：2026-07-02
-- 状态：社区讨论中
-- 概括：在 iommu 中lazy-populate iommu_group reserved_regions/type attrs。
-- 来源：https://patchwork.kernel.org/project/kexec/patch/20260702175114.24659-5-sakacpav@amazon.de/
-
-**▸ 组织：Qualcomm**（3 patches）
-
-**[SERIES] Fix GPU and display on ARM32 platforms using the MSM IOMMU** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-07-30
-- 状态：社区讨论中
-- 概括：该系列围绕 Fix GPU and display on ARM32 platforms using the MSM IOMMU，具体包括iommu/msm 中track a context master per device and IOMMU、iommu/msm 中为 page table allocation 改用 the IOMMU device。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/msm: track a context master per device and IOMMU
-  - iommu/msm: use the IOMMU device for page table allocation
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260730-fix-qcom-smmu-v2-1-18e0daf2d836@oss.qualcomm.com/
-
-**[3/8] iommu/fsl: use platform_device_set_fwnode()**
-
-- 日期：2026-07-20
-- 状态：社区讨论中
-- 概括：在 iommu/fsl 中改用 platform_device_set_fwnode()。
-- 来源：https://patchwork.kernel.org/project/alsa-devel/patch/20260720-pdev-set-fwnode-instead-of-of-node-v1-3-2dee93f42c54@oss.qualcomm.com/
-
-**[v3,09/20] iommu/fsl: use platform_device_set_of_node()**
-
-- 日期：2026-07-06
-- 状态：社区讨论中
-- 概括：在 iommu/fsl 中改用 platform_device_set_of_node()。
-- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260706-pdev-fwnode-ref-v3-9-1ff028e33779@oss.qualcomm.com/
-
-**▸ 组织：Google**（1 patches）
-
-**[SERIES] iommu: Add live update state preservation** （cover letter，16/16 个 patch 达到代码量阈值）
-
-- 日期：2026-08-08
-- 状态：社区讨论中
-- 概括：为 IOMMU live update 添加状态保存/恢复框架：在 iommu 层实现 FLB 回调、domain/device/IOMMU 硬件状态保存与恢复，在 VT-d 中实现 context entry 清理、PASID 表保存及 domain id 恢复。
-- 达到阈值的 patches（16 个，显示前 5）：
-  - iommu: Implement IOMMU Live update FLB callbacks
-  - iommu/pages: Add APIs to preserve/unpreserve/restore iommu pages
-  - iommupt: Implement preserve/unpreserve/restore callbacks
-  - iommu: Implement IOMMU domain preservation
-  - iommu: Implement device and IOMMU HW preservation
-  - ... 及其他 11 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-3-skhawaja@google.com/
-
----
-
-### ◆ 子系统：ARM SMMUv3（13 patches）
-
-**▸ 组织：NVIDIA**（6 patches）
+- 概括：iommufd/selftest 中将 cache invalidation mocks 转换为 the core array loop、Iterate the cache invalidation array in the core、iommu/arm-smmu-v3-iommufd 中拒绝 unsupported bits in invalidation commands。
+- 达到阈值的 patches（5 个，显示前 5）：
+  - iommufd/selftest: Convert cache invalidation mocks to the core array loop
+  - iommufd: Iterate the cache invalidation array in the core
+  - iommu/arm-smmu-v3-iommufd: Reject unsupported bits in invalidation commands
+  - iommu/vt-d: Convert nested cache invalidation to the core array loop
+  - iommu/arm-smmu-v3-iommufd: Convert cache invalidation to the core array loop
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/535f3b97e16c437f1df0c988a96229f623142ee9.1788127877.git.nicolinc@nvidia.com/
 
 **[SERIES] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump** （cover letter，10/13 个 patch 达到代码量阈值）
 
 - 日期：2026-08-30
 - 状态：社区讨论中
-- 概括：让 kdump 内核采纳 crashed kernel 的 stream table：保留 CR0_SMMUEN，新增 ARM_SMMU_OPT_KDUMP_ADOPT 探测选项，跳过 RMR bypass，在 kexec 辅助文件中解析 STRTAB/CD 表并预留 ASID/VMID，使 ASID 空间按 SMMU 实例独立。
+- 概括：Retain CR0_SMMUEN（在 kdump device reset 期间）、iommu/arm-smmu-v3-kdump 中实现 is_attach_deferred()、Skip RMR bypass for kdump adoption、iommu/arm-smmu-v3-kdump 中Reserve crashed kernel's ASIDs and VMIDs。
 - 达到阈值的 patches（10 个，显示前 5）：
   - iommu/arm-smmu-v3: Retain CR0_SMMUEN during kdump device reset
   - iommu/arm-smmu-v3: Skip RMR bypass for kdump adoption
@@ -250,7 +124,7 @@
 
 - 日期：2026-08-12
 - 状态：社区讨论中
-- 概括：将 ARM SMMUv3 从 io-pgtable-arm 切换到通用 iommu 页表：为 iommupt 增加 ARMv8 64 位页表格式与 DBM 支持，实现其专属组件，SMMUv3 使用通用页表并从 sva.c 移除 io-pgtable-arm。
+- 概括：iommupt 中移除 the sanity check for pt_num_items_lg2() at the top level、iommu/arm-smmu-v3 中移除 io-pgtable-arm from sva.c、iommupt/kunit 中Skip test configs without supported features。
 - 达到阈值的 patches（5 个，显示前 5）：
   - iommu/arm-smmu-v3: Move the DMA API comment to flush_iotlb_all
   - iommu/arm-smmu-v3: Use the generic iommu page table
@@ -270,7 +144,7 @@
 
 - 日期：2026-07-26
 - 状态：社区讨论中
-- 概括：重构 arm-smmu-v3 的 CMDQ 批处理强制同步条件判定，新增 CFGI/TLBI-repeat 硬件缺陷 workaround 并在 Tegra264 上启用，同时在 iommufd 接口中向用户空间报告该 erratum。
+- 概括：抽出 CMDQ batch force-sync conditions、启用 CFGI/TLBI-repeat workaround on Tegra264、新增 CFGI/TLBI-repeat workaround，并iommu/arm-smmu-v3-iommufd 中Report CFGI/TLBI-repeat erratum。
 - 达到阈值的 patches（2 个，显示前 5）：
   - iommu/arm-smmu-v3: Enable CFGI/TLBI-repeat workaround on Tegra264
   - iommu/arm-smmu-v3-iommufd: Report CFGI/TLBI-repeat erratum
@@ -287,7 +161,7 @@
 
 - 日期：2026-07-03
 - 状态：社区讨论中
-- 概括：该系列围绕 iommu/arm-smmu-v3: Quarantine device upon ATC invalidation timeout，具体包括将 gdev->blocked from bool 转换为 enum gdev_blocked、避免 rb_erase() a never-inserted stream node。
+- 概括：将 gdev->blocked from bool 转换为 enum gdev_blocked、避免 rb_erase() a never-inserted stream node、Skip remaining GERROR causes on SFM、Mark ATC invalidate timeouts via lockless bitmap。
 - 达到阈值的 patches（4 个，显示前 5）：
   - iommu: Convert gdev->blocked from bool to enum gdev_blocked
   - iommu/arm-smmu-v3: Don't rb_erase() a never-inserted stream node
@@ -301,7 +175,7 @@
 
 - 日期：2026-08-28
 - 状态：社区讨论中
-- 概括：该系列围绕 iommu/arm-smmu-v3: Fixes reported by Sashiko，具体包括iommu/arm-smmu-v3-iommufd 中修复 error path in arm_vsmmu_cache_invalidate()、确保 L2 tables are visible（在 L1 ptrs 前）。
+- 概括：iommu/arm-smmu-v3-iommufd 中修复 error path in arm_vsmmu_cache_invalidate()、确保 L2 tables are visible（在 L1 ptrs 前）、iommu/arm-smmu-v3-test 中修复 arm_smmu_v3_test_debug_print_used_bits()。
 - 达到阈值的 patches（2 个，显示前 5）：
   - iommu/arm-smmu-v3: Ensure L2 tables are visible before L1 ptrs
   - iommu/arm-smmu-v3: Prevent rbtree corruption from duplicate streams
@@ -318,7 +192,7 @@
 
 - 日期：2026-07-28
 - 状态：社区讨论中
-- 概括：为 arm-smmu-v3 和 tegra241-cmdqv 实现运行时及系统睡眠 PM：重构中断设置、增加 cmdq/VCMDQ 排空与静止辅助函数，用 CMDQ_PROD_STOP_FLAG 暂停提交，恢复后还原 PROD/CONS，缓存并恢复 MSI 配置，挂起时处理 gerror，启用 pm_runtime 并设置 devlinks。
+- 概括：Refactor arm_smmu_setup_irqs、新增用于 drain cmd queues 的 helper、iommu/tegra241-cmdqv 中新增用于 drain VCMDQs 的 helper、新增 CMDQ_PROD_STOP_FLAG to gate CMDQ submissions，并iommu/tegra241-cmdqv 中新增用于 quiesce VCMDQs 的 helper。
 - 达到阈值的 patches（7 个，显示前 5）：
   - iommu/arm-smmu-v3: Refactor arm_smmu_setup_irqs
   - iommu/tegra241-cmdqv: Restore PROD and CONS after resume
@@ -332,7 +206,7 @@
 
 - 日期：2026-07-15
 - 状态：社区讨论中
-- 概括：为 pKVM 增加 SMMUv3 trap-and-emulate 驱动：将 arm-smmu-v3 代码拆出 hyp 共用部分，新增 arm-smmu-v3-kvm 驱动来探测硬件、模拟 MMIO/CMDQ/GBPA、影子化 stream table/STE/命令队列及 CPU stage-2 页表。
+- 概括：iommu/arm-smmu-v3 中拆分 code（携带 hyp）、iommu/arm-smmu-v3 中Move TLB range invalidation into common code、iommu/arm-smmu-v3-kvm 中新增 SMMUv3 driver、iommu/arm-smmu-v3-kvm 中Probe SMMU HW，并iommu/arm-smmu-v3-kvm 中新增 MMIO emulation。
 - 达到阈值的 patches（17 个，显示前 5）：
   - iommu/arm-smmu-v3: Split code with hyp
   - iommu/arm-smmu-v3: Move TLB range invalidation into common code
@@ -371,6 +245,114 @@
 
 ---
 
+### ◆ 子系统：IOMMU Core（12 patches）
+
+**▸ 组织：Individual Contributor**（9 patches）
+
+**[v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks**
+
+- 日期：2026-08-27
+- 状态：社区讨论中
+- 概括：在 iommu/ipmmu-vmsa 中实现 suspend/resume callbacks。
+- 来源：https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/
+
+**[SERIES] iommu/rockchip: turn rk_iommu_ops into data** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-08-25
+- 状态：社区讨论中
+- 概括：拒绝 unsupported physical addresses，并Reduce rk_iommu_ops to pure data。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/rockchip: Reject unsupported physical addresses
+  - iommu/rockchip: Reduce rk_iommu_ops to pure data
+- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260825092132.154150-3-xxm@rock-chips.com/
+
+**[SERIES] IOMMU driver improvements for modern Exynos SysMMUs** （cover letter，2/4 个 patch 达到代码量阈值）
+
+- 日期：2026-08-20
+- 状态：社区讨论中
+- 概括：iommu/exynos 中detect SysMMUs without BLOCK mode、iommu/exynos 中修复 the enable sequence for no-block SysMMUs、iommu/exynos 中修复 TLB invalidation for no-block SysMMUs，并iommu/exynos 中decode the v7 fault transaction info。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/exynos: detect SysMMUs without BLOCK mode
+  - iommu/exynos: decode the v7 fault transaction info
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260820-exynos-iommu-fixes-v1-1-6bbcd673bb15@gmail.com/
+
+**[SERIES] iommu/iova: convert from rbtree to maple tree** （cover letter，3/3 个 patch 达到代码量阈值）
+
+- 日期：2026-08-18
+- 状态：社区讨论中
+- 概括：defer maple tree erase on GFP_ATOMIC failure、将 from rbtree 转换为 maple tree，并新增 KUnit test suite。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu/iova: defer maple tree erase on GFP_ATOMIC failure
+  - iommu/iova: convert from rbtree to maple tree
+  - iommu/iova: add KUnit test suite
+- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20260818152505.1057922-3-riel@surriel.com/
+
+**iommu/msm: limit the per-master Machine ID list**
+
+- 日期：2026-07-22
+- 状态：社区讨论中
+- 概括：在 iommu/msm 中限制 the per-master Machine ID list。
+- 来源：https://patchwork.kernel.org/project/linux-arm-msm/patch/20260722041619.17735-1-pengpeng@iscas.ac.cn/
+
+**[SERIES] accel/rocket: RK3576 NPU (RKNN) enablement** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-07-18
+- 状态：社区讨论中
+- 概括：为 RK3576 RKNN NPU 启用补齐 Rockchip IOMMU 支持，包括获取设备树时钟、在启用 stall 前清除 bootloader 遗留 stale page fault，并跳过孤儿 fault bank。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/rockchip: take all DT clocks
+  - iommu/rockchip: clear stale page faults before enabling stall
+- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260718031146.3368811-5-gahing@gahingwoo.com/
+
+**[RFC,4/9] iommu/rockchip: skip orphaned-fault banks in rk_iommu_is_stall_active**
+
+- 日期：2026-07-17
+- 状态：社区讨论中
+- 概括：在 iommu/rockchip 中skip orphaned-fault banks in rk_iommu_is_stall_active。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717085220.3212274-5-gahing@gahingwoo.com/
+
+**[RFC,5/9] iommu/rockchip: skip orphaned-fault banks in CMD_ENABLE_STALL dispatch**
+
+- 日期：2026-07-17
+- 状态：社区讨论中
+- 概括：在 iommu/rockchip 中skip orphaned-fault banks in CMD_ENABLE_STALL dispatch。
+- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260717085220.3212274-6-gahing@gahingwoo.com/
+
+**[RFC,09/14] iommu: lazy-populate iommu_group reserved_regions/type attrs**
+
+- 日期：2026-07-02
+- 状态：社区讨论中
+- 概括：在 iommu 中lazy-populate iommu_group reserved_regions/type attrs。
+- 来源：https://patchwork.kernel.org/project/kexec/patch/20260702175114.24659-5-sakacpav@amazon.de/
+
+**▸ 组织：Qualcomm**（3 patches）
+
+**[SERIES] Fix GPU and display on ARM32 platforms using the MSM IOMMU** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-07-30
+- 状态：社区讨论中
+- 概括：iommu/msm 中track a context master per device and IOMMU，并iommu/msm 中为 page table allocation 改用 the IOMMU device。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/msm: track a context master per device and IOMMU
+  - iommu/msm: use the IOMMU device for page table allocation
+- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260730-fix-qcom-smmu-v2-1-18e0daf2d836@oss.qualcomm.com/
+
+**[3/8] iommu/fsl: use platform_device_set_fwnode()**
+
+- 日期：2026-07-20
+- 状态：社区讨论中
+- 概括：在 iommu/fsl 中改用 platform_device_set_fwnode()。
+- 来源：https://patchwork.kernel.org/project/alsa-devel/patch/20260720-pdev-set-fwnode-instead-of-of-node-v1-3-2dee93f42c54@oss.qualcomm.com/
+
+**[v3,09/20] iommu/fsl: use platform_device_set_of_node()**
+
+- 日期：2026-07-06
+- 状态：社区讨论中
+- 概括：在 iommu/fsl 中改用 platform_device_set_of_node()。
+- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260706-pdev-fwnode-ref-v3-9-1ff028e33779@oss.qualcomm.com/
+
+---
+
 ### ◆ 子系统：AMD IOMMU（7 patches）
 
 **▸ 组织：AMD**（3 patches）
@@ -386,7 +368,7 @@
 
 - 日期：2026-08-21
 - 状态：社区讨论中
-- 概括：为 AMD IOMMU 增加 GAPPI 支持：添加内核命令行使能选项，重命名 IOMMU 接口参数 cpu→apicid 与 ga_log_intr→wakeup_intr，增加显式 vCPU 运行状态，并在 IRTE[IsRun] 为 0 时为 GAPPI 唤醒编程 guest-mode IRTE。
+- 概括：iommu/amd 中提供 kernel command line option to enable GAPPI、iommu/amd: KVM: SVM 中将 cpu 重命名为 apicid in IOMMU interface、iommu/amd: KVM: SVM 中将 ga_log_intr 重命名为 wakeup_intr in IOMMU interface。
 - 达到阈值的 patches（4 个，显示前 5）：
   - iommu/amd: Provide kernel command line option to enable GAPPI
   - iommu/amd: KVM: SVM: Rename cpu to apicid in IOMMU interface
@@ -398,7 +380,7 @@
 
 - 日期：2026-08-07
 - 状态：社区讨论中
-- 概括：该系列围绕 acpi_build: Refactor and cleanup AMD IVRS build，具体包括amd_iommu 中Return empty efr for stub call、amd_iommu: acpi-build 中update PA, GVA and VA size macros。
+- 概括：amd_iommu 中Return empty efr for stub call、amd_iommu: acpi-build 中update PA, GVA and VA size macros，并amd_iommu: acpi-build 中移除 unsupported PPR and HE feature。
 - 达到阈值的 patches（1 个，显示前 5）：
   - amd_iommu: Return empty efr for stub call
 - 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260807061250.27739-2-sarunkod@amd.com/
@@ -418,7 +400,7 @@
 
 - 日期：2026-07-05
 - 状态：社区讨论中
-- 概括：修正 AMD IOMMU 无效命令处理中上报的 opcode，以非位域方式解码 XT 中断控制寄存器和 IRTE，修正命令缓冲区条目大小端问题，让页表遍历状态辅助函数返回 int 以传播错误；同时修正 Intel IOMMU 扩展 capability 寄存器中 pt 位的设置。
+- 概括：修复 opcode reported in invalid command handling、intel_iommu 中Correctly set pt bit in extended capability register、Decode XT interrupt control register without bitfields、修复 endianness handling for command buffer entries。
 - 达到阈值的 patches（4 个，显示前 5）：
   - intel_iommu: Correctly set pt bit in extended capability register
   - amd_iommu: Decode XT interrupt control register without bitfields
@@ -432,7 +414,7 @@
 
 - 日期：2026-07-24
 - 状态：社区讨论中
-- 概括：修订 AMD IOMMU 驱动：定义 MMIO 寄存器掩码，不锁存不支持的 GA 日志状态位，避免重复创建 MSI capability，将扩展特性寄存器设为只读，并在页错误报告中输出完整 BDF。
+- 概括：Define MMIO register masks、避免 latch unsupported GA log status bits、避免 create duplicate MSI capability、调整 extended feature register read-only，并改用 full BDF（当 reporting page faults 时）。
 - 达到阈值的 patches（5 个，显示前 5）：
   - amd_iommu: Define MMIO register masks
   - amd_iommu: Do not latch unsupported GA log status bits
@@ -447,28 +429,39 @@
 
 - 日期：2026-08-24
 - 状态：社区讨论中
-- 概括：该系列围绕 iommu/amd: Refactors for ATS robustness，具体包括Refactor device probe and capability initialization、修复 DTE clearing and rename iommu_ignore_device()。
+- 概括：Refactor device probe and capability initialization、修复 DTE clearing and rename iommu_ignore_device()、Fail probe on ATS configuration failure，并拆分 probe error paths to preserve IRQ remapping。
 - 达到阈值的 patches（1 个，显示前 5）：
   - iommu/amd: Refactor device probe and capability initialization
 - 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260824122347.1588592-2-praan@google.com/
 
 ---
 
-### ◆ 子系统：RISC-V IOMMU（4 patches）
+### ◆ 子系统：RISC-V IOMMU（5 patches）
 
-**▸ 组织：Individual Contributor**（3 patches）
+**▸ 组织：Individual Contributor**（4 patches）
 
 **[SERIES] iommu/riscv: Add hardware dirty tracking for second-stage domains** （cover letter，4/7 个 patch 达到代码量阈值）
 
 - 日期：2026-08-21
 - 状态：社区讨论中
-- 概括：为 RISC-V 二级域增加硬件 dirty tracking：用结构替代分散变量，添加 RISC-V iohgatp 二级页表和 dirty PTE 操作，支持 GSCID/GVMA 失效命令，新增 domain_alloc_paging_flags，实现 dirty tracking 并预使能 GADE。
+- 概括：改用 data structure instead of individual values、iommupt 中新增 RISC-V Second-stage (iohgatp) page table support、iommupt 中新增 RISC-V dirty tracking PTE ops、支持 GSCID and GVMA invalidation command。
 - 达到阈值的 patches（4 个，显示前 5）：
   - iommu/riscv: use data structure instead of individual values
   - iommupt: Add RISC-V Second-stage (iohgatp) page table support
   - iommu/riscv: support GSCID and GVMA invalidation command
   - iommu/riscv: Pre-enable GADE for second-stage domains
 - 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20260821132749.82070-5-fangyu.yu@linux.alibaba.com/
+
+**[SERIES] riscv: iommu: Add QoS ID support for resctrl device assignment** （cover letter，3/4 个 patch 达到代码量阈值）
+
+- 日期：2026-07-14
+- 状态：社区讨论中
+- 概括：新增 group lookup by ID、新增 checked group device update helper、iommu/riscv 中Program QoS IDs for assigned groups，并iommu/riscv 中暴露 global QoS IDs in sysfs。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu: Add group lookup by ID
+  - iommu/riscv: Program QoS IDs for assigned groups
+  - iommu/riscv: Expose global QoS IDs in sysfs
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20260714130657.46963-2-zhangzhanpeng.jasper@bytedance.com/
 
 **[v3] iommu/riscv: Use 32-bit MMIO accesses for 64-bit registers**
 
@@ -490,7 +483,7 @@
 
 - 日期：2026-08-31
 - 状态：社区讨论中
-- 概括：为 RISC-V 启用 MSI 重映射与 IOMMU_DMA：将 iommufd 的软件 MSI 映射表改为可扩展 bitmap，分配独立的 MSI IOVA 窗口，按窗口约束安装映射，引入 iommu_dma_prepare_msi_list() 准备物理地址列表，并让 RISCV IOMMU 报告缓存一致性以配合 VFIO。
+- 概括：iommufd 中将 struct iommufd_sw_msi_maps 转换为 a growable bitmap、iommu/dma 中启用 IOMMU_DMA for 64-bit RISC-V、Reserve an MSI IOVA window for iommufd、Report cache coherency capability。
 - 达到阈值的 patches（11 个，显示前 5）：
   - iommufd: Convert struct iommufd_sw_msi_maps to a growable bitmap
   - iommu/dma: Enable IOMMU_DMA for 64-bit RISC-V
@@ -502,107 +495,7 @@
 
 ---
 
-### ◆ 子系统：IOMMUFD（4 patches）
-
-**▸ 组织：NVIDIA**（2 patches）
-
-**[SERIES] iommufd: Iterate the cache invalidation array in the core** （cover letter，5/5 个 patch 达到代码量阈值）
-
-- 日期：2026-08-30
-- 状态：社区讨论中
-- 概括：将缓存失效数组的迭代逻辑移到 iommufd 核心，并让 selftest、arm-smmu-v3-iommufd 与 vt-d 的嵌套缓存失效路径改用核心数组循环，同时让 arm-smmu-v3-iommufd 拒绝失效命令中不支持的位。
-- 达到阈值的 patches（5 个，显示前 5）：
-  - iommufd/selftest: Convert cache invalidation mocks to the core array loop
-  - iommufd: Iterate the cache invalidation array in the core
-  - iommu/arm-smmu-v3-iommufd: Reject unsupported bits in invalidation commands
-  - iommu/vt-d: Convert nested cache invalidation to the core array loop
-  - iommu/arm-smmu-v3-iommufd: Convert cache invalidation to the core array loop
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/535f3b97e16c437f1df0c988a96229f623142ee9.1788127877.git.nicolinc@nvidia.com/
-
-**[SERIES] iommufd: Fix vDEVICE allocation lifecycle bugs** （cover letter，2/3 个 patch 达到代码量阈值）
-
-- 日期：2026-07-06
-- 状态：社区讨论中
-- 概括：该系列围绕 iommufd: Fix vDEVICE allocation lifecycle bugs，具体包括iommufd/viommu 中Release the igroup lock on the vdevice_size error path。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommufd/viommu: Publish a vDEVICE only after vdevice_init() succeeds
-  - iommu/arm-smmu-v3-iommufd: Require exactly one Stream ID for a vDEVICE
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/e903f775d491296a525097e2a90b3eb6a47cf2ef.1783311134.git.nicolinc@nvidia.com/
-
-**▸ 组织：Google**（1 patches）
-
-**[2/2] iommufd: Periodically reschedule when unmapping**
-
-- 日期：2026-07-14
-- 状态：社区讨论中
-- 概括：在 iommufd 中Periodically reschedule（当 unmapping 时）。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-3-aaronlewis@google.com/
-
-**▸ 组织：Individual Contributor**（1 patches）
-
-**[SERIES] KVM: selftests: sev_smoke_test: Only run VM types the host offers** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-07-20
-- 状态：社区讨论中
-- 概括：该系列围绕 KVM: selftests: sev_smoke_test: Only run VM types the host offers，具体包括iommufd 中Plumb dma-buf memory-type (RAM vs MMIO) through the phys map。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommufd: Plumb dma-buf memory-type (RAM vs MMIO) through the phys map
-  - iommufd: Look up private-interconnect phys via exporter symbols
-- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/a7ca2d885903679dc63c85620bff72fea21f5c18.1784545391.git.dwmw@amazon.co.uk/
-
----
-
-### ◆ 子系统：ARM SMMU (v1/v2)（4 patches）
-
-**▸ 组织：Qualcomm**（3 patches）
-
-**[SERIES] iommu: qcom_iommu: implement support for instances on MSM8974** （cover letter，9/10 个 patch 达到代码量阈值）
-
-- 日期：2026-08-09
-- 状态：社区讨论中
-- 概括：为 MSM8974 上的 qcom_iommu 实例补全支持：从 arm-smmu 抽出全局寄存器定义，提取 context bank 编程辅助函数，支持短描述符页表格式及 SMMU 全局寄存器空间，处理非 TZ 管理实例，电源崩溃后恢复 context bank 状态，允许终止故障事务，编程 context bank 前暂停 micro-MMU。
-- 达到阈值的 patches（9 个，显示前 5）：
-  - iommu: qcom_iommu: extract context bank programming into a helper
-  - iommu: qcom_iommu: support the short-descriptor pagetable format
-  - iommu: qcom_iommu: handle the SMMU global register space
-  - iommu: qcom_iommu: support non-TZ-managed instances
-  - iommu: qcom_iommu: restore context bank state after power collapse
-  - ... 及其他 4 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260809-msm8974-iommu-upstream-v1-2-87f5cd492560@oss.qualcomm.com/
-
-**[v4] iommu/arm-smmu: Use pm_runtime in fault handlers**
-
-- 日期：2026-08-06
-- 状态：社区讨论中
-- 概括：在 iommu/arm-smmu 中改用 pm_runtime in fault handlers。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260806-smmu-rpm-v4-1-8183d007331c@oss.qualcomm.com/
-
-**[SERIES] iommu/qcom: Misc Fixes** （cover letter，4/6 个 patch 达到代码量阈值）
-
-- 日期：2026-07-17
-- 状态：社区讨论中
-- 概括：该系列围绕 iommu/qcom: Misc Fixes，具体包括修复 inverted fault report check in qcom_iommu_fault()、改用 devm_pm_runtime_enable() in qcom_iommu_device_probe()。
-- 达到阈值的 patches（4 个，显示前 5）：
-  - iommu/qcom: Use devm_pm_runtime_enable() in qcom_iommu_device_probe()
-  - iommu/qcom: Check pm_runtime_resume_and_get() return in probe
-  - iommu/qcom: Publish pgtbl_ops before releasing init_mutex
-  - iommu/qcom: Enable clocks before hardware access in qcom_iommu_ctx_probe()
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717144608.3216274-2-mukesh.ojha@oss.qualcomm.com/
-
-**▸ 组织：Individual Contributor**（1 patches）
-
-**[SERIES] Enable LPAC on a7xx series GPUs** （cover letter，1/2 个 patch 达到代码量阈值）
-
-- 日期：2026-07-05
-- 状态：社区讨论中
-- 概括：在 arm-smmu-qcom 驱动中为 a7xx GPU 的 LPAC 设备配置分离地址空间，并修正 GPU 与 LPAC 之间从 stream ID 到 context bank 的映射关系。
-- 达到阈值的 patches（1 个，显示前 5）：
-  - iommu: arm-smmu-qcom: Configure lpac device with split address space
-- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260705-descriptive-name-lpac-upstream-v1-1-01d50c3e0c99@gmail.com/
-
----
-
-### ◆ 子系统：Intel VT-d（3 patches）
+### ◆ 子系统：Intel VT-d（4 patches）
 
 **▸ 组织：Individual Contributor**（2 patches）
 
@@ -626,13 +519,116 @@
 
 - 日期：2026-08-31
 - 状态：社区讨论中
-- 概括：为 Intel IOMMU 加速路径实现 passthrough 设备的 PRQ 支持：在 bottom half 中拆解 FAULTQ 资源，为 VTDAccelPASIDCacheEntry 添加定义保护，接收 passthrough 设备的 PRQ 响应并新增 PRQ 注入。
+- 概括：intel_iommu_accel 中teardown FAULTQ resources in bottom half、intel_iommu_accel 中Guard VTDAccelPASIDCacheEntry definition、intel_iommu_accel 中Accept PRQ response for passthrough device。
 - 达到阈值的 patches（4 个，显示前 5）：
   - intel_iommu_accel: teardown FAULTQ resources in bottom half
   - intel_iommu_accel: Guard VTDAccelPASIDCacheEntry definition
   - intel_iommu_accel: Accept PRQ response for passthrough device
   - intel_iommu_accel: Add PRQ injection for passthrough device
 - 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260831095200.1279366-7-zhenzhong.duan@intel.com/
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] iommu: Add live update state preservation** （cover letter，16/16 个 patch 达到代码量阈值）
+
+- 日期：2026-08-08
+- 状态：社区讨论中
+- 概括：实现 IOMMU Live update FLB callbacks、iommu/pages 中新增 APIs to preserve/unpreserve/restore iommu pages、iommupt 中实现 preserve/unpreserve/restore callbacks、实现 IOMMU domain preservation，并实现 device and IOMMU HW preservation。
+- 达到阈值的 patches（16 个，显示前 5）：
+  - iommu: Implement IOMMU Live update FLB callbacks
+  - iommu/pages: Add APIs to preserve/unpreserve/restore iommu pages
+  - iommupt: Implement preserve/unpreserve/restore callbacks
+  - iommu: Implement IOMMU domain preservation
+  - iommu: Implement device and IOMMU HW preservation
+  - ... 及其他 11 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-3-skhawaja@google.com/
+
+---
+
+### ◆ 子系统：ARM SMMU (v1/v2)（4 patches）
+
+**▸ 组织：Qualcomm**（3 patches）
+
+**[SERIES] iommu: qcom_iommu: implement support for instances on MSM8974** （cover letter，9/10 个 patch 达到代码量阈值）
+
+- 日期：2026-08-09
+- 状态：社区讨论中
+- 概括：iommu: arm-smmu 中新增 global register definitions used by the QSMMU、extract context bank programming into a helper、支持 the short-descriptor pagetable format、handle the SMMU global register space。
+- 达到阈值的 patches（9 个，显示前 5）：
+  - iommu: qcom_iommu: extract context bank programming into a helper
+  - iommu: qcom_iommu: support the short-descriptor pagetable format
+  - iommu: qcom_iommu: handle the SMMU global register space
+  - iommu: qcom_iommu: support non-TZ-managed instances
+  - iommu: qcom_iommu: restore context bank state after power collapse
+  - ... 及其他 4 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260809-msm8974-iommu-upstream-v1-2-87f5cd492560@oss.qualcomm.com/
+
+**[v4] iommu/arm-smmu: Use pm_runtime in fault handlers**
+
+- 日期：2026-08-06
+- 状态：社区讨论中
+- 概括：在 iommu/arm-smmu 中改用 pm_runtime in fault handlers。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260806-smmu-rpm-v4-1-8183d007331c@oss.qualcomm.com/
+
+**[SERIES] iommu/qcom: Misc Fixes** （cover letter，4/6 个 patch 达到代码量阈值）
+
+- 日期：2026-07-17
+- 状态：社区讨论中
+- 概括：修复 inverted fault report check in qcom_iommu_fault()、改用 devm_pm_runtime_enable() in qcom_iommu_device_probe()、检查 pm_runtime_resume_and_get() return in probe、修复 pgtbl_ops leak in qcom_iommu_init_domain() error path。
+- 达到阈值的 patches（4 个，显示前 5）：
+  - iommu/qcom: Use devm_pm_runtime_enable() in qcom_iommu_device_probe()
+  - iommu/qcom: Check pm_runtime_resume_and_get() return in probe
+  - iommu/qcom: Publish pgtbl_ops before releasing init_mutex
+  - iommu/qcom: Enable clocks before hardware access in qcom_iommu_ctx_probe()
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717144608.3216274-2-mukesh.ojha@oss.qualcomm.com/
+
+**▸ 组织：Individual Contributor**（1 patches）
+
+**[SERIES] Enable LPAC on a7xx series GPUs** （cover letter，1/2 个 patch 达到代码量阈值）
+
+- 日期：2026-07-05
+- 状态：社区讨论中
+- 概括：iommu: arm-smmu-qcom 中Configure lpac device（携带 split address space），并iommu: arm-smmu-qcom 中Fixed mapping between sid and cb for gpu and lpac。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommu: arm-smmu-qcom: Configure lpac device with split address space
+- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260705-descriptive-name-lpac-upstream-v1-1-01d50c3e0c99@gmail.com/
+
+---
+
+### ◆ 子系统：IOMMUFD（3 patches）
+
+**▸ 组织：Google**（1 patches）
+
+**[2/2] iommufd: Periodically reschedule when unmapping**
+
+- 日期：2026-07-14
+- 状态：社区讨论中
+- 概括：在 iommufd 中Periodically reschedule（当 unmapping 时）。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-3-aaronlewis@google.com/
+
+**▸ 组织：NVIDIA**（1 patches）
+
+**[SERIES] iommufd: Fix vDEVICE allocation lifecycle bugs** （cover letter，2/3 个 patch 达到代码量阈值）
+
+- 日期：2026-07-06
+- 状态：社区讨论中
+- 概括：iommufd/viommu 中Release the igroup lock on the vdevice_size error path、iommufd/viommu 中Publish a vDEVICE only（在 vdevice_init() succeeds 后），并iommu/arm-smmu-v3-iommufd 中Require exactly one Stream ID for a vDEVICE。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommufd/viommu: Publish a vDEVICE only after vdevice_init() succeeds
+  - iommu/arm-smmu-v3-iommufd: Require exactly one Stream ID for a vDEVICE
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/e903f775d491296a525097e2a90b3eb6a47cf2ef.1783311134.git.nicolinc@nvidia.com/
+
+**▸ 组织：Individual Contributor**（1 patches）
+
+**[SERIES] KVM: selftests: sev_smoke_test: Only run VM types the host offers** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-07-20
+- 状态：社区讨论中
+- 概括：iommufd 中Plumb dma-buf memory-type (RAM vs MMIO) through the phys map，并iommufd 中Look up private-interconnect phys via exporter symbols。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommufd: Plumb dma-buf memory-type (RAM vs MMIO) through the phys map
+  - iommufd: Look up private-interconnect phys via exporter symbols
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/a7ca2d885903679dc63c85620bff72fea21f5c18.1784545391.git.dwmw@amazon.co.uk/
 
 ---
 
@@ -651,7 +647,7 @@
 
 - 日期：2026-07-14
 - 状态：社区讨论中
-- 概括：该系列围绕 iommu/tegra241-cmdqv: Fix error-interrupt races and VINTF lifecycle bugs，具体包括Publish an LVCMDQ only（在 it is fully initialized 后）。
+- 概括：Publish an LVCMDQ only（在 it is fully initialized 后）、Synchronize the error ISR against VINTF (de)init、Free the error IRQ（在 tearing down VINTFs 前）、拒绝 a vSID wider than the SID_MATCH field。
 - 达到阈值的 patches（5 个，显示前 5）：
   - iommu/tegra241-cmdqv: Publish an LVCMDQ only after it is fully initialized
   - iommu/tegra241-cmdqv: Reject a vSID wider than the SID_MATCH field
@@ -734,4 +730,4 @@ python3 tracker.py 子系统 --start 2026-03-01 --end 2026-04-30
 
 ---
 
-*报告由 Linux Patches Tracker 自动生成 | 2026-09-08 19:16:32*
+*报告由 Linux Patches Tracker 自动生成 | 2026-09-08 21:32:08*

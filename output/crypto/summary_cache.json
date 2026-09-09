@@ -784,5 +784,387 @@
     "E38": "在 lib/crypto 中将 fips.h 拆分为 fips-aes.h 与 fips-sha.h，并为 AES 未认证模式和 GCM/CCM 增加 FIPS 自测试。",
     "E39": "在 padata 中当 padata_work 不再需要时立即释放，并将剩余函数和数据标记为 __init 与 __initdata。",
     "E40": "在 crypto/zstd 中避免对压缩流和解压流工作区进行重复初始化，移除冗余的 ZSTD_CStream/DStream 初始化操作。"
+  },
+  "batch-table-v4:34fad9b7fad0483be640a1f52fd1880d": {
+    "E03": "crypto/iaa 驱动对多段 scatterlist 的压缩/解压请求回退到软件实现，解压输入在回退前先用 bounce buffer 拷贝，执行软件解压回退前先 unmap dst DMA 映射，并避免统计这些回退解压产生的字节数。",
+    "E04": "将 af_alg_restrict allowlist 中的 bool privileged 改成 AF_ALG_FLAG 标志位，把 cbc(paes) 算法改为仅特权进程可用，同时在允许列表里匹配到算法名后立即停止继续遍历。",
+    "E05": "atmel-tdes 驱动改写 crypt_start() 的快速路径使其直接复用已有 DMA 描述符，buff_init() 改用 __get_free_page() 分配页，并删除 crypt_pdc_stop() 中冗余的 ret 变量和 crypt_dma_stop() 中多余的条件判断。",
+    "E07": "keembay 硬件加密驱动的 GCM 和 CCM AEAD 在验证 tag 时改用 crypto_memneq() 进行恒定时间比较，避免因 memcmp() 提前返回而向攻击者泄露认证标签校验时序。",
+    "E08": "简化 qce 驱动的 qce_handle_request() 与 devm_qce_register_algs()，去除请求分发中不必要的分支和注册算法列表时重复的错误清理路径。"
+  },
+  "batch-table-v4:43f19ae1522413580176cd3b970c826f": {
+    "E09": "Maybe mention \"crypto/af_alg.c\" in Chinese? \"在 crypto/af_alg.c 的允许绑定算法白名单...\" Good.",
+    "E10": "We can phrase: \"为 hwrng 核心添加 suspend/resume 处理，在电源状态转换前后分别 kthread_stop() 并再次唤醒 hwrng_fillfn() 填充线程，避免恢复期间读取不响应的硬件熵源。",
+    "E11": "\"在 omap-rng 的 of_device_id 和 Kconfig 中启用 Renesas RZ/N1D SoC 的匹配项，使该平台可探测并使用 OMAP 硬件随机数生成器驱动。\" If uncertain about \"of_device_id\", but likely. Could be \"在 hwrng: omap 的 Kconfig 中加上 A。",
+    "E12": "\"在 crypto/qce 驱动中整理算法注册函数（如 qce_skcipher_register 等）的 goto 错误处理路径，把各失败分支的清理动作收拢到统一出口。\" Good enough specific.",
+    "E15": "\"在 ccree 驱动的 AEAD tag 验证中改用 crypto_memneq() 比较 tag，防止比较所花时间随 tag 字节匹配程度变化。\" Good.",
+    "E16": "\"在 crypto4xx/amcc 驱动中，把 request_irq() 传给中断处理例程的 dev_id 参数由 NULL 改为 core_dev 结构体指针，使中断上下文可通过该指针访问设备数据。\" This is precise.",
+    "E14": "\"在 octeontx 驱动的 HMAC 校验路径中用 crypto_memneq() 替换 memcmp() 比较 HMAC 值。\" Need mention \"constant-time\". E13 vs E14: octeontx and octeontx2 are different drivers. Good."
+  },
+  "batch-table-v4:b380f21fa30fc2f71956104c63015db9": {
+    "E17": "在 s5p-sss 加密驱动中，将 s5p_aes_dev 设备上下文指针作为参数直接传入 irq 处理函数，替代原先从全局或私有数据获取的方式。",
+    "E18": "在 rockchip 加密驱动中，将 crypto_info 上下文直接传给 irq handler，使中断服务例程通过参数获得设备信息，不再依赖间接引用。",
+    "E19": "在 sa2ul 驱动中，AEAD 认证标签比较从 memcmp() 改为 crypto_memneq()，以恒定时间比较防止时序侧信道攻击。",
+    "E20": "在 crypto/krb5 中，对派生的密钥缓冲区释放时使用 kfree_sensitive() 替代 kfree()，确保内存回收前将密钥数据清零。",
+    "E22": "在 qce 加密驱动中引入 BAM DMA 机制，将寄存器 I/O 改为 DMA 传输，并增加对应锁定；同时化简 devm_qce_dma_request() 使用 devres API，传递物理基地址给 dmaengine，并取消设备分离时的遗留工作。",
+    "E23": "为 lib/crypto/aes 新增 ECB、CBC、CBC-CTS、CTR、XCTR、XTS、GCM、CCM 模式的库 API，并让 crypto 的 AES 模板改用这些库实现，消除驱动层重复代码。"
+  },
+  "batch-table-v4:884f6d6e33e1fa268d28c4c97980daa3": {
+    "E25": "在 Qualcomm qce 驱动中修复 crypto 自测失败：拒绝 AES-XTS 空消息，对 AES-CTR/CCM 的部分最终块和分片 skcipher 载荷改用软件回退，修复 HMAC 空消息自测失败并检查 xts-aes-qce 的弱密钥。",
+    "E26": "在 caam 的 cbc(paes) job 路径中，将受保护密钥的 DMA 映射从每次请求分配改为每个 tfm 映射一次，并在 setkey 时校验 paes 密钥头，修复请求完成/释放时的 DMA mapping 泄漏。",
+    "E27": "在 eip93 驱动中，仅对已初始化的 DMA 映射执行清理，setkey 前拒绝 HMAC 请求，cipher 请求改用 request-local SA record，读取结果描述符前等待 PE_READY，并处理 request ID 耗尽，修复请求生命周期与完成处理缺陷。",
+    "E28": "为 lib/crypto 下的 AES、MD5、SHA1、SHA2 新增 aes_zeroize_*key()、hmac_md5_zeroize_ctx()、hmac_sha*_zeroize_ctx() 等清理函数，并将原有的 memzero_explicit() 调用替换为这些函数，使敏感密钥和摘要上下文可配合 __cleanup 自动清零。",
+    "E29": "在 talitos 驱动中移除对 crypto_ahash::init 的依赖，修复 SEC1 对 32KB ahash 请求的长度限制，并将描述符指针字段 first/last 重命名为 first_desc/last_desc。",
+    "E30": "为 TI DTHEv2 驱动添加 SHA224/256/384/512 摘要算法支持，并加入基于这些摘要算法的 HMAC 注册，使该硬件能处理对应的 ahash/hmac 请求。",
+    "E31": "将 tcrypt 的 cycle benchmark 辅助函数移出供通用层使用，新增通用的动态软件回退机制，让 eip93 接入该机制以按运行条件动态回退到软件实现，并在回退禁用时消除代理层的额外开销。",
+    "E32": "新增用于清零 aes_cmac_key 与 aes_cmac_ctx 的 __cleanup 包装函数，并将 AES-CMAC 实现中的 memzero_explicit() 替换为基于该包装的自动清零逻辑。"
+  },
+  "batch-table-v4:d88f3758bc579cc9aff9c327c2fbb292": {
+    "E33": "在 lib/crypto 中新增 HKDF-SHA{256,384,512} 的 KUnit 测试用例和核心实现，提供 RFC5869 定义的 HKDF-Extract/Expand 密钥派生函数，供 fscrypt 和 NVMe 等内核用户替换各自的派生逻辑。",
+    "E34": "在 crypto/rsassa-pkcs1 的签名和验签路径中，对模数长度不足以容纳 DigestInfo 与哈希编码的 RSA 密钥显式拒绝执行，防止密钥过短触发填充错误或越界访问。",
+    "E35": "在 amlogic crypto 引擎驱动中，修正中断处理函数返回值（IRQ_NONE/IRQ_HANDLED）与 switch-case 的 fallthrough 逻辑，并将时钟和硬件引擎的获取注册改为 devm_* 接口以自动释放资源。",
+    "E37": "在 padata 初始化路径中，当串行化阶段结束后释放 padata_work 对象，不再等到模块卸载，同时把剩余的初始化函数和静态数据标记为 __init/__initdata 以便启动后释放。",
+    "E38": "把 fips.h 拆成 fips-aes.h 与 fips-sha.h 后，在 lib/crypto 的 AES 模块中新增 FIPS 自检逻辑，分别对无认证的块加密模式和 GCM/CCM 认证加密模式运行 known-answer 测试并校验结果。",
+    "E39": "在 img-hash 驱动 probe 中，先将 platform device 的资源（寄存器地址、IRQ、时钟）获取到局部变量并提前准备时钟，同时调整错误退出时 free_irq 与 clk_disable_unprepare 的释放顺序，避免 IRQ 残留或时钟未开启时的无效操作。",
+    "E40": "在 crypto/zstd 实现中，压缩与解压初始化时分别省略对 cstream 和 dstream 工作区的重复 setup 调用，使同一变换请求不再两次初始化压缩/解压流，降低每次请求的固定开销。"
+  },
+  "batch-table-v4-retry:0ef1cf8363a461a64448f2fa124725de": {
+    "E01": "在 crypto API 中新增 aes_zeroize_ctx() 清零函数，并通过 __cleanup(aes_zeroize_ctx) 让 aspeed、padlock-aes、sa2ul、arm/aes-neonbs、arm64/aes-neonbs、qat。",
+    "E06": "重构 atmel-ecc 驱动中 atmel_ecdh_set_secret() 的控制流，删除冗余的返回变量，使 ECDH 私钥设置函数在错误路径使用统一返回、成功路径直接返回 0。",
+    "E13": "在 octeontx2 驱动的 authenc(cipher_null,hmac) 校验路径中，将 HMAC 摘要比对从 memcmp() 改为恒定时间比较的 crypto_memneq()，以消除标签校验耗时对机密信息的侧信道泄露。"
+  },
+  "batch-table-v4-retry:4b8ac521d0e29d4c35663cafbeafdc0e": {
+    "E36": "在 lib/crypto 中新建 test-utils.h 和 aead-test-template.h 通用测试模板，将 hash 测试改为每用例独立缓冲区，并为 AES-CCM 和 AES-GCM 各添加一套 KUnit 测试套件以覆盖加解密及认证失败路径。"
+  },
+  "batch-table-v4:95819ad36d25f118560514bffdf69984": {
+    "E02": "patch list says two patches. Diff shows cbc(paes) allowlist privileged-only? Wait patch 14726295 changes cbc(paes) allowlist from false to true. Need understand af_alg allowlist me。",
+    "E04": "Series \"Provide a function for zeroizing crypto_aes_ctx\" and patch list clear ctx when done in aspeed, padlock, sa2ul, arm/arm64 aes-neonbs; provide wrapper; simplify AES key check。",
+    "E05": "No patch list no diff. Subject: hwrng core Stop/start hwrng_fillfn() kthread before/after suspend-resume. Need summarize exactly: \"在系统 suspend 前停止 hwrng_fillfn kthread。",
+    "E06": "Patch list four. Need summarize all: \"修复 IAA crypto 驱动多 entry SG list 问题：解压完成路径只在硬件实际完成时统计 decompress bytes，避免 fallback 计入；对多 SG entry 的压缩输入回退软件；解压输入用 mempool bounce buffer。",
+    "E07": "hwrng omap Kconfig change enable on Renesas RZ/N1D by adding `ARCH_RZN1` to HW_RANDOM_OMAP dependencies. Need mention RZN1 has OMAP RNG IP? likely. One line: \"在 HW_RANDOM_OMAP 的 de。",
+    "E08": "simplify control flow in register functions in qce. Diff shows in qce_aead_register, qce_ahash_register, qce_skcipher_register, on registration error call unregister and return ret。",
+    "E03": "Add xts(camellia), xts(serpent), xts(twofish) to skcipher AF_ALG allowlist for cryptsetup. Need mention status. One sentence: \"扩展 crypto/algif_skcipher.c 的 AF_ALG skcipher allowlis。"
+  },
+  "batch-table-v4:3773be89703b855f552b1371277c74f6": {
+    "E09": "在 octeontx2 CPT VF 驱动的 validate_hmac_cipher_null() 中，将 rctx->fctx.hmac.s.hmac_calc 与 hmac_recv 的 memcmp() 校验改为 crypto_memneq()，比较长度取 crypto_aead_authsize(tfm)，不匹配时返回 -EBADMSG。",
+    "E10": "在 octeontx CPT VF 驱动对 cipher_null authenc 的 HMAC 校验中，将 hmac_calc 与 hmac_recv 的 memcmp() 比较替换为 crypto_memneq()，以消除 memcmp 的时序侧信道，不匹配时返回 -EBADMSG。",
+    "E11": "ccree 驱动的 AEAD 标签比较从 memcmp() 改为 crypto_memneq()，使认证标签比较时间与内容无关，避免验证失败时泄露比较位置的时序信息。",
+    "E12": "amcc crypto4xx 驱动将 request_irq/free_irq 的 dev_id 从 struct device *dev 改为 struct crypto4xx_core_device *core_dev。",
+    "E13": "s5p-sss 驱动的 s5p_aes_interrupt() 原来接收 platform_device 再调用 platform_get_drvdata() 获取 s5p_aes_dev，现在 devm_request_threaded_irq() 的 dev_id 改为直接传 s5p_aes_dev，中断入口不再做一次驱动数据查找。",
+    "E14": "rockchip rk3288 crypto 驱动的 rk_crypto_irq_handle() 入口由接收 platform_device 改为直接用 dev_id 作为 rk_crypto_info *，probe() 中 devm_request_irq() 的 dev_id 也从 pdev 换成 crypto_info。",
+    "E15": "sa2ul 驱动的 AEAD 标签比较由 memcmp() 改为 crypto_memneq()，保证比较过程不依赖标签字节内容，降低认证标签校验的时序侧信道风险。",
+    "E16": "Intel Keembay OCS 驱动的 GCM 与 CCM AEAD 路径均把 memcmp() 换成 crypto_memneq()：kmb_ocs_aead_run() 在 GCM decrypt 时比较 in_tag/out_tag，ccm_compare_tag_to_yr() 比较 tag 与 yr，不相等时返回 -EBADMSG。"
+  },
+  "batch-table-v4:7e3f661feb45f6fb228a1afaaeaecbf3": {
+    "E17": "在 crypto/krb5/krb5_api.c 的 crypto_krb5_prepare_encryption() 和 crypto_krb5_prepare_checksum() 中将释放派生密钥缓冲区从 kfree() 改为 kfree_sensitive()，使敏感密钥内容在释放前被清空。",
+    "E18": "在 eip93 的 struct eip93_device 中把 ring 指针改为 flexible array member ring[]，并在 eip93_crypto_probe() 中使用 struct_size(eip93, ring, 1) 的 devm_kzalloc() 一次分配 device 和单个 ring。",
+    "E19": "在 qce core.c 中让 qce_handle_request() 在算法类型匹配时直接返回 ops->async_req_handle(async_req)，并在 devm_qce_register_algs() 失败回滚时改用 while (i--) 逐个调用 qce_ops[i]->unregister_algs(qce)。",
+    "E20": "在 include/uapi/linux/psp-sfs.h 中把两处非 kernel-doc 的块注释从 /** 改为 /*，避免它们被当作 kernel-doc 注释解析。",
+    "E21": "在 atmel-ecc.c 中引入 atmel_ecc_kpp_lock、refcnt、unreg_done completion 等全局同步状态，probe 注册 atmel_ecdh_nist_p256 前等待上一次注销完成。",
+    "E22": "在 qce 驱动中把寄存器写改为通过 qce_write_dma() 走 BAM DMA，并配置 bam_config.lock_scratchpad_addr 为 base_phys + REG_VERSION；同时调整 aead 流程使 qce_start() 先于 qce_dma_prep_sgs()。",
+    "E23": "删除 padata 的 serialized job 支持，并在 padata.rst 中移除 serialized job 的初始化、padata_alloc_shell、padata_do_parallel、serial_cpumask 以及系统 sysfs 接口等对应文档章节。",
+    "E24": "在 TI DTHEv2 驱动中新增 SHA224/256/384/512 与 HMAC 支持：Kconfig 增加 CRYPTO_SHA256、CRYPTO_SHA512、CRYPTO_HMAC 选择，Makefile 加入 dthev2-hash.o。"
+  },
+  "batch-table-v4:c5012de0a4462b5b56346eb606d5faf5": {
+    "E26": "在drivers/crypto/rockchip下新增CRYPTO_DEV_ROCKCHIP2的rk2_crypto驱动，为RK3566/RK3568/RK3588提供AES/SM3等硬件加速；驱动用devm_clk_bulk_get_all获取时钟，通过RK2_CRYPTO_DMA_INT_EN/ST寄存器开关中断。",
+    "E28": "在lib/crypto中新增AES-ECB、CBC/CBC-CTS、CTR/XCTR、GCM、CCM的库API及头文件（如include/crypto/aes-cbc.h、aes-ctr.h），补充libcrypto-unauth-encryption.rst文档，并将crypto的AES CBC/CTS/GCM/CCM/XTS模板改用库实现。",
+    "E29": "在crypto/asymmetric_keys中新增x509_crl.asn1和x509_idp.asn1解析器，使x509_cert_parser能够处理CRL格式及issuingDistributionPoint、certificateIssuer、cRLReason扩展，支持间接CRL。",
+    "E30": "在QAT gen4 VF迁移路径中，adf_gen4_vfmig_save_setup先对mdev->state整个缓冲区memset清零，adf_gen4_vfmig_save_state则清零setup_size之后剩余区域，避免陈旧数据被包含进迁移状态缓冲区。",
+    "E31": "talitos驱动将所有request_irq中断处理回调的data参数从struct device*改为struct talitos_private*，宏展开的handler与talitos_error()均通过priv->dev引用设备，省去每次dev_get_drvdata()转换。",
+    "E32": "在lib/crypto/aes.c中为AES裸算法、ECB等非认证模式以及GCM/CCM增加FIPS启动自检，使用固定测试向量加解密比对失败即panic；并将fips.h拆分为fips-aes.h和fips-sha.h分别声明AES与SHA的FIPS测试向量。"
+  },
+  "batch-table-v4:47bdda7c275013a160b7cc52c93fa6b6": {
+    "E34": "在 lib/crypto/x86 中新增 chacha-avx512-x86_64.S，实现 chacha_16block_xor_avx512()，用 512 位 zmm 寄存器一次并行处理 16 个 ChaCha 块，并在 lib/crypto/Makefile 中把该文件加入 x86 的 libchacha 构建。",
+    "E35": "在 lib/crypto 中新增 HKDF-SHA{256,384,512} 库实现，include/crypto/hkdf.h 暴露 hkdf_seg 分段 info 和 hkdf_sha256_extract/expand 等接口，支持不拼接临时缓冲的复合 info。",
+    "E36": "在 talitos 驱动中为 SEC1 32K ahash 限制加入 work_struct sec1_ahash_process_remaining 和剩余字节计数，使 ahash_done() 在请求未完成时用 schedule_work() 处理后续分块；将 first/last 字段改名为 first_desc/last_desc 并同步相关函数。"
+  },
+  "batch-table-v4-retry:54e7e17cd922883d9f003d85d557142a": {
+    "E25": "Since E25 is cover letter with many patches. Maybe use one sentence listing driver and algorithms. Let's make:"
+  },
+  "batch-table-v5:8bbaef01aad08f632247dc307213995c": {
+    "E03": "diff adds entries xts(camellia), xts(serpent), xts(twofish) to skcipher_allowlist all with false. If false semantic not certain; but we can just say \"在 crypto/algif_skcipher.c 的 sk。"
+  },
+  "batch-table-v5:b671cba9a63c5c91209ee97b2c61f539": {
+    "E05": "在 drivers/char/hw_random/core.c 中注册 PM notifier，于 PM_SUSPEND_PREPARE/PM_HIBERNATION_PREPARE/PM_RESTORE_PREPARE 回调内持 rng_mutex 调用 hwrng_stop_hwrng_fillfn() 停止 hwrng_fillfn kthread 并。",
+    "E06": "在 Intel IAA 压缩驱动中修复多 entry SG 列表问题：将解压完成统计从完成回调无条件执行改为仅硬件成功路径（iaa_desc_complete/iaa_decompress 同步分支）执行，避免软件 fallback 重复统计。",
+    "E07": "在 drivers/char/hw_random/Kconfig 的 HW_RANDOM_OMAP 依赖中加入 ARCH_RZN1，使 OMAP 随机数发生器驱动可被 Renesas RZ/N1D 平台选择并编译。",
+    "E08": "在 qce 驱动的 qce_aead_register、qce_ahash_register、qce_skcipher_register 中，将算法注册循环里失败时的 goto err 公共退出改为在循环内直接调用对应的 qce_aead_unregister/qce_ahash_unregister/qce_skcipher_unregister 并返回错。"
+  },
+  "batch-table-v5:84a2f51b5bcb23e6abc478353bfd9a73": {
+    "E09": "在 marvell octeontx2 的 otx2_cptvf_algs.c 中，将 validate_hmac_cipher_null() 对 hmac_calc 与 hmac_recv 的 memcmp() 校验改为 crypto_memneq()，认证不匹配时返回 -EBADMSG，避免 cipher_null authenc 路径的时序侧信道。",
+    "E10": "在 octeontx（非 octeontx2）驱动 otx_cptvf_algs.c 中，将 validate_hmac_cipher_null() 检查 HMAC 的 memcmp() 替换为 crypto_memneq()，失败时返回 -EBADMSG，消除 HMAC 标签比较时间信息泄露。",
+    "E11": "在 ccree 驱动 cc_aead.c 的 cc_aead_complete() 解密密文路径中，用 crypto_memneq() 替代 memcmp() 比较 mac_buf 与 icv_virt_addr 的 authsize 字节 AEAD 标签，认证失败时仍走原有 dev_dbg 报错与错误处理分支。",
+    "E12": "在 crypto4xx 驱动的 crypto4xx_probe()/crypto4xx_remove() 中，request_irq()/free_irq() 的 dev_id 参数由 struct device *dev 改为 struct crypto4xx_core_device *core_dev。"
+  },
+  "batch-table-v5:3477b9885b1539184be70bdfaa255457": {
+    "E13": "修改 s5p-sss 加密驱动，将 s5p_aes_interrupt 的 dev_id 参数从 platform_device 改为 s5p_aes_dev，s5p_aes_probe 中请求 feed control 中断时把 pdata 传给 devm_request_threaded_irq，回调函数直接使用 pdata。",
+    "E14": "修改 rk3288_crypto 驱动，rk_crypto_irq_handle 的 dev_id 从 platform_device 改为 rk_crypto_info，probe 中 devm_request_irq 注册 IRQF_SHARED 中断时最后参数由 pdev 改为 crypto_info。",
+    "E15": "在 sa2ul 驱动的 sa_aead_dma_in_callback 中，将 AEAD 解密认证时 mdptr 中 tag 与从 req->src 提取的 auth_tag 的 memcmp 比较改为 crypto_memneq，不匹配仍返回 -EBADMSG，避免 memcmp 非恒定时间带来的信息泄露。",
+    "E16": "把 Intel Keem Bay OCS 加密驱动中 GCM 与 CCM 两条 AEAD tag 比较路径从 memcmp 改为 crypto_memneq：GCM 在 kmb_ocs_aead_run 的 OCS_DECRYPT 分支比较 rctx->in_tag 与 rctx->out_tag。"
+  },
+  "batch-table-v5:8c4dd2b6d9e28e4579f1c33b505d18e6": {
+    "E17": "在 crypto/krb5 的 crypto_krb5_prepare_encryption() 与 crypto_krb5_prepare_checksum() 中，将成功与错误路径释放派生密钥缓冲区 keys.data 的 kfree() 改为 kfree_sensitive()，先清零敏感密钥内容再释放。",
+    "E18": "在 inside-secure/eip93 驱动中，将 eip93_device 结构体的 ring 指针改为柔性数组 eip93_ring ring[]，并在 eip93_crypto_probe() 中用 struct_size(eip93, ring, 1) 一次分配设备与 ring，删除了原先单独的 devm_kcalloc 分配调用。",
+    "E19": "简化 qce 驱动的请求分发和算法注册错误回滚：qce_handle_request() 在循环中命中 type 匹配的 ops 时直接返回 ops->async_req_handle 的结果，未命中时返回 -EINVAL。",
+    "E20": "在 include/uapi/linux/psp-sfs.h 中，将描述 AMD SFS 接口和 SFS IOCTL 返回码的两处以 / ** 开头的 kernel-doc 格式注释改为 /* 普通注释，避免被内核文档工具误解析。"
+  },
+  "batch-table-v5:d03418beef19ade6f3ac4b931f448749": {
+    "E21": "在 atmel-ecc 驱动的 atmel_ecc_probe/atmel_ecc_remove 中引入全局 mutex、kpp 注册引用计数和 per-client remove_done completion，unregister 前等待在途 tfm_count 归零并解除 i2c 列表节点。",
+    "E22": "为高通 qce 加密引擎添加 BAM DMA 寄存器 I/O 路径：将 qce_write() 从 writel 改为 qce_write_dma()，在 probe 中保存 base_phys/dma_size 并执行 dma_map_resource()。",
+    "E23": "删除 padata 内核 API 的 serialized job 支持及相关文档段落，移除 padata_shell 串行作业描述、padata_do_parallel 的 serial_cpumask 回调流程，仅保留 multithreaded jobs 的并行执行功能。",
+    "E24": "在 TI DTHEv2 驱动中添加 SHA224/256/384/512 哈希和 HMAC 算法支持：新增 dthev2-hash.c，在 Kconfig 中为 CRYPTO_DEV_TI_DTHEV2 选择 CRYPTO_SHA256/SHA512/CRYPTO_HMAC。"
+  },
+  "batch-table-v5:5367bc2bcf56beec769d84c8af115cb9": {
+    "E25": "在 TI DTHEv2 Hashing Engine 驱动（drivers/crypto/ti/dthev2-hash.c 与 dthev2-common.h）中增加对 HMAC 的支持：将 DTHE_MAX_KEYSIZE 从 AES 双倍密钥大小改为 SHA512_BLOCK_SIZE (128)。",
+    "E27": "为 Rockchip RK3566/RK3568/RK3588 SoC 新增 crypto offloader 驱动（drivers/crypto/rockchip/rk2_crypto.c），在 Kconfig 中加入 CRYPTO_DEV_ROCKCHIP2 配置。",
+    "E28": "在 lib/crypto/tests/ 下为 AES-CCM 和 AES-GCM 添加 KUnit 测试套件，新增共享的 aead-test-template.h、test-utils.h，并将现有 hash 测试改为每个测试用例独立分配缓冲区。"
+  },
+  "batch-table-v5:baeb06144bd4d4a6f478fdb8060e2590": {
+    "E29": "在lib/crypto及crypto中新增AES ECB、CBC/CBC-CTS、CTR/XCTR、XTS、GCM、CCM库API，并让crypto的aes模板改用这些库实现加解密，同时新增aes-ecb.h、aes-cbc.h、aes-ctr.h等头文件和libcrypto-unauth-encryption.rst文档。",
+    "E30": "在x509证书解析器中新增CRL解析及间接CRL支持，添加x509_crl.asn1和x509_idp.asn1解码器，在x509_process_extension中处理IssuingDistributionPoint、certificateIssuer和cRLReason扩展，并允许blacklist描述符使用crl:前缀。",
+    "E31": "在adf_gen4_vf_mig.c中，于adf_gen4_vfmig_save_state和adf_gen4_vfmig_save_setup里用memset将mdev->state缓冲区全部清零后再初始化迁移状态管理器，避免保存未定义残留数据。",
+    "E32": "将talitos驱动所有irq handler的data参数从struct device *改为struct talitos_private *，在request_irq调用中直接传priv，并删除handler内通过dev_get_drvdata(dev)获取priv的冗余步骤。"
+  },
+  "batch-table-v5:a7d2541edf28459325b7446f4941f030": {
+    "E33": "在 lib/crypto/aes.c 中加入 AES 的 FIPS 启动自检，覆盖未认证模式和 GCM/CCM，利用 fips_test_key/fips_test_data 与预期密文比对，失败时 panic，并将 fips.h 拆分为 fips-aes.h 和 fips-sha.h。",
+    "E35": "在 lib/crypto/x86 的 Makefile 中加入 chacha-avx512-x86_64.o，汇编新增 chacha_16block_xor_avx512()，以 AVX-512 zmm 寄存器一次并行执行 ChaCha 的 16 个数据块。"
+  },
+  "batch-table-v5:d284bdbc38a0d60f281ab160cb402826": {
+    "E37": "在 talitos 驱动中为 SEC1 32k ahash 请求限制新增 workqueue 及剩余字节计数，使 ahash_done 后仍有数据时通过 schedule_work 继续处理；将 struct talitos_ahash_req_ctx/export_state 中 first/last 字段重命名为 first_desc/last_desc。"
+  },
+  "batch-table-v5-retry:d6394e56491872d1a87d9e5dc07c4891": {
+    "E02": "将 AF_ALG skcipher allowlist 中 cbc(paes) 条目从仅特权可用改为标记 AF_ALG_UNPRIVILEGED，并在 af_alg_check_restriction() 中当按名字匹配到条目但当前进程无对应特权时用 break 直接结束遍历返回拒绝，不再继续查找重复名条目。",
+    "E26": "在 drivers/crypto/cmh 下新增 Rambus CryptoManager Hub 平台驱动，向内核 crypto API 注册 HMAC-SHA2/SHA3、CSHAKE/KMAC、SHA-2/3/SM3、AES/SM4 的 skcipher/aead/cmac、ChaCha20-Poly1305、RSA、ECDH/X25519。"
+  },
+  "batch-table-v5-retry:90993912afc5da4ae220380b585f63ce": {
+    "E34": "为 Crypto API 新增 CRYPTO_DYNAMIC_FALLBACK 配置并实现 crypto/fallback.c 通用软件回退，使 Inside Secure eip93 驱动通过新增 eip93-fallback.c 在初始化时依据 benchmark 动态选择软件实现作为硬件算法回退。",
+    "E36": "在 lib/crypto 中新增 HKDF-SHA{256,384,512} 的库实现（如 include/crypto/hkdf.h 中 hkdf_sha256_extract/expand 接口），并加入对应的 KUnit 测试配置 CONFIG_CRYPTO_LIB_HKDF_KUNIT_TEST 及 .kunitconfig 条目。"
+  },
+  "batch-table-v6:88a8769f156a3764a857af107a2d50a0": {
+    "E01": "在crypto/asymmetric_keys中新增KUnit测试套件verify_pefile，构造data_dirs数量不同的畸形PE32镜像调用verify_pefile_signature，断言目录项缺失时返回-ELIBBAD、有证书目录但无签名时返回-ENODATA，以验证PE解析器不会越界读取。",
+    "E02": "将skcipher allowlist中cbc(paes)条目的标志改为非特权可用，使非特权进程能通过AF_ALG使用该算法；同时修改af_alg_check_restriction，在同名allowlist条目匹配后立即break，不再继续遍历后续条目。",
+    "E03": "在crypto/algif_skcipher.c的skcipher allowlist中加入xts(camellia)、xts(serpent)、xts(twofish)三个条目，使cryptsetup能通过AF_ALG socket使用这些算法。",
+    "E04": "引入aes_zeroize_ctx清理函数并用__cleanup标记crypto_aes_ctx局部变量，在aspeed-hace、padlock-aes、sa2ul、arm/arm64 aes-neonbs等驱动的AES setkey路径中在函数退出时自动清零扩展密钥，同时简化safexcel和eip93的AES key合法性检查。"
+  },
+  "batch-table-v6:6d095237d2f59dddc9c8d138c8777c70": {
+    "E05": "在 hwrng core 中注册 PM notifier，在 PM_SUSPEND_PREPARE/PM_HIBERNATION_PREPARE/PM_RESTORE_PREPARE 时停止 hwrng_fillfn kthread 并置 hwrng_fillfn_stopped。",
+    "E06": "在 IAA crypto 驱动中处理多段 SG：iaa_comp_acompress 对多条目 scatterlist 回退到新增的 deflate_generic_compress() 软件压缩，解压多段输入通过 iaa_req_ctx 记录并经 mempool 的 bounce_src 做 DMA。",
+    "E07": "在 HW_RANDOM_OMAP 的 Kconfig 依赖中加入 ARCH_RZN1，使 OMAP RNG 驱动可在 Renesas RZ/N1D 平台选择编译。",
+    "E08": "将 qce 驱动的 aead、ahash、skcipher 注册函数中无法注册某个算法时的 goto err 写法改为在循环内直接调用对应 qce_*_unregister 后返回，错误路径行为不变但删除了多余的 err 标签和跳转。"
+  },
+  "batch-table-v6:3532e2f3b6d777495b7891fa4fbe070a": {
+    "E09": "在 marvell/octeontx2 的 otx2_cptvf_algs.c 的 validate_hmac_cipher_null() 中，用 crypto_memneq() 替代 memcmp 比较 hmac_calc 与 hmac_recv，使 cipher_null authenc 的 HMAC 校验变为常数时间比较。",
+    "E10": "在 marvell/octeontx 的 otx_cptvf_algs.c 的 validate_hmac_cipher_null() 中，将 HMAC 校验的 memcmp 换成 crypto_memneq()，避免因比较时间泄露 HMAC 信息，失败时返回 -EBADMSG。",
+    "E11": "在 ccree AEAD 驱动 cc_aead_complete() 的解密路径中，用 crypto_memneq() 替换 memcmp 比较 areq_ctx->mac_buf 与 icv_virt_addr 的 ctx->authsize 字节认证标签，以常数时间比较避免侧信道，认证失败后仍走原有 dev_dbg 和错误处理。",
+    "E12": "在 amcc crypto4xx 驱动的 crypto4xx_interrupt_handler() 中，把传入的 data 由 struct device * 改为 struct crypto4xx_core_device *。"
+  },
+  "batch-table-v6:4320af394880b698f56e02a0b16dd69f": {
+    "E13": "在 s5p-sss 驱动中将 s5p_aes_interrupt 中断处理函数的 dev_id 参数由 platform_device 改为 s5p_aes_dev，并在 s5p_aes_probe 中把 devm_request_threaded_irq 的 context 参数从 pdev 改为 pdata。",
+    "E14": "在 rockchip rk3288_crypto 驱动中将 rk_crypto_irq_handle 中断处理函数的 dev_id 参数由 platform_device 改为 rk_crypto_info，并把 devm_request_irq 的 context 参数从 pdev 改为 crypto_info。",
+    "E15": "在 sa2ul 驱动的 sa_aead_dma_in_callback 中，将 AEAD 认证标签的比较从 memcmp(&mdptr[4], auth_tag, authsize) 改为 crypto_memneq，并加入 <crypto/utils.h> 头文件，避免非恒定时间比较导致的时序攻击。",
+    "E16": "在 keembay OCS AES 驱动中，把 GCM 解密路径中 rctx->in_tag 与 rctx->out_tag 的 memcmp 比较改为 crypto_memneq，同时把 CCM 的 ccm_compare_tag_to_yr 函数内 tag 与 yr 的 memcmp 比较改为 crypto_memneq。"
+  },
+  "batch-table-v6:0d5d781a4a4a4d176721999729da452f": {
+    "E17": "在 crypto/krb5/krb5_api.c 的 crypto_krb5_prepare_encryption() 和 crypto_krb5_prepare_checksum() 中将释放派生密钥缓冲区 keys.data 的 kfree() 改为 kfree_sensitive()，成功与 err 路径都会先清零敏感密钥再释放。",
+    "E18": "将 eip93_main.h 中 eip93_device 的 ring 指针改为弹性数组成员 ring[]，在 eip93_crypto_probe() 用 struct_size(eip93, ring, 1) 一次性分配设备结构和 ring，删除原先单独的 devm_kcalloc() 分配及对应 -ENOMEM 检查。",
+    "E19": "在 qce_handle_request() 中去除 ret 变量，类型匹配时直接返回 ops->async_req_handle(async_req)，否则返回 -EINVAL；在 devm_qce_register_algs() 注册失败回滚中把 for (j = i-1; j >= 0; j--) 循环简化为 while (i--) qce_ops[i。",
+    "E20": "在 include/uapi/linux/psp-sfs.h 中把 SFS 顶层接口说明和 SFS IOC 注释的 /** 起始符改为 /*，避免非 kernel-doc 注释被当作 kernel-doc 解析，UAPI 结构和语义不变。"
+  },
+  "batch-table-v6:08b165137da9b4e02aa8cdc6fabbcc59": {
+    "E21": "在 atmel-ecc 驱动中引入全局 mutex atmel_ecc_kpp_lock、引用计数 atmel_ecc_kpp_refcnt 及完成量 atmel_ecc_unreg_done，将 ECDH NIST P256 KPP 注册改为首个设备负责、多设备 probe 等待旧实例注销完成。",
+    "E22": "为 Qualcomm qce crypto 驱动引入 BAM 跨引擎锁并改用 DMA 访问寄存器：probe 时保存 base_phys/dma_size，在 devm_qce_dma_request 中把 bam_config.lock_scratchpad_addr 配为 base_phys+REG_VERSION。",
+    "E24": "TI DTHE V2 驱动新增 dthev2-hash.c，注册 SHA224/256/384/512 与 HMAC 算法；Kconfig 相应 select CRYPTO_SHA256、CRYPTO_SHA512 和 CRYPTO_HMAC。"
+  },
+  "batch-table-v6:367d982114338debd7934a993c1f330b": {},
+  "batch-table-v6:b6554a7459b93c949fe0fe80e09c4171": {
+    "E29": "在 lib/crypto 与 include/crypto 中新增 AES-ECB、CBC/CBC-CTS、CTR/XCTR、XTS、GCM、CCM 的库级加解密接口（如 aes_cbc_encrypt()、aes_ctr()），并让 crypto/aes 等模板改用这些库实现，同时从 xts 拆出 __xts_verify_key() 供复用。",
+    "E30": "在 asymmetric_keys 中新增 x509 CRL 解析器并支持间接 CRL：加入 x509_crl.asn1/x509_idp.asn1，在 x509_cert_parser.c 中解析 issuingDistributionPoint、certificateIssuer、cRLReason 扩展。",
+    "E31": "在 QAT gen4 VF 迁移的 adf_gen4_vfmig_save_setup() 和 adf_gen4_vfmig_save_state() 中分别对 mdev->state 及 state 中 setup 之后的区域执行 memset 清零，再交给 adf_mstate_mgr_init() 写入迁移状态，避免旧数据残留。",
+    "E32": "talitos 驱动将 talitos_private *priv 直接作为 request_irq 的 data 传给中断处理函数，去掉中断回调里的 dev_get_drvdata(dev) 取值，并让 talitos_error() 通过 priv->dev 打印设备信息。"
+  },
+  "batch-table-v6:5e459919a61fc926038fce36d21f9a82": {
+    "E33": "在 lib/crypto/aes.c 中加入 AES 裸算法、AES-ECB、AES-GCM（含 CCM 补丁）的 FIPS 自检函数，用 fips_test_key/fips_test_data 校验加密与解密结果，失败时触发 panic。",
+    "E34": "引入 crypto/fallback.c 与 Kconfig 中新的 CRYPTO_DYNAMIC_FALLBACK 选项，建立运行时依据 benchmark 结果切换软件回退的通用框架；让 EIP93 驱动新增 eip93-fallback.c 接入该框架并在 Kconfig 中补选 AES/CBC/CTR/DES/HMAC 等算法。",
+    "E35": "在 lib/crypto/x86 的 ChaCha 构建中加入新增的 chacha-avx512-x86_64.S 文件，实现 chacha_16block_xor_avx512() 函数，用 16 个 512 位 zmm 寄存器一次并行处理 16 个 ChaCha 块的加解密与异或。",
+    "E36": "在 lib/crypto 中新增 HKDF 库实现，提供 include/crypto/hkdf.h 中的 hkdf_sha256_extract/hkdf_sha256_expand 等 API，覆盖 HKDF-SHA256/384/512。"
+  },
+  "batch-table-v6:d422fd21f2b0101c0ad096425ec18d6f": {
+    "E37": "在 talitos 驱动的 talitos_ahash_req_ctx 中把 first/last 字段重命名为 first_desc/last_desc，停止使用 crypto_ahash::init，使 ahash_digest 直接调用 ahash_init/ahash_finup 并为 sha224 新增专用 digest 函数。"
+  },
+  "batch-table-v6-retry:c5921a0e0860a624f0add272e6b66c18": {
+    "E25": "在 TI DTHEv2 哈希引擎驱动中加入 HMAC 能力，Kconfig 依赖 CRYPTO_HMAC，将 dthe_tfm_ctx 最大密钥容量改为 SHA512_BLOCK_SIZE(128 字节)，在 dthe_hash_req_ctx 中新增 odigest 暂存缓冲区。"
+  },
+  "batch-table-v6-retry:4ee102a3d8cc8ac703d5254a1bbb2a46": {},
+  "batch-table-v7:b753c73698be8efe49dc666483504e94": {},
+  "batch-table-v7:ef16d962442a389b746ffeb43d691e8e": {
+    "E05": "在 hwrng core 中注册 PM notifier：suspend/hibernate 准备阶段经 rng_mutex 调用 hwrng_stop_hwrng_fillfn 停止 hwrng_fillfn kthread 并置位 hwrng_fillfn_stopped。",
+    "E06": "针对 iaa_crypto_main.c 修复 IAA 多 entry scatterlist 处理：对 iaa_comp_acompress 的多 SG 请求回退到软件压缩并新增 deflate_generic_compress，为多 SG 解压输入使用 mempool 分配的 bounce buffer。",
+    "E07": "在 hw_random Kconfig 的 HW_RANDOM_OMAP 依赖列表中追加 ARCH_RZN1，使 OMAP RNG 驱动可被 Renesas RZ/N1D (RZN1) 平台选用。",
+    "E08": "将 qce_aead_register、qce_ahash_register、qce_skcipher_register 的注册失败处理由 goto err 统一清理改为循环内失败时直接调用各自 qce_*_unregister 并返回错误码，移除 err 标签路径，控制流保持不变。"
+  },
+  "batch-table-v7:be2e947e0331f32f430e69cc81275914": {
+    "E09": "在 otx2_cptvf_algs.c 的 validate_hmac_cipher_null() 中，将 cipher_null authenc 校验 HMAC 时对 rctx->fctx.hmac.s.hmac_calc 与 hmac_recv 的 memcmp() 改为 crypto_memneq()，不相等时返回 -EBADMSG。",
+    "E10": "在 otx_cptvf_algs.c 的 validate_hmac_cipher_null() 中，将比较 rctx->fctx.hmac.s.hmac_calc 与 hmac_recv 的 memcmp() 改为 crypto_memneq()，校验失败返回 -EBADMSG。",
+    "E11": "在 ccree 驱动 cc_aead_complete() 的解密路径中，将 areq_ctx->mac_buf 与 icv_virt_addr 的 memcmp() 比较改为 crypto_memneq()，认证失败时进入对应错误分支。",
+    "E12": "在 crypto4xx 驱动的 probe/remove 与中断处理中，将 request_irq/free_irq 的 data 参数从 struct device *dev 改为 struct crypto4xx_core_device *core_dev。"
+  },
+  "batch-table-v7:d65fbf608b0f1f46c2edc293763011c2": {
+    "E13": "在 s5p-sss 驱动的中断处理路径中，将 devm_request_threaded_irq 的 dev_id 从 struct platform_device *pdev 改为指向 s5p_aes_dev 的 pdata，同时把 s5p_aes_interrupt 的 dev_id 参数直接当作 s5p_aes_dev 使用。",
+    "E14": "在 rockchip rk3288_crypto 驱动中，将 devm_request_irq 的 dev_id 从 struct platform_device *pdev 改为指向 rk_crypto_info 的 crypto_info，并将 rk_crypto_irq_handle 的 dev_id 参数直接当作 rk_crypto_info 使用。",
+    "E15": "在德州仪器 sa2ul 驱动的 sa_aead_dma_in_callback 中，将 AEAD 认证标签比较从 memcmp 改为常数时间的 crypto_memneq，并新增 <crypto/utils.h> 头文件，以消除认证标签比较的时间侧信道。",
+    "E16": "在 intel keembay 的 OCS AES 驱动中，将 GCM 解密路径（kmb_ocs_aead_run 内 OCS_DECRYPT）和 CCM 标签比较函数 ccm_compare_tag_to_yr 里的 memcmp 对 in_tag/out_tag 和 tag/yr 的验证均改用常数时间的 crypto_memneq。"
+  },
+  "batch-table-v7:bccb7cdd1d59448a8ca516c45bcdae88": {
+    "E17": "在 crypto/krb5/krb5_api.c 中，将 crypto_krb5_prepare_encryption() 与 crypto_krb5_prepare_checksum() 正常与错误路径上 keys.data 的释放由 kfree() 改为 kfree_sensitive()，使派生密钥缓冲区释放前被清零。",
+    "E18": "在 eip93 驱动中，将 struct eip93_device 的 ring 成员改为柔性数组 struct eip93_ring ring[]，并让 eip93_crypto_probe() 通过 struct_size(eip93, ring, 1) 一次性分配设备及 ring，同时删除原来单独的 devm_kcalloc() 分配。",
+    "E19": "在 drivers/crypto/qce/core.c 中，将 qce_handle_request() 的类型匹配分发逻辑改为命中时直接返回 ops->async_req_handle() 结果、全部不匹配返回 -EINVAL，并将 devm_qce_register_algs() 注册失败后的回滚卸载循环简化为 while (i--) 形式。",
+    "E20": "在 UAPI 头文件 include/uapi/linux/psp-sfs.h 中，将描述 AMD SFS 接口与 SFS IOC 的两处 /** */ kernel-doc 注释改为 /* */ 普通注释，避免被 kernel-doc 工具误解析。"
+  },
+  "batch-table-v7:4079789b8ede116a17841c954e251516": {
+    "E22": "在 qce_crypto_probe 中保存 qce->base_phys 和 dma_size 传给 dmaengine，使 devm_qce_dma_request() 能以 REG_VERSION 的物理地址初始化 bam_config.lock_scratchpad_addr 并实行 BAM 锁定。",
+    "E24": "在 TI DTHEv2 驱动新增 dthev2-hash.c 实现 SHA224/256/384/512 与 HMAC 算法支持，Kconfig 增加 select CRYPTO_SHA256/SHA512/CRYPTO_HMAC。"
+  },
+  "batch-table-v7:262803c0fabb48315e3f1e79a07253bd": {
+    "E25": "为TI DTHEv2哈希引擎驱动(drivers/crypto/ti/dthev2-hash.c)加入HMAC处理，Kconfig增加select CRYPTO_HMAC，将DTHE_MAX_KEYSIZE由AES_MAX_KEY_SIZE*2改为SHA512_BLOCK_SIZE并在dthe_hash_req_ctx新增odigest缓冲。",
+    "E27": "为Rockchip RK3566/RK3568/RK3588添加新的加密卸载驱动，新增CONFIG_CRYPTO_DEV_ROCKCHIP2与rockchip/rk2_crypto.o，rk2_crypto.c实现平台驱动、devm_clk_bulk_get_all时钟获取及RK2_CRYPTO_DMA_INT_EN/ST寄存器的中断使能/掩码/清除。"
+  },
+  "batch-table-v7:05d3085947db8017c35d48cc52dcf0a0": {
+    "E29": "在 lib/crypto 中新增 AES-ECB、AES-CBC/CBC-CTS、AES-CTR/XCTR、AES-XTS、AES-GCM、AES-CCM 的库级 API（新增 include/crypto/aes-ecb.h/aes-cbc.h/aes-ctr.h 及对应实现）。",
+    "E30": "在 X.509 解析器中加入 CRL 解析（新增 x509_crl.asn1/x509_idp.asn1），在 x509_cert_parser.c 中处理 issuingDistributionPoint、certificateIssuer、cRLReason 扩展并支持间接 CRL 的撤销条目与颁发者。",
+    "E31": "在 QAT gen4 VF 迁移保存路径中，adf_gen4_vfmig_save_setup() 先对整个 mdev->state 的 state_size 范围 memset 清零，adf_gen4_vfmig_save_state() 再对 setup 之后区域清零后才调用 adf_mstate_mgr_init()。",
+    "E32": "将 talitos 驱动的 talitos1_interrupt_4ch、talitos2_interrupt_ch0_2/ch1_3/4ch 中断处理函数参数从 struct device * 改为 struct talitos_private *，request_irq() 的 dev_id 全部改传 priv。"
+  },
+  "batch-table-v7:2dee16a42d1de05adf0635af7212b244": {
+    "E33": "具体描述。考虑提及“FIPS”自检实际上是 lib/crypto/aes.c 内部 `__init` 函数，在启动时运行，失败会 `panic()`。这些自检被AES ECB和GCM加入；还有“fips.h”拆分为“fips-aes.h”和“fips-sha.h”。",
+    "E35": "确凿。输出：",
+    "E36": "我们要包括HKDF API和 KUnit test。可以："
+  },
+  "batch-table-v7:afc9b3f4fa6df83c2b44a59eea612f95": {
+    "E37": "在 talitos 驱动中将 ahash 请求首尾标记由 first/last 改名为 first_desc/last_desc，并让 ahash_digest 直接调用 ahash_init/ahash_finup 替代 crypto_ahash::init，为 sha224 新增 ahash_digest_sha224_swinit。"
+  },
+  "batch-table-v7-retry:b753c73698be8efe49dc666483504e94": {
+    "E02": "在 af_alg_restrict 的 skcipher_allowlist 中把 cbc(paes) 标记为 AF_ALG_UNPRIVILEGED，并将 af_alg_check_restriction() 的 allowlist 遍历改为名字匹配但无特权时立即 break，使同名词条不会被继续匹配。",
+    "E03": "在 crypto/algif_skcipher.c 的 skcipher_allowlist 中加入 xts(camellia)、xts(serpent)、xts(twofish)，供 cryptsetup 通过 AF_ALG socket 使用这三种 xts 算法。",
+    "E04": "在 aspeed、padlock-aes、sa2ul、arm/aes-neonbs-glue、arm64/aes-neonbs-glue 等驱动的 AES 路径引入带 __cleanup(aes_zeroize_ctx) 的 crypto_aes_ctx 局部变量，离开作用域时自动清零密钥上下文。"
+  },
+  "batch-table-v7-retry:6391806eeaf2d9b33274b5f01fbf0d15": {
+    "E21": "在 atmel-ecc 驱动中修复多设备热拔插时的 use-after-free 和 crypto_register_kpp 注册竞争：新增 atmel_ecc_kpp_lock/refcnt 与 atmel_ecc_unreg_done/atmel_ecc_unreg_active。",
+    "E23": "删除 padata 的 serialized job 机制：同步修改 Documentation/core-api/padata.rst 和核心调度路径，移除 PADATA_CPU_SERIAL/serial_cpumask 及相关 serial()/cb_cpu/padata_alloc_shell 串行化接口描述与实现。",
+    "E28": "为 lib/crypto 新增 AES-CCM/AES-GCM 的 KUnit 测试：加入 CRYPTO_LIB_AES_CCM_KUNIT_TEST 与 CRYPTO_LIB_AES_GCM_KUNIT_TEST 配置及测试文件，抽出公共 aead-test-template.h 复用 AEAD 测试/蒙特卡洛基准。"
+  },
+  "batch-table-v7-retry:27dd5900b61310d0330a7d7accc16833": {
+    "E34": "在 crypto 子系统新增 CRYPTO_DYNAMIC_FALLBACK 配置及 crypto/fallback.c，实现根据 CRYPTO_BENCHMARK_LIB 基准测量结果自动决定软件 fallback 阈值的通用库。"
+  },
+  "batch-table-v8:3bd9efab903693eff8d4f8e0f706db98": {
+    "E03": "阐述添加三种 XTS 算法。",
+    "E02": "阐述如上。"
+  },
+  "batch-table-v8:e83e8a01d4f689a5282ab0358847c6fb": {
+    "E05": "在 drivers/char/hw_random/core.c 中注册 PM notifier，在 PM_SUSPEND_PREPARE/PM_HIBERNATION_PREPARE/PM_RESTORE_PREPARE 时通过 kthread_stop 停止 hwrng_fillfn 线程并置 hwrng_fillfn_stopped 标志以阻止。",
+    "E06": "在 drivers/crypto/intel/iaa/iaa_crypto_main.c 中修复多 SG scatterlist 处理：把解压输入字节统计移到硬件完成路径，软件回退时不计数；对多条目 scatterlist 的压缩/解压回退软件实现，并在软件回退前解映射 dst。",
+    "E07": "在 drivers/char/hw_random/Kconfig 的 HW_RANDOM_OMAP 依赖中加入 ARCH_RZN1，使该 OMAP RNG 驱动可在 Renesas RZ/N1D 平台被选中并编译。",
+    "E08": "在 drivers/crypto/qce/aead.c/sha.c/skcipher.c 的 qce_aead_register/qce_ahash_register/qce_skcipher_register 中，把循环注册失败后的 goto err 清理改为失败处直接调用。"
+  },
+  "batch-table-v8:a19f6320bfdd4f26f9595971bde75bd0": {
+    "E09": "在 octeontx2 的 validate_hmac_cipher_null() 中，将 authenc cipher_null 模式下用 memcmp() 比较 hmac_calc 与 hmac_recv 改为恒定时间的 crypto_memneq()，不匹配时返回 -EBADMSG。",
+    "E10": "在 octeontx 的 validate_hmac_cipher_null() 中，将 authenc cipher_null 模式下用 memcmp() 校验 HMAC 值改为 crypto_memneq()，避免时序侧信道。",
+    "E11": "在 ccree 的 cc_aead_complete() 解密路径中，将 AEAD tag 校验使用的 memcmp(mac_buf, icv_virt_addr, authsize) 改为 crypto_memneq()，认证失败时记录调试信息并跳转错误处理。",
+    "E12": "将 crypto4xx 中断处理函数的 data 参数从 struct device * 改为 struct crypto4xx_core_device *，request_irq() 和 free_irq() 改传 core_dev，中断处理中直接用其访问 CE 寄存器与调度 tasklet。"
+  },
+  "batch-table-v8:b3eb2c2faceeecefe6b427ad904c37ed": {
+    "E13": "在 s5p-sss 驱动中把 IRQ 处理函数的 dev_id 由 platform_device 改为 s5p_aes_dev：s5p_aes_interrupt 直接取 dev_id 为 dev，probe 里 devm_request_threaded_irq 的最后一个参数由 pdev 改为 pdata。",
+    "E14": "在 Rockchip Crypto 驱动中把 IRQ 处理函数的 dev_id 由 platform_device 改为 rk_crypto_info：rk_crypto_irq_handle 直接使用 dev_id 作为 dev，probe 里 devm_request_irq 的 dev_id 参数由 pdev 改为 crypto_info。",
+    "E15": "在 sa2ul 驱动的 sa_aead_dma_in_callback 中，将 memcmp() 比较硬件输出的 &mdptr[4] 与 req->src 上的认证 tag 改为 crypto_memneq()，失败时仍返回 -EBADMSG，以消除 tag 比较的时间侧信道。",
+    "E16": "在 Intel Keembay OCS 驱动的 GCM 与 CCM AEAD decrypt 路径中，将 tag 比较从 memcmp() 改为 crypto_memneq()：kmb_ocs_aead_run 比较 rctx->in_tag 与 rctx->out_tag，ccm_compare_tag_to_yr 比较 tag 与 yr。"
+  },
+  "batch-table-v8:169d10d76e15f74ba0091fad588a0578": {
+    "E17": "在 crypto/krb5/krb5_api.c 中，将 crypto_krb5_prepare_encryption() 与 crypto_krb5_prepare_checksum() 的成功返回路径和 err 错误路径里的 kfree(keys.data) 改为 kfree_sensitive(keys.data)。",
+    "E18": "调整 drivers/crypto/inside-secure/eip93 驱动，将 eip93_device 中原有独立指针 eip93_ring *ring 改为柔性数组成员 struct eip93_ring ring[]，并在 probe 中删除独立的 devm_kcalloc 分配。",
+    "E19": "简化 drivers/crypto/qce/core.c：qce_handle_request() 在遍历 qce_ops 时类型匹配即直接 return ops->async_req_handle()，不再用 break 后返回统一 ret。",
+    "E20": "修改 include/uapi/linux/psp-sfs.h，把本不属于 kernel-doc 注释的 SFS 接口说明和 SFS IOC 说明从 '/**' 改为 '/*'，避免被 kernel-doc 解析器误当作文档注释生成条目。"
+  },
+  "batch-table-v8:2221e7bf1411c3507abe9e34e31d6703": {
+    "E21": "在 atmel-ecc 驱动中增加全局 atmel_ecc_kpp_lock/refcnt，仅在首设备 probe 时 crypto_register_kpp、末设备 remove 时 crypto_unregister_kpp，并通过 atmel_ecc_unreg_done 等待上次注销结束。",
+    "E22": "在 qce 驱动中引入 BAM DMA 方式访问 QCE 寄存器，把 qce_write() 改为经 qce_write_dma() 下发，并在 probe 中先记录 res->start 到 qce->base_phys 供 dma_request 配置 BAM 使用。",
+    "E23": "从 padata 机制中删除 serialized job 支持，同步移除内核文档中关于 padata_do_parallel、serial 回调、serial_cpumask 及 padata_shell 提交等序列化任务的说明，使 padata 只保留多 CPU 并行执行与线程间协调的 multithreaded job 语义。",
+    "E24": "在 TI DTHE V2 crypto 驱动中新增 dthev2-hash.o，加入 SHA-224/256/384/512 哈希处理路径并注册相应 ahash 算法，Kconfig 增加 CRYPTO_SHA256/SHA512 依赖。"
+  },
+  "batch-table-v8:2906a4a01d40183268b23a8ae5f31361": {
+    "E25": "为 TI DTHEv2 哈希驱动添加 HMAC：Kconfig 选择 CRYPTO_HMAC，DTHE_MAX_KEYSIZE 改 SHA512_BLOCK_SIZE，哈希 req_ctx 增加 odigest，新增 DTHE_HASH512_ODIGEST_A 寄存器及 HMAC_KEY_PROCESSING/OUTER_HASH 模式位处理内外哈希。"
+  },
+  "batch-table-v8:8257b24bbacf74b65b1b95e30b195539": {
+    "E29": "在 lib/crypto/aes 中新增 ECB、CBC/CBC-CTS、CTR/XCTR、XTS、GCM、CCM 模式的库 API，新增 include/crypto/aes-cbc.h、aes-ctr.h 等头文件及配套文档，并让 crypto 层的 aes、xts 模板改用这些库函数。",
+    "E30": "在 x509 解析器中加入 CRL 解析与间接 CRL 支持，新增 x509_crl.asn1 和 x509_idp.asn1 解码器，处理 IssuingDistributionPoint、certificateIssuer 和 cRLReason 扩展。",
+    "E31": "在 QAT gen4 VF 迁移保存路径的 adf_gen4_vfmig_save_state() 和 adf_gen4_vfmig_save_setup() 中，对 mdev->state 及其未使用部分执行 memset 清零，避免将残留数据打包进迁移状态缓冲区。",
+    "E32": "将 talitos 驱动中 talitos1_interrupt_* 和 talitos2_interrupt_* 中断处理函数的 data 参数从 struct device * 改为 struct talitos_private *，request_irq 直接传入 priv，并在错误路径通过 priv->dev 调用 talitos_error()。"
+  },
+  "batch-table-v8:2268137a70c1badc2df0dec3688bd1f1": {
+    "E33": "在 lib/crypto/aes.c 中为 bare AES/AES-ECB 与 AES-GCM/AES-CCM 加入基于 fips_test_key、fips_test_data 等已知向量的 FIPS 自检，失败时调用 panic()。",
+    "E36": "在 lib/crypto 中加入 HKDF-SHA256/384/512，新增 include/crypto/hkdf.h 定义 hkdf_seg、hkdf_sha256_extract()/hkdf_sha256_expand() 等接口。",
+    "E37": "在 lib/crypto/aes.c 中把原本仅针对 AES-CMAC 的 FIPS 自检注释去除，并组织为独立测试函数，但与 E33 的完整自检集中添加不同，此处仅精简了现有 aes_cmac_fips_test 的职责说明。"
+  },
+  "batch-table-v8:d12cb1cc18b5f3989a0ba66b9700a634": {},
+  "batch-table-v8-retry:7cbef04f737a3dbb173970dbd6f9fba0": {},
+  "batch-table-v8-retry:3fa66fa8a499a7507f54f93faef7af82": {
+    "E34": "在 crypto 层引入 CONFIG_CRYPTO_DYNAMIC_FALLBACK 通用动态软件回退库，新增 crypto/fallback.c 以根据 Crypto API 基准结果选择软件回退阈值；将 tcrypt 的 cycle 基准助手拆为独立库 CONFIG_CRYPTO_BENCHMARK_LIB（benchmark.o）。",
+    "E35": "在 lib/crypto/x86 下新增 chacha-avx512-x86_64.S 汇编文件，实现 chacha_16block_xor_avx512 函数，将 16 字 ChaCha 状态广播到 16 个 zmm 寄存器，借助 .rodata.cst64.CTR16BL 常量预加载 16 个块的计数器，一次处理 16 个数据块。"
+  },
+  "batch-table-v8:c4d4edbab656fbb082eebad0f051dc0d": {
+    "E02": "将crypto/algif_skcipher.c中cbc(paes)的allowlist标志从false改为true以允许非特权AF_ALG访问，并在crypto/af_alg.c的af_alg_check_restriction()中当allowlist匹配到名称但权限不足时立即break，因每名至多一项而不再继续查找。",
+    "E03": "在crypto/algif_skcipher.c的skcipher allowlist中新增xts(camellia)、xts(serpent)、xts(twofish)三个项且标记为允许受限使用，使cryptsetup可以通过AF_ALG调用这些xts算法。",
+    "E04": "提供aes_zeroize_ctx()清零包装函数，用__cleanup属性让aspeed-hace、padlock-aes、sa2ul、arm/aes-neonbs-glue、arm64/aes-neonbs-glue等驱动在setkey或派生逆密钥作用域结束时自动清零crypto_aes_ctx，并简化safexcel与eip93对合法AES key的判定。"
+  },
+  "batch-table-v8:f8c0c5a00254b2660ee207c5875d692e": {
+    "E05": "在 hwrng core 中新增 hwrng_pm_notifier 和 hwrng_fillfn_stopped 标志，收到 PM_SUSPEND_PREPARE/PM_HIBERNATION_PREPARE/PM_RESTORE_PREPARE 时持 rng_mutex 调用 hwrng_stop_hwrng_fillfn() 停止 hwrng_fill kthread。",
+    "E06": "在 IAA crypto 驱动中修复多 entry SG 列表：新增 deflate_generic_compress() 用于多 SG 压缩的软件回退，解压输入经 iaa_req_ctx.bounce_src 申请 iaa_bounce_pool 页拷贝为单 SG 后再提交硬件，并把解压字节统计移入非回退的硬件完成分支，软件回退前调用 iaa_unmap_src() 等解除 src/dst 的 DMA 映射。",
+    "E07": "在 drivers/char/hw_random/Kconfig 中将 HW_RANDOM_OMAP 的依赖列表加入 ARCH_RZN1，使 OMAP RNG 驱动可以在 Renesas RZ/N1D 平台上被配置和编译。",
+    "E08": "在 qce 的 aead.c、sha.c、skcipher.c 注册函数中，将寄存器循环内失败后的 goto err 分支改为立即调用 qce_aead_unregister()/qce_ahash_unregister()/qce_skcipher_unregister() 并 return ret，去掉共享的 err 标签和末尾回滚路径。"
+  },
+  "batch-table-v8:cd53eb911a53520dc6ba34d9854a1d17": {
+    "E09": "在 octeontx2 CPT 驱动的 validate_hmac_cipher_null() 中，将比较 rctx->fctx.hmac.s.hmac_calc 与 hmac_recv 的 memcmp 改为 crypto_memneq()，认证失败仍返回 -EBADMSG，以避免 HMAC 校验的时间侧信道泄漏。",
+    "E10": "在 octeontx CPT 驱动的 validate_hmac_cipher_null() 中，把 memcmp 比较 hmac_calc 与 hmac_recv 替换为 crypto_memneq()，防止非恒定时间比较泄露 HMAC 信息。",
+    "E11": "在 ccree 驱动 cc_aead_complete() 的解密分支中，将 mac_buf 与 icv_virt_addr 的 memcmp 比较改为 crypto_memneq()，认证失败时按原路径处理，消除标签校验的时序差异。",
+    "E12": "在 crypto4xx 驱动 probe/remove 的 request_irq/free_irq 中，把中断上下文数据由 struct device *dev 改为 struct crypto4xx_core_device *core_dev，中断处理函数 crypto4xx_interrupt_handler 直接使用 data 作为 core_dev 并去掉 dev_get_drvdata 转换。"
+  },
+  "batch-table-v8:539b316a5c510b6e3bebcb676e2ee28c": {
+    "E13": "在 s5p-sss 驱动中将 s5p_aes_interrupt 的 dev_id 参数由 platform_device 改为 s5p_aes_dev，并在 devm_request_threaded_irq 调用点直接传入 pdata，使中断回调不再通过 platform_get_drvdata 间接获取设备结构。",
+    "E14": "在 rk3288_crypto 驱动中将 rk_crypto_irq_handle 的 dev_id 参数由 platform_device 改为 rk_crypto_info，并在 devm_request_irq 调用点传入 crypto_info 而非 pdev，去掉中断处理中的 platform_get_drvdata 调用。",
+    "E15": "在 sa2ul 驱动的 sa_aead_dma_in_callback 中，用 crypto_memneq 替换 memcmp 比较 AEAD 认证标签与 mdptr 偏移处的收尾 tag，标签不一致时返回 -EBADMSG 以避免时间侧信道。",
+    "E16": "keembay OCS 的 GCM 解密路径将 rctx->in_tag 与 rctx->out_tag 的比较改用 crypto_memneq，CCM 的 ccm_compare_tag_to_yr 函数中 tag 与 yr 的比较也改用 crypto_memneq，两者均在标签不匹配时返回 -EBADMSG，替代 memcmp 以消除时序泄露。"
+  },
+  "batch-table-v8:79823d53c7c524033ed855d8320d4e38": {
+    "E17": "在 crypto_krb5_prepare_encryption() 与 crypto_krb5_prepare_checksum() 的成功及错误路径中，将释放派生密钥缓冲区 keys.data 的 kfree() 改为 kfree_sensitive()，使缓冲区释放前被清零，避免敏感密钥数据残留。",
+    "E18": "为 eip93 驱动把 struct eip93_device 末尾的 ring 指针改为灵活的 struct eip93_ring ring[] 数组成员，移除单独 devm_kcalloc() 分配 ring 的代码，在 eip93_crypto_probe() 中用 devm_kzalloc(... struct_size(eip93, ring, 1) ...) 一次性分配设备结构与单个 ring 对象。",
+    "E19": "在 Qualcomm crypto engine (qce) 驱动中简化两处逻辑：qce_handle_request() 遍历 qce_ops 时发现 type 匹配就直接 return ops->async_req_handle(async_req)，否则返回 -EINVAL。",
+    "E20": "在 include/uapi/linux/psp-sfs.h 中把描述 AMD Seamless Firmware Support (SFS) 接口及 IOCTL 的注释起始符从 /** 改为 /*，避免被内核文档工具误当 kernel-doc 解析，注释内容本身不变。"
+  },
+  "batch-table-v8:ba71cf60975163d557b0ed61d4f32d83": {
+    "E22": "QCE crypto 驱动将寄存器访问改为 BAM DMA：qce_write 改用新增 qce_write_dma() 命令码下发，probe 记录 base_phys/dma_size 并 dma_map_resource，devm_qce_dma_request() 为 BAM 配置 lock_scratchpad_addr=base_phys+REG_VERSION。",
+    "E24": "TI DTHEV2 crypto 驱动新增哈希算法支持：Kconfig 选入 CRYPTO_SHA256/SHA512/CRYPTO_HMAC，Makefile 增加 dthev2-hash.o，新文件实现 SHA224/256/384/512 与 HMAC 的 ahash 注册。"
+  },
+  "batch-table-v8:ec1c4709a9daea9fab40dff4daada41c": {
+    "E25": "在 TI DTHEv2 hash 驱动的 Kconfig 中 select CRYPTO_HMAC，将 dthe_tfm_ctx 的 DTHE_MAX_KEYSIZE 由 AES-XTS 的 64 字节改为 SHA512_BLOCK_SIZE，并在 dthe_hash_req_ctx 增加 odigest 缓冲。",
+    "E26": "为 Rambus CryptoManager Hub 新增 core platform driver 和 key provisioning/management，并在 drivers/crypto/cmh 下注册 AES/SM4 skcipher/aead/cmac、SM3/SHA-2/SHA-3/SHAKE/CSHAKE/KMAC/HMAC ahash、RSA akcipher、ECDH/X25519 kpp、ECDSA/SM2。",
+    "E28": "在 lib/crypto 的 KUnit 测试中加入 AES-CCM 与 AES-GCM 测试套件，新增共享的 aead-test-template.h 和 test-utils.h 头文件，通过 .kunitconfig/Kconfig/Makefile 增加对应 CONFIG_CRYPTO_LIB_AES_CCM_KUNIT_TEST 和 CONFIG_CRYPTO_LIB_AES_GCM_KUNIT_TEST 开关。"
+  },
+  "batch-table-v8:6ff8d00c164aaa4fadf5a2c10b27d53c": {
+    "E29": "在 lib/crypto 中新增 AES 的 ECB、CBC/CBC-CTS、CTR/XCTR、XTS、GCM、CCM 库接口，并新增 include/crypto/aes-*.h 头文件和文档，同时让 crypto 层的对应算法模板改为调用这些库实现，并从 crypto/xts 中拆分出 __xts_verify_key() 辅助函数。",
+    "E30": "在 crypto/asymmetric_keys 的 X.509 解析器中新增 CRL 解析，加入 x509_crl.asn1 和 x509_idp.asn1，处理 IssuingDistributionPoint、certificateIssuer 与 CRLReason 扩展以支持 indirect CRL。",
+    "E31": "在 QAT gen4 VF 迁移保存路径中，adf_gen4_vfmig_save_setup() 使用 memset(mdev->state, 0, mdev->state_size) 清零整个状态缓冲，adf_gen4_vfmig_save_state() 再清零 setup 区之后的部分，然后才初始化 mstate_mgr，避免未初始化迁移状态被保存。",
+    "E32": "将 talitos1/2 中断处理程序的 request_irq() dev_id 从 struct device *dev 改为 struct talitos_private *priv，使回调宏直接以 data 作为 priv 使用，并在错误路径调用 talitos_error(priv->dev, ...)，替换原先的 dev_get_drvdata(dev) 间接查找。"
+  },
+  "batch-table-v8:42c9e267a12f87bf1b1045964ade0f6e": {
+    "E33": "为 lib/crypto/aes.c 新增 bare-AES、AES-ECB 以及 AES-GCM/CCM 的 FIPS 自检函数（aes_fips_test/aes_ecb_fips_test 等），使用 fips-aes.h 中固定测试密钥与明文经 aes_preparekey、aes_encrypt、aes_decrypt、aes_gcm_encrypt 等加解密后比对，失败即调用 panic()。"
+  },
+  "batch-table-v8:a5854e8442fc6778acc819f888adee58": {
+    "E37": "在 talitos 驱动中修复 SEC1 哈希请求超过 32KB 时被截断的问题：为 struct talitos_ahash_req_ctx 增加 remaining_ahash_request_bytes 与 work_struct sec1_ahash_process_remaining 等字段，并在 ahash_done 完成当前段后通过 schedule_work 继续处理剩余数据。"
+  },
+  "batch-table-v8-retry:884b344b29a270958ab48fa4294d3bee": {
+    "E21": "在 atmel-ecc.c 中引入 atmel_ecc_kpp_lock、kpp_refcnt 和 completion，让 atmel_ecc_remove() 等待 tfm_count 归零后才释放 i2c 客户端，而 atmel_ecc_probe() 在注册 kpp 前等待旧实例注销完成（超时返回 -ETIMEDOUT），修复多设备并发注册/注销时 i2c_priv 被释放后仍被 TFM 访问的 use-after-free。",
+    "E27": "为 RK356x/RK3588 新增 CRYPTO_DEV_ROCKCHIP2 配置及 rockchip/rk2_crypto.c 驱动，注册 skcipher 与 ahash 算法，提供 reset/clk/pm_runtime 电源管理，并操作 RK2_CRYPTO_DMA_INT_EN/ST 寄存器使能与清除 DMA 中断，实现硬件加解密和哈希卸载。"
+  },
+  "batch-table-v8-retry:24266e4dc0a6a86f1e770f7645927fc8": {
+    "E34": "为 Crypto API 新增 CONFIG_CRYPTO_DYNAMIC_FALLBACK 与 crypto/fallback.c，提供依据 benchmark 结果动态切换软回退的机制；EIP93 驱动在 Kconfig 中 select CRYPTO_DYNAMIC_FALLBACK 及 AES/CBC/CTR/DES/ECB/HMAC 并新增 eip93-fallback.c。",
+    "E35": "在 lib/crypto/x86 下新增 lib/crypto/x86/chacha-avx512-x86_64.S 并加入 Makefile 的 CONFIG_X86 libchacha 编译列表；函数 chacha_16block_xor_avx512() 将 ChaCha state 广播到 16 个 zmm 寄存器，用 .rodata.cst64.CTR16BL 常量把 0-15 计数器加到 x12。"
   }
 }

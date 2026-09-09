@@ -219,5 +219,161 @@
     "E18": "在 vfio/cdx 驱动的 region 映射处理中，当用户通过 mmap 建立 VMA 时检查 region 的只读属性，若 region 声明为只读，则清除 VMA 的 VMA_WRITE 标志并拒绝后续通过写映射改变只读区域，确保只读区域不会被映射成可写。",
     "E19": "在 vfio/pci 实现中，当用户通过 sysfs 触发设备 reset 时，在设备复位前遍历并 zapping 所有被映射的 PCI BAR 区间（vma_pages）和 DMA-BUF 映射，通过 invalidate 使已建立的映射失效，防止 reset 期间或之后 guest 访问到已失效的 BAR/DMABUF 数据。",
     "E20": "在 vfio 核心代码中，将原来对 KVM 对象采用直接持有 struct kvm 指针引用计数的方式，改为在 vfio_group 与 KVM 关联时通过获取 KVM 文件描述符的 struct file 引用（fdget/kvm_destroy）来管理生命周期，使用基于文件的引用计数确保 KVM 在 vfio 使用期间不被释放。"
+  },
+  "batch-table-v4:18cb72178010bdbb86db50cb557c7045": {},
+  "batch-table-v4:e98bc37b5b715c589bdb118941ba9a07": {
+    "E10": "在 vfio selftests 中为 IGB QEMU 设备添加驱动，启用高级 TX/RX 描述符，编程 MSI-X 中断路由，并禁用 PCIe completion timeout retries 同时延长 memcpy 完成超时以适配线速硬件。",
+    "E11": "在 vfio/pci 中为 cdev 增加 iommufd 状态保持逻辑以在 live update 时保存并恢复设备状态，同时 iommufd 新增用于 preserve/unpreserve vfio cdev 的 API。",
+    "E12": "在 vfio-pci 中禁止对已启用 VF 的 SR-IOV PF 执行设备重置，并改用 pci_reset_supported() 替代 reset_works 作为重置可用性检查，以防止破坏活跃 VF。",
+    "E14": "在 vfio/mlx5 驱动中为 live migration 数据传输使用的 mkey 启用 relaxed ordering，使其访问具备 PCIe Relaxed Ordering 语义。",
+    "E15": "在 vfio selftests 的 IGB 测试驱动中，对 82576 网卡改用 PHY 内部回环模式进行数据通路测试。",
+    "E16": "将 vfio 对 KVM 的引用计数改为基于 struct file 的引用，使 KVM 生命周期随其文件对象引用计数归零而终结，避免设备与 KVM 之间出现悬垂指针。"
+  },
+  "batch-table-v4:0f70044d6fc77f23f27b66aef8044ec8": {
+    "E17": "在 vfio_group_set_kvm() 中通过 try_module_get() 引用 KVM 模块，并在 vfio_group 释放路径调用 module_put()，避免 vfio_group 缓存的 kvm 指针在 KVM 模块卸载后变为悬垂引用。",
+    "E18": "在 vfio_cdx_ioctl_mmap() 中根据 region 的 VFIO_REGION_INFO_FLAG_WRITE 标志处理 vma->vm_flags，对未声明可写的只读 region 清除 VM_WRITE 并使用只读 pgprot，阻止用户通过 mmap 将只读 region 映射为可写。",
+    "E19": "在 sysfs 触发 VFIO 绑定的 PCI 设备 reset 时，先撤销该设备所有 BAR 的用户空间 mmap 映射及已导出的 DMABUFs 映射，再执行 PCI reset，避免设备重置后用户态继续访问陈旧映射。",
+    "E20": "在 vfio_pci_core_release() 中增加对 PF 设备调用 pci_disable_sriov() 的逻辑，当 PF 的 VFIO 文件描述符关闭时自动禁用 SR-IOV，清除残留的 VF 设备状态。"
+  },
+  "batch-table-v4-retry:50a738c446e2e177a8cd66085f4edfbd": {
+    "E01": "在 vfio/pci 中新增 CXL ops 注册与 vfio-cxl 模块，检测 CXL Type-2 设备后接管其组件寄存器 BAR，通过虚拟化 CXL DVSEC 和 HDM decoder 寄存器、排除 HDM 区域于直通 mmap、仿真 decoder commit 握手及在处理复位时撤销 HDM 映射，实现 CXL Type-2 设备透传。",
+    "E02": "在 vfio/pci 中将 PCIe TPH capability 虚拟化并暴露 VFIO_DEVICE_FEATURE_TPH 系列 UAPI，实现 TPH_ST 批量 ST 表编程、TPH_RESOLVE 解析 DMABUF/CPU 源，并用 tph_policy 参数控制分段启用，set/disable 时复位硬件 TPH 状态。"
+  },
+  "batch-table-v4-retry:afb83ab6a014f4efe275d3b63ca3cbb5": {
+    "E05": "在 vfio/pci 中把 BAR mmap 改为以 DMABUF 为承载：新增查找 PFN、为 BAR-map VMA 创建 DMABUF 的辅助函数，转换 BAR mmap 使用 DMABUF，提供用户可读的 BAR 映射名称，清理 BAR zap/revocation 逻辑，并支持对 VFIO DMABUF 直接 mmap。",
+    "E07": "在 s390/vfio_ccw 中做多项修复：限制 channel program 段数、按 idaw 类型正确计算 idal 长度、取消既有 workqueue、将 cp 清理移出 not operational 流程、cp_init() 失败时释放全部内存、确保 read/write region 索引不越界、有选择地扩展 io_mutex。",
+    "E08": "在 vfio selftests 框架中增加 mlx5 测试驱动：让驱动可指定所需 region 大小，添加 dev_dbg 输出，并实现 mlx5 驱动的数据路径及 memcpy 操作、send_msi 支持，以及硬件初始化和命令接口，用于自测模拟。"
+  },
+  "batch-table-v4-retry:563cb646e8902cf81c7f86f98d8ab3e2": {},
+  "batch-table-v4:ffc70417abc1b9c37a1c1819db445b23": {
+    "E01": "s390/vfio-ap 中将 vfio_ap_wait_for_irqclear() 改为 vfio_ap_wait_for_irqstate() 并增加 AP_IRQ_DISABLED/AP_IRQ_ENABLED，vfio_ap_irq_disable() 随后轮询 PQAP(TAPQ) 确认 IR 位真正关闭。",
+    "E02": "vfio/pci 扩展 TPH 的 IV-ST 策略：tph_policy 参数上限从 NO_ST 放开到 IV_ST，vfio_tph_config_write 允许写 IV 模式；新增 vfio_pci_get_tph_st_tag/allow_src/size 系列函数。",
+    "E03": "在 vfio/pci 的 config 区虚拟化 TPH 扩展 capability：init_pci_ext_cap_tph_perm() 把 TPH_CAP 和 TPH_CTRL 设为只读/可写并让 ST 表前 64 项可写；新增 tph_calc_st_size()/tph_get_st_tag() 供 ST 表编程。",
+    "E04": "为 VFIO selftests 新增 igb 驱动，面向 Intel 82576：通过软链接复用内核 igb 头文件，在 igb.c 中实现 BAR0 的 readl/writel、E1000_MDIC MDIO 写 PHY。",
+    "E05": "vfio/pci 引入基于 DMABUF 的 BAR mmap 机制：新增 vfio_pci_dmabuf_export() 导出 BAR 映射 DMABUF 并挂入 vdev->dmabufs 跟踪，vfio_pci_dmabuf_release() 释放 vfile。",
+    "E06": "为 vfio-pci 建立基础 Live Update 支持：新增实验性 VFIO_PCI_LIVEUPDATE Kconfig（依赖 PCI_LIVEUPDATE 和 VFIO_DEVICE_CDEV），在 vfio_pci_dev_is_frozen() 时让 __vfio_pci_memory_enabled() 返回 false 且 VFIO_DEV。",
+    "E07": "在 vfio/pci 中加入 CXL Type-2 设备直通：vfio-cxl bind 时只接受 decoder_count=1、interleave_ways=1 且 cxl_reset_capable() 的设备并拒绝其他拓扑，通过 cxl_pci_setup_regs() 声明整个 component BAR 归 vfio-cxl 所有。",
+    "E08": "patch 列表有两个标题，diff 显示 mlx5.c 实现 CQ create/destroy，以及驱动整体。简介应该指明是 selftests 驱动，使用 mlx5 硬件的命令接口和自环 DMA。不要只说“添加mlx5支持”要具体。"
+  },
+  "batch-table-v4:2f1adf5faefdfad693cf27d8ba4e8f67": {
+    "E09": "在 vfio cdev 与 iommufd 路径中新增 iommufd_device_is_preserved() 检查，vfio_df_ioctl_attach_pt/detach_pt 和 iommufd_hw_pagetable_attach 在设备已被 live update 保留时返回 -EBUSY。",
+    "E10": "在 tools/testing/selftests/vfio 中新增针对 QEMU IGB 设备的 igb 驱动，用符号链接复用内核 e1000_82575.h/e1000_regs.h/e1000_defines.h，并在 igb_init 中清除 E1000_GCR 的 E1000_GCR_CMPL_TMOUT_RESEND 位。",
+    "E11": "hisi_acc_vfio_pci：拒绝在 64KB 页大小与 QM_HW_V3 硬件组合下执行 live migration；在 hisi_acc_vf_pci_aer_reset_done 中当 set_reset_flag 置位且 PF QM 的 io_base 可用时。",
+    "E13": "vfio_pci_core 用 pci_reset_supported(pdev) 替换 vdev->reset_works 来决定 VFIO_DEVICE_FLAGS_RESET 与复位路径；总线热复位改用 pci_reset_bus_cond()，用 vfio_pci_dev_has_vfs 回调检查受影响 PF 的 pci_num_vf()。",
+    "E14": "在 vfio/mlx5 的 live migration data mkey 创建流程中启用 relaxed ordering 标志，使迁移数据的 DMA 操作采用宽松排序语义以提升传输性能。",
+    "E15": "vfio_ccw 修复：限制单个 channel program 的 ccwchain 数量为 CCWCHAIN_COUNT_MAX(16) 并在 cp_init 初始化计数；vfio_ccw_async_region_read/write 对 region index 用 array_index_nospec 做界检查。"
+  },
+  "batch-table-v4-retry:c4be6027602c5bb06fea2a077a8fdc7a": {
+    "E16": "将 x86 KVM 页跟踪接口 kvm_page_track_register_notifier/unregister_notifier 和 kvm_write_track_add_gfn/remove_gfn 的入参从 struct kvm * 改为 struct file *，内部用 file_to_kvm() 获取 kvm。"
+  },
+  "batch-table-v5:516ff15d9b4859675af80b85d27069a9": {
+    "E04": "在 tools/testing/selftests/vfio/lib/drivers 下新增 Intel 82576 igb 测试驱动，创建 igb.c 实现基于 libvfio 的 BAR0 寄存器读写和 igb_write_phy 的 MDIO 写操作。"
+  },
+  "batch-table-v5:f15fd9e9deea8ba349a034b63298772a": {
+    "E05": "在 vfio_pci_dmabuf.c 中新增 vfio_pci_dma_buf_find_pfn()，按 VMA 起始地址和 pgoff 在 phys_vec 区间内计算 fault 地址对应的 PFN，并通过 vfio_pci_dmabuf_export() 将 BAR-map VMA 导出为受 vdev 跟踪的 DMABUF。",
+    "E06": "为 vfio-pci 新增依赖 PCI_LIVEUPDATE 和 VFIO_DEVICE_CDEV 的 CONFIG_VFIO_PCI_LIVEUPDATE，注册 Live Update Orchestrator 文件处理器以保留设备节点。",
+    "E07": "vfio-pci 通过 CXL DVSEC 的 CXL.cache/CXL.mem 能力识别 Type-2 设备并动态加载 vfio-cxl；绑定阶段用 devm_cxl_dev_state_create() 注册 CXL 内存设备。",
+    "E08": "在 VFIO selftest 库中新增 mlx5 用户态驱动，通过 BAR0 命令接口发送 CREATE_PD/MR/QP/EQ/CQ 等 MLX5_CMD_OP 命令初始化 ConnectX 设备，分配含 CQ/msi_eq_buf 的 DMA 缓冲区，用 RDMA WRITE 自环回执行 memcpy 数据路径测试。"
+  },
+  "batch-table-v5:b718c0190c9229e0a2d320af27a8bb07": {
+    "E09": "为 iommufd/vfio 增加 live update 状态保留：新增 iommufd_device_is_preserved() 与 iommufd_device_preserve() API，并在保留后使 vfio_df_ioctl_attach_pt()/detach_pt() 和 iommufd_hw_pagetable_attach() 对同一。",
+    "E10": "在 tools/testing/selftests/vfio 中为 QEMU 的 IGB 设备新增用户态驱动，通过符号链接复用内核 e1000_* 头文件，并在 igb_init() 内写 E1000_GCR 清除 E1000_GCR_CMPL_TMOUT_RESEND 位来禁用 PCIe 完成超时重试。",
+    "E11": "在 vfio_pci DMA_BUF 特性中新增 mmap 属性设置：扩展 UAPI 增加 VFIO_DEVICE_FEATURE_DMA_BUF_MEMATTR 及 struct vfio_device_feature_dma_buf_memattr。",
+    "E12": "在 hisi_acc_vfio_pci 中，于 hisi_acc_vf_qm_init() 对 QM_HW_V3 的 HW_ACC_MIG_VF_CTRL 模式检查 BAR2 功能段长度，若小于 PAGE_SIZE（64KB 页）则返回 -EINVAL 拒绝打开以禁用迁移。"
+  },
+  "batch-table-v5:0313cf111f13eecd944e5ebed8d7e94a": {
+    "E14": "vfio-pci core 将 reset_works 判断替换为 pci_reset_supported(pdev)，并把 hot reset/try reset 的 pci_reset_bus() 改为 pci_reset_bus_cond()。",
+    "E15": "在 mlx5 vfio-pci 驱动的 cmd.c 中给 alloc_mkey_in() 增加 mdev 参数，对构造的 mkc 调用 mlx5_core_mkey_set_relaxed_ordering()，使 live migration 数据 buffer 及 QP recv buffer 的 mkey 带 relaxed ordering 属性。",
+    "E16": "对 s390/vfio_ccw 的通道程序处理加防护：新增 CCWCHAIN_COUNT_MAX=16 限制链数，ccwchain 计数超限返回 -EINVAL；async read/write region 路径增加 i >= num_regions 检查并用 array_index_nospec。"
+  },
+  "batch-table-v5-retry:dbfe253612bb00e73f6c5e992d685301": {
+    "E01": "在 vfio_ap_irq_enable/disable 中加入 AP_IRQ_DISABLED/AP_IRQ_ENABLED 状态等待，通过 ap_tapq 轮询确认 PQAP(TAPQ) 的 IR 位达到预期状态。"
+  },
+  "batch-table-v6:9f95c31972672618ccb562e05b027313": {
+    "E01": "在s390 vfio-ap的vfio_ap_irq_enable/disable()中引入AP_IRQ_DISABLED/AP_IRQ_ENABLED状态等待，把vfio_ap_wait_for_irqclear推广为vfio_ap_wait_for_irqstate。",
+    "E02": "在vfio/pci新增PCIe TPH支持：vfio_pci_core_ioctl_feature中加入VFIO_DEVICE_FEATURE_DMA_BUF_TPH分支调用vfio_pci_core_feature_dma_buf_tph()。",
+    "E03": "在vfio/pci虚拟化PCIe TPH扩展cap：vfio_ext_cap_len中在pcie_tph_supported(pdev,false)为false时返回0以隐藏cap；新增init_pci_ext_cap_tph_perm将PCI_TPH_CAP设为只读、PCI_TPH_CTRL仅允许写MODE_SEL与REQ_EN位。",
+    "E04": "在vfio selftests lib的drivers/igb目录下新增igb.c及指向内核igb头文件的符号链接，构成Intel 82576（0x10C9）设备测试驱动：通过igb_write32/igb_read32访问bar0，实现E1000_MDIC寄存器的PHY写流程并轮询E1000_MDIC_READY/E1000_MDIC_ERROR。"
+  },
+  "batch-table-v6:a39edff6100e1af8f93bfaee9bb9575d": {},
+  "batch-table-v6:c965769d4f7eecc073534211f678b674": {
+    "E09": "在 vfio_pci cdev 的 attach/detach 路径和 iommufd_hw_pagetable_attach 中加入 iommufd_device_is_preserved 检查，保留状态下的设备直接返回 -EBUSY，并新增 iommufd_device_preserve/unpreserve 与 pasid 附件检测辅助函数。",
+    "E10": "在 vfio selftests 库下新增 igb 虚拟设备驱动，复用内核 igb 头文件实现寄存器操作和环回初始化，并清除 E1000_GCR 的 E1000_GCR_CMPL_TMOUT_RESEND 位以禁用 PCIe completion timeout 重发。",
+    "E12": "在 hisi_acc_vf_qm_init 中检测 QM_HW_V3 的 HW_ACC_MIG_VF_CTRL 模式下 BAR2 功能与迁移寄存器在 64KB 页时共享同一物理页，若无法用 mmap 隔离则返回 -EINVAL 拒绝打开设备。"
+  },
+  "batch-table-v6:cc254c20b448e9b2a366267955883ec9": {
+    "E14": "在 vfio-pci 中用 pci_reset_supported() 取代 vdev->reset_works 判断复位能力，并在 hot_reset/try_reset 中改用 pci_reset_bus_cond()，通过 vfio_pci_dev_has_vfs() 在 PF 的 pci_num_vf() 非零时返回 -EBUSY。",
+    "E15": "在 mlx5 vfio 的 cmd.c 中为 alloc_mkey_in() 增加 mdev 参数并调用 mlx5_core_mkey_set_relaxed_ordering() 设置 mkc，从而使 live migration 数据 mkey 和 QP recv buffer mkey 均启用 relaxed ordering。",
+    "E16": "在 s390/vfio_ccw 中限制单个 channel program 的 ccwchain 数量为 CCWCHAIN_COUNT_MAX(16)，对 async/chp 区域读写索引增加 num_regions 边界检查并用 array_index_nospec()。"
+  },
+  "batch-table-v6-retry:a39edff6100e1af8f93bfaee9bb9575d": {},
+  "batch-table-v6-retry:9c790b523f1a04b585e8f4ba5ff7087f": {},
+  "batch-table-v7:22c8f5ea4d4686d919c23423073d3ac5": {
+    "E04": "在 tools/testing/selftests/vfio/lib/drivers/igb/ 下新增 igb.c 用户态驱动，通过软链接复用内核 igb 驱动的 e1000_defines.h、e1000_regs.h、e1000_82575.h。"
+  },
+  "batch-table-v7:c96bd05461f746bb29e8a89799f5e0a2": {
+    "E05": "在 vfio_pci_dmabuf.c 中新增 vfio_pci_dma_buf_find_pfn()/vfio_pci_dmabuf_export() 等辅助函数，将 BAR mmap 改为先导出携带 phys_vec 的 DMABUF 再由 vfio_pci_mmap_huge_fault() 解析 fault 地址完成映射。",
+    "E06": "为 vfio-pci 加入基于 KHO/Live Update Orchestrator 的设备文件保留基础：新增 include/linux/kho/abi/vfio_pci.h 和依赖 PCI_LIVEUPDATE 与 VFIO_DEVICE_CDEV 的 VFIO_PCI_LIVEUPDATE Kconfig。",
+    "E07": "在 vfio/pci 中加入 CXL Type-2 设备直通：通过 CXL DVSEC 中 CXL.cache/CXL.mem 能力识别 Type-2 设备并动态加载 vfio-cxl，新增 vfio_pci_cxl_ops 和 vfio_cxl_state。",
+    "E08": "在 VFIO selftests 中新增 mlx5 用户态驱动，基于 ConnectX 命令接口实现硬件初始化与 MLX5_CMD_OP_CREATE_CQ/CQ destroy 等流程，配置 PD/MKEY 和 DMA 缓冲，通过 RDMA WRITE 回环执行 memcpy 自测。"
+  },
+  "batch-table-v7:e9b96f8f8c087d549c14144e530e0dfc": {
+    "E09": "在 iommufd/device.c 新增 iommufd_device_preserve/unpreserve 接口并由 vfio_pci_liveupdate 调用，用于 live update 时保存 vfio cdev 的 iommufd 状态。",
+    "E10": "在 vfio selftests 库中新增 igb 测试驱动目录，用符号链接复用内核 igb 的 e1000_82575.h/e1000_defines.h/e1000_regs.h 头文件，新建 igb.c 驱动实现 IGB QEMU 设备初始化。",
+    "E12": "在 hisi_acc_vf_qm_init() 中增加检查，当 hisi_acc_vdev->drv_mode == HW_ACC_MIG_VF_CTRL 且 VF BAR2 的功能区长度（pci_resource_len >> 1）小于 PAGE_SIZE 时返回 -EINVAL。"
+  },
+  "batch-table-v7:e6c5e8c932ce048a498ca0eb2c5a2777": {},
+  "batch-table-v7-retry:95fb04ce7fbef2505f64da70803f8a00": {
+    "E01": "vfio_ap_irq_disable()在AQIC异步关闭中断时用新增的vfio_ap_wait_for_irqstate()反复通过PQAP(TAPQ)轮询IR位至AP_IRQ_DISABLED，超时则将AP_RESPONSE_NORMAL改写成OTHERWISE_CHANGED并清零status以阻止guest释放仍被硬件引用的NIB/NISC。",
+    "E02": "通过新增tph_policy模块参数（0=No-ST,1=IV-ST）控制vfio_update_tph_vconfig_bytes()对PCIe TPH capability中ST_IV/ST_DS等能力位的隐藏，在vfio_pci_core_ioctl_feature()接入VFIO_DEVICE_FEATURE_DMA_BUF_TPH并将vfio_pc。",
+    "E03": "在vfio_pci_config.c中当pcie_tph_supported()为false时vfio_ext_cap_len()直接返回0以隐藏TPH扩展capability，init_pci_ext_cap_tph_perm()虚拟化TPH_CAP/TPH_CTRL及最多64个ST表项为可读写并用vfio_tph_capability_adjust()按。"
+  },
+  "batch-table-v7-retry:e6c5e8c932ce048a498ca0eb2c5a2777": {
+    "E14": "在 vfio-pci 的禁用与 VFIO_DEVICE_FLAGS_RESET 上报等路径用 pci_reset_supported(pdev) 替代 vdev->reset_works 判断设备是否支持复位，并将 vfio_pci_dev_set_hot_reset/try_reset 改调 pci_reset_bus_cond()。",
+    "E15": "在 vfio/mlx5 的 mlx5vf_cmd 中给 alloc_mkey_in() 增加 mdev 参数，在构造 MKC 时调用 mlx5_core_mkey_set_relaxed_ordering(mdev, mkc)。"
+  },
+  "batch-table-v8:0a076ba7dea1a1a3548cc958ade497d3": {
+    "E01": "s390/vfio-ap: 将vfio_ap_wait_for_irqclear改为vfio_ap_wait_for_irqstate并加入AP_IRQ_DISABLED/ENABLED常量，在vfio_ap_irq_disable的AQIC disable路径上轮询TAPQ直到IR位达到期望状态。",
+    "E03": "vfio/pci 虚拟化PCIe TPH capability：当pcie_tph_supported返回false时在vfio_ext_cap_len中返回0隐藏该能力，对TPH_CAP/CTRL及ST表寄存器设置ALL_VIRT/NO_WRITE等权限，新增vfio_tph_capability_adjust按root port支持裁剪。",
+    "E04": "为vfio selftests添加igb测试驱动：软链接引用igb内核头文件，实现igb.c定义82576设备ID、TX/RX描述符结构与软件环形队列，封装bar0寄存器读写以及通过MDIC寄存器写PHY的igb_write_phy，为PHY内部回环测试配置设备。"
+  },
+  "batch-table-v8:74513659280acfd7821e3344ae28d36c": {
+    "E05": "在 vfio_pci_dmabuf.c 中新增 vfio_pci_dma_buf_find_pfn() 和 vfio_pci_dmabuf_export()，使 VFIO 用户可通过 mmap() 直接映射导出的 DMABUF。",
+    "E06": "为 vfio-pci 增加 Live Update 支持：新增 VFIO_PCI_LIVEUPDATE Kconfig，当设备被 freeze（vfio_pci_dev_is_frozen()）时令 __vfio_pci_memory_enabled() 返回 false。",
+    "E07": "在 vfio/pci 中加入 CXL Type-2 设备直通支持：vfio_cxl_init_device() 在 bind 时拒绝 decoder_count != 1、interleave_ways != 1 以及 cxl_reset_capable() 为假的设备。",
+    "E08": "在 VFIO selftest mlx5 驱动中新增 CQ create/destroy（MLX5_CMD_OP_CREATE_CQ）并设置 cq_context 的 uar_page/eqn/log_cq_size 等字段，增加 MSI EQ 缓冲和 send_msi_src/dst 用于 CQ 完成触发 MSI-X。"
+  },
+  "batch-table-v8:6a2f30739589ae222c6e10bd61372d79": {
+    "E10": "在 tools/testing/selftests/vfio/lib/drivers/igb/ 下新增 IGB QEMU 设备的用户态驱动 igb.c，符号链接复用 e1000_82575.h/e1000_defines.h/e1000_regs.h 并实现初始化。",
+    "E12": "在 hisi_acc_vf_qm_init() 中对 HW_ACC_MIG_VF_CTRL 模式检查 VFIO_PCI_BAR2_REGION_INDEX 的 pci_resource_len 的一半是否小于 PAGE_SIZE，若是则打印 QM_HW_V3 64KB 页不支持迁移并返回 -EINVAL。"
+  },
+  "batch-table-v8:8cd6e564ed66ba05985f515a86317cce": {
+    "E14": "在 vfio_pci_core 中用 pci_reset_supported() 取代 vdev->reset_works 判断复位能力，并在 vfio_pci_dev_set_hot_reset/vfio_pci_dev_set_try_reset 中改用 pci_reset_bus_cond() 并传入回调 vfio_pci_dev_has_vfs。",
+    "E15": "修改 vfio/mlx5 的 alloc_mkey_in()，增加 mlx5_core_dev 参数并调用 mlx5_core_mkey_set_relaxed_ordering()，为 live migration 数据 buffer 与 QP recv 资源构造的 mkey/mkc 设置 relaxed ordering 标志。",
+    "E16": "在 s390/vfio_ccw 中新增 CCWCHAIN_COUNT_MAX 限制 channel program 的 ccwchain 数量，对 async/chp 区域读写的 region 索引做 num_regions 越界检查并 array_index_nospec。"
+  },
+  "batch-table-v8-retry:4502c126a8cd2b10959def619c046daf": {},
+  "batch-table-v8:8288a138043e668f994a22a2b0b81196": {
+    "E01": "在 s390 vfio_ap 的 vfio_ap_irq_disable() 中引入 vfio_ap_wait_for_irqstate()，将通过 TAPQ 轮询 IR bit 从仅等待清除扩展为可等待 enabled/disabled 两种状态；当 AQIC 返回 NORMAL 但 IR bit 超时未转为 disabled 时，清零 status 并伪造 OTHERWISE_CHANGED 返回给 guest。",
+    "E03": "在 vfio_ext_cap_len() 中通过 pcie_tph_supported() 判断不支持 TPH 时返回 0 隐藏扩展 capability；新增 init_pci_ext_cap_tph_perm() 对 TPH capability、TPH_CTRL 的 MODE_SEL/REQ_EN 及 ST 表逐字配置写权限实现寄存器虚拟化；实现 TPH_ST 批量 ST 表编程的 tag 计算与 size 推导。",
+    "E04": "在 tools/testing/selftests/vfio/lib/drivers/igb/ 下新增面向 Intel 82576 (0x10C9) 的 igb 测试驱动，通过符号链接复用 kernel igb 驱动的 e1000_82575.h/e1000_defines.h/e1000_regs.h。"
+  },
+  "batch-table-v8:a87dc150d8061785c53bc8af730279cc": {
+    "E05": "在 vfio/pci 中为 BAR-map VMA 引入 DMABUF 映射机制：新增 vfio_pci_dma_buf_find_pfn() 与 vfio_pci_dmabuf_export()，使 VFIO 设备 fd 的 mmap() 通过 DMABUF 持有 vfio_device 注册引用，并在 DMABUF 被 revoke 时撤销对应 BAR VMA。",
+    "E06": "引入 CONFIG_VFIO_PCI_LIVEUPDATE，在 include/linux/kho/abi/vfio_pci.h 中定义 ABI 并注册 Live Update Orchestrator file handler，保留 vfio-pci 设备文件；设备被冻结后让 vfio_pci_ioctl_get_region_info() 返回 -EIO、__vfio_pci_memory_enabled() 返回 false。",
+    "E07": "在 vfio/pci 中加入 CXL Type-2 直通支持：通过 PCI_DVSEC_CXL_CAP 的 CACHE_CAPABLE/MEM_CAPABLE 识别 Type-2 设备并加载 vfio-cxl，vfio_cxl_init_device() 拒绝 decoder_count 非 1、interleave_ways 非 1 及无 cxl_reset_capable() 的拓扑。",
+    "E08": "在 tools/testing/selftests/vfio 中新增 mlx5 驱动，通过 ConnectX 的 BAR0 initial segment、命令接口、PD/mkey/CQ/EQ（含 MSI EQ）初始化实现真实 DMA 数据路径，支持 RDMA WRITE memcpy 与 send_msi() 经 UAR doorbell 触发 MSI-X 中断。"
+  },
+  "batch-table-v8:f4227848d02567f26ea4b387010f5e0e": {
+    "E09": "在 vfio_pci 的 VFIO_DEVICE_ATTACH_PT/DETACH_PT 及 iommufd 的 iommufd_hw_pagetable_attach() 中加入 iommufd_device_is_preserved() 检查，已进入 live update 保留状态的设备直接返回 -EBUSY。",
+    "E12": "hisi_acc_vfio_pci 驱动修复：在 QM_HW_V3 且为 HW_ACC_MIG_VF_CTRL 模式时，若 BAR2 功能寄存器长度（pci_resource_len >> 1）小于 PAGE_SIZE（如 host 页 64KB），则在 hisi_acc_vf_qm_init() 中返回 -EINVAL 拒绝启用迁移。"
+  },
+  "batch-table-v8:e0b4508bcec4a90411e2684cce08edc7": {
+    "E14": "在 vfio_pci_core 中以 vdev->pdev 调用 pci_reset_supported() 取代原 vdev->reset_works 标志判断；对 vfio_pci_dev_set_hot_reset() 和 vfio_pci_dev_set_try_reset() 改用 pci_reset_bus_cond()，并新增 vfio_pci_dev_has_vfs() 回调。",
+    "E15": "在 mlx5 vfio 驱动中为 alloc_mkey_in() 增加 mdev 参数，对 live migration data buffer 与 QP recv resources 创建的 mkey 调用 mlx5_core_mkey_set_relaxed_ordering()，使这些 mkey 启用 relaxed ordering。",
+    "E16": "在 s390/vfio_ccw 中限制单个通道程序的 ccwchain 数量为 CCWCHAIN_COUNT_MAX(16)；对 async/chp 读/写 region 索引增加 num_regions 边界检查并用 array_index_nospec 防错；在 get_guest_idal() 中校验首 IDAW 等于 cp->guest_iova，否则返回 -EINVAL。"
+  },
+  "batch-table-v8-retry:b19e311bd8fc440f619e6cebfaf93d79": {
+    "E10": "在 tools/testing/selftests/vfio/lib/drivers/igb 下加入 IGB 的设备驱动，通过符号链接复用内核 e1000_82575.h/e1000_defines.h/e1000_regs.h，并在 igb_init() 中清除 E1000_GCR 的 E1000_GCR_CMPL_TMOUT_RESEND 位，关闭 PCIe completion timeout 重发。"
   }
 }

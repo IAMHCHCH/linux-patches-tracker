@@ -77,9 +77,7 @@
     "series_name": "[v5] hwrng: core - Stop/start hwrng_fillfn() kthread before/after suspend-resume",
     "series_version": 5,
     "series_mbox": "https://patchwork.kernel.org/series/1139990/mbox/",
-    "series_total": null,
-    "table_summary": "在 hwrng 核心的电源管理回调中，suspend 时调用 kthread_stop() 停止 hwrng_fillfn 填充线程，resume 后再重新启动该线程，避免挂起期间继续搬运熵数据。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14664539,
@@ -119,9 +117,7 @@
     "series_name": "crypto: af_alg - Allow additional ciphers for cryptsetup",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1121872/mbox/",
-    "series_total": null,
-    "table_summary": "在 crypto/af_alg.c 的算法 allowlist 中加入 cryptsetup 所需的额外 cipher 名称，使非特权 cryptsetup 进程能通过 AF_ALG socket 完成这些算法的认证与初始化。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14666537,
@@ -261,9 +257,7 @@
     "series_name": "hwrng: Enable EIP-76 on RZ/N1",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1125551/mbox/",
-    "series_total": 2,
-    "table_summary": "在 omap-rng 驱动的设备匹配表中加入 Renesas RZ/N1D 对应的 compatible 项，使该 SoC 的硬件随机数发生器能够被 omap hwrng 驱动 probe 并注册。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": 2
   },
   {
     "id": 14680711,
@@ -903,9 +897,7 @@
     "series_name": "crypto/krb5: use kfree_sensitive() for derived key buffers",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1139626/mbox/",
-    "series_total": null,
-    "table_summary": "在 crypto/krb5 中为 derived key buffers 改用 kfree_sensitive()。",
-    "table_summary_source": "fallback"
+    "series_total": null
   },
   {
     "id": 14728702,
@@ -945,9 +937,7 @@
     "series_name": "crypto: sa2ul - use crypto_memneq() to compare AEAD tag",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1142302/mbox/",
-    "series_total": null,
-    "table_summary": "在 crypto 中sa2ul - use crypto_memneq() to compare AEAD tag。",
-    "table_summary_source": "fallback"
+    "series_total": null
   },
   {
     "id": 14741532,
@@ -987,9 +977,7 @@
     "series_name": "crypto: s5p-sss: pass s5p_aes_dev to irq handler",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1143811/mbox/",
-    "series_total": null,
-    "table_summary": "在 crypto: s5p-sss 中传递 s5p_aes_dev to irq handler。",
-    "table_summary_source": "fallback"
+    "series_total": null
   },
   {
     "id": 14742393,
@@ -1029,9 +1017,7 @@
     "series_name": "crypto: rockchip: pass crypto_info to irq handler",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1143818/mbox/",
-    "series_total": null,
-    "table_summary": "在 crypto: rockchip 中传递 crypto_info to irq handler。",
-    "table_summary_source": "fallback"
+    "series_total": null
   },
   {
     "id": 14743949,
@@ -1091,9 +1077,7 @@
     "series_name": "crypto: amcc: pass core_dev to request_irq",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1144934/mbox/",
-    "series_total": null,
-    "table_summary": "在 amcc crypto4xx 驱动的 request_irq() 调用中传入 core_dev 作为中断处理函数上下文，使 ISR 的 data 参数指向真正包含硬件状态与锁的 core_dev 结构体。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14748148,
@@ -1193,9 +1177,7 @@
     "series_name": "crypto: qce - simplify control flow in register functions",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146533/mbox/",
-    "series_total": null,
-    "table_summary": "重构 crypto/qce 驱动的寄存器注册函数控制流，删除重复的错误分支，使多个算法注册失败时统一走同一个返回路径，减少缩进层级。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14751533,
@@ -1215,9 +1197,7 @@
     "series_name": "crypto: octeontx2 - use crypto_memneq() to check HMAC for cipher_null authenc",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146562/mbox/",
-    "series_total": null,
-    "table_summary": "在 octeontx2 的 authenc(cipher_null,hmac) 路径中，将计算出的 HMAC 与入 tag 的匹配由 memcmp() 改为 crypto_memneq()，防止按内容早退造成时序侧信道。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14751534,
@@ -1237,9 +1217,7 @@
     "series_name": "crypto: octeontx - use crypto_memneq() to check HMAC",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146563/mbox/",
-    "series_total": null,
-    "table_summary": "在 octeontx 的 HMAC 认证路径中，将 tag 比较从 memcmp() 换成 crypto_memneq()，使比较时间不依赖明文/摘要内容。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14751535,
@@ -1259,9 +1237,7 @@
     "series_name": "crypto: ccree - use crypto_memneq() to compare AEAD tag",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146564/mbox/",
-    "series_total": null,
-    "table_summary": "在 ccree 驱动的 AEAD tag 校验时改用 crypto_memneq() 比较解密获得的 tag 与原始 tag，以常数时间比较避免认证失败路径泄露数据。",
-    "table_summary_source": "llm-mail-batch"
+    "series_total": null
   },
   {
     "id": 14752866,
@@ -1715,7 +1691,7 @@
     "state": "series",
     "submitter": "Pavitrakumar Managutte",
     "version": 25,
-    "summary": "该系列围绕 crypto: spacc - Add SPAcc Crypto Driver，具体包括spacc - Add SPAcc ahash support、spacc - Add SPAcc Kconfig and Makefile、spacc - add spacc autodetect support。",
+    "summary": "新增 SPAcc ahash support、新增 SPAcc Kconfig and Makefile，并新增 spacc autodetect support。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907155916.999153-3-pavitrakumarm@vayavyalabs.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1159880/mbox/",
@@ -1747,7 +1723,7 @@
     "state": "series",
     "submitter": "Bartosz Golaszewski",
     "version": 6,
-    "summary": "该系列围绕 crypto: qce - Fix crypto self-test failures，具体包括qce - Fix HMAC self-test failures for empty messages、qce - Reject empty messages for AES-XTS、qce - Fix CTR-AES for partial block requests、qce - Use a fallback for AES-CTR（携带 a partial final block）、qce - Use a fallback for CCM（携带 a partial final block）。",
+    "summary": "修复 HMAC self-test failures for empty messages、拒绝 empty messages for AES-XTS、修复 CTR-AES for partial block requests、为 AES-CTR（携带 a partial final block 改用 a fallback），并为 CCM（携带 a partial final block 改用 a fallback）。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260717-qce-fix-self-tests-v6-1-455775fe5f6c@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1129713/mbox/",
@@ -1773,9 +1749,7 @@
       "[v6,6/8] crypto: qce - Fix xts-aes-qce for weak keys",
       "[v6,5/8] crypto: qce - Use fallback for fragmented skcipher payloads"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"在 QCE 驱动中修复 crypto 自测失败：空消息 HMAC 改为能产生正确结果，空消息 AES-XTS 请求被拒绝，AES-CTR 部分块请求的计数/长度处理被修正，并将部分末块/分片负载的 AES-CTR、CCM、弱 XTS 密钥和分片 skcipher 负载移交软件实现。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -1789,7 +1763,7 @@
     "state": "series",
     "submitter": "Thorsten Blum",
     "version": 1,
-    "summary": "该系列围绕 crypto: atmel-tdes - simplify fast path in crypt_start，具体包括atmel-tdes - simplify fast path in crypt_start、atmel-tdes - use __get_free_page in buff_init、atmel-tdes - drop redundant return variable in crypt_pdc_stop、atmel-tdes - drop redundant if check in crypt_dma_stop。",
+    "summary": "simplify fast path in crypt_start、改用 __get_free_page in buff_init、删除 redundant return variable in crypt_pdc_stop，并删除 redundant if check in crypt_dma_stop。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260706150404.382209-5-thorsten.blum@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1122497/mbox/",
@@ -1808,9 +1782,7 @@
       "[3/4] crypto: atmel-tdes - drop redundant return variable in crypt_pdc_stop",
       "[4/4] crypto: atmel-tdes - drop redundant if check in crypt_dma_stop"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 atmel-tdes 驱动中重构 crypt_start 快速路径，移除 crypt_pdc_stop 与 crypt_dma_stop 内冗余的返回变量和 if 检查，并将 buff_init 的缓冲页分配改为 __get_free_page()。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -1824,7 +1796,7 @@
     "state": "series",
     "submitter": "Eric Biggers",
     "version": 2,
-    "summary": "该系列围绕 Library APIs for AES encryption modes，具体包括crypto 中xts - Split out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support、lib/crypto: aes 中新增 CTR and XCTR support、lib/crypto: aes 中新增 XTS support。",
+    "summary": "crypto 中拆分 out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support、lib/crypto: aes 中新增 CTR and XCTR support，并lib/crypto: aes 中新增 XTS support。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260715221153.246410-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1128418/mbox/",
@@ -1855,9 +1827,7 @@
       "[v2,11/13] crypto: aes - Add XTS support using library",
       "[v2,13/13] crypto: aes - Add CCM support using library"
     ],
-    "qualified_has_more": true,
-    "table_summary": "该系列围绕 Library APIs for AES encryption modes，具体包括crypto 中xts - Split out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support、lib/crypto: aes 中新增 CTR and XCTR support、lib/crypto: aes 中新增 XTS support。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": true
   },
   {
     "id": null,
@@ -1871,7 +1841,7 @@
     "state": "series",
     "submitter": "Jihong Min",
     "version": 2,
-    "summary": "该系列围绕 crypto: eip93: fix request lifetime and completion handling，具体包括guard DMA cleanup on uninitialized mappings、拒绝 HMAC requests（在 setkey 前）、为 cipher requests 改用 request-local SA records、order result descriptor reads（在 PE_READY 后）、handle request ID exhaustion。",
+    "summary": "guard DMA cleanup on uninitialized mappings、拒绝 HMAC requests（在 setkey 前）、为 cipher requests 改用 request-local SA records、order result descriptor reads（在 PE_READY 后），并handle request ID exhaustion。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260707171537.467608-2-hurryman2212@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1123263/mbox/",
@@ -1893,9 +1863,7 @@
       "[v2,4/5] crypto: eip93: order result descriptor reads after PE_READY",
       "[v2,5/5] crypto: eip93: handle request ID exhaustion"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"在 EIP93 加密驱动中修复请求生命周期与完成处理：DMA 清理时跳过未初始化映射，未 setkey 的 HMAC 请求被拒绝，加密请求改用 request-local SA 记录，待 PE_READY 后再读结果描述符，并处理 request ID 耗尽情况。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -1909,7 +1877,7 @@
     "state": "series",
     "submitter": "Goetz Goerisch",
     "version": 3,
-    "summary": "该系列围绕 crypto: talitos - fix rename first/last to first_desc/last_desc，具体包括crypto: talitos - stop using crypto_ahash:  中init、talitos - fix SEC1 32k ahash request limitation、talitos - rename first/last to first_desc/last_desc。",
+    "summary": "清理 talitos ahash 请求上下文字段命名，将 first/last 改为 first_desc/last_desc，并同步调整 ahash digest/init/finup 路径及 sha224 软件初始化处理。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260709193956.15619-4-ggoerisch@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1124951/mbox/",
@@ -1928,9 +1896,7 @@
       "[4/5] crypto: talitos - fix SEC1 32k ahash request limitation",
       "[5/5] crypto: talitos - rename first/last to first_desc/last_desc"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"在 talitos 驱动中停用 crypto_ahash::init 回调，解决 SEC1 每个 ahash 请求超过 32k 条描述符时的限制，并将区分首个/末个描述符的 first/last 改名为 first_desc/last_desc。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -1944,7 +1910,7 @@
     "state": "series",
     "submitter": "Ousherovitch, Alex",
     "version": 4,
-    "summary": "该系列围绕 crypto: cmh - add Rambus CryptoManager Hub driver，具体包括cmh - add HMAC ahash、cmh - add ML-KEM/ML-DSA (QSE)、cmh - add DRBG hwrng、cmh - add CSHAKE/KMAC ahash、cmh - add SHA-2/SHA-3/SHAKE ahash。",
+    "summary": "新增 Rambus CryptoManager Hub 平台驱动，向 crypto API 注册 HMAC-SHA2/SHA3、CSHAKE/KMAC、SHA-2/3/SM3、AES/SM4、ChaCha20-Poly1305、RSA、ECDH/X25519、ML-KEM/ML-DSA 以及 DRBG hwrng 能力。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260825221539.255951-6-aousherovitch@rambus.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1151771/mbox/",
@@ -1977,9 +1943,7 @@
       "[v4,03/19] crypto: cmh - add key provisioning and management",
       "[v4,02/19] crypto: cmh - add core platform driver"
     ],
-    "qualified_has_more": true,
-    "table_summary": "该系列围绕 crypto: cmh - add Rambus CryptoManager Hub driver，具体包括cmh - add HMAC ahash、cmh - add ML-KEM/ML-DSA (QSE)、cmh - add DRBG hwrng、cmh - add CSHAKE/KMAC ahash、cmh - add SHA-2/SHA-3/SHAKE ahash。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": true
   },
   {
     "id": null,
@@ -1993,7 +1957,7 @@
     "state": "series",
     "submitter": "Bartosz Golaszewski",
     "version": 24,
-    "summary": "该系列围绕 crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O，具体包括qce - Cancel work on device detach、qce - Include algapi.h in the core.h header、qce - Remove unused ignore_buf、qce - Simplify arguments of devm_qce_dma_request()、qce - Use existing devres APIs in devm_qce_dma_request()。",
+    "summary": "取消 work on device detach、Include algapi.h in the core.h header、移除 unused ignore_buf、Simplify arguments of devm_qce_dma_request()，并改用 existing devres APIs in devm_qce_dma_request()。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260723-qcom-qce-cmd-descr-v24-7-4f87bb4d9938@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1133402/mbox/",
@@ -2019,9 +1983,7 @@
       "[v24,13/14] crypto: qce - Add BAM DMA support for crypto register I/O",
       "[v24,14/14] crypto: qce - Communicate the base physical address to the dmaengine"
     ],
-    "qualified_has_more": true,
-    "table_summary": "该系列围绕 crypto/dmaengine: qce: introduce BAM locking and use DMA for register I/O，具体包括qce - Cancel work on device detach、qce - Include algapi.h in the core.h header、qce - Remove unused ignore_buf、qce - Simplify arguments of devm_qce_dma_request()、qce - Use existing devres APIs in devm_qce_dma_request()。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": true
   },
   {
     "id": null,
@@ -2035,7 +1997,7 @@
     "state": "series",
     "submitter": "Vinicius Costa Gomes",
     "version": 2,
-    "summary": "该系列围绕 crypto: iaa - Fixes for multi entry SG lists，具体包括iaa - avoid counting fallback decompression bytes、iaa - fall back to software for multi-entry scatterlists、iaa - use bounce buffer for multi-sg decompress input、iaa - unmap dst（在 software fallback on decompress 前）。",
+    "summary": "避免 counting fallback decompression bytes、fall back to software for multi-entry scatterlists、为 multi-sg decompress input 改用 bounce buffer，并unmap dst（在 software fallback on decompress 前）。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260805-iaa-crypto-fixes-zswap-v2-3-55c02694f499@intel.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1141036/mbox/",
@@ -2056,9 +2018,7 @@
       "[v2,4/5] crypto: iaa - use bounce buffer for multi-sg decompress input",
       "[v2,5/5] crypto: iaa - unmap dst before software fallback on decompress"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 Intel IAA crypto 驱动中，对含多 scatterlist entry 的解压输入使用 bounce buffer，并在软件回退解压前先解除 dst DMA 映射，同时使解压字节统计不再计入回退到软件实现的数据。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2072,7 +2032,7 @@
     "state": "series",
     "submitter": "Eric Biggers",
     "version": 1,
-    "summary": "该系列围绕 More padata cleanups，具体包括Free the padata_works（当 they're no longer needed 时）、Mark remaining code as __init and data as __initdata。",
+    "summary": "Free the padata_works（当 they're no longer needed 时），并Mark remaining code as __init and data as __initdata。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260717171831.27994-3-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1129759/mbox/",
@@ -2089,9 +2049,7 @@
       "[2/2] padata: Free the padata_works when they're no longer needed",
       "[1/2] padata: Mark remaining code as __init and data as __initdata"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 padata 中当 padata_work 不再需要时立即释放，并将剩余函数和数据标记为 __init 与 __initdata。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2105,7 +2063,7 @@
     "state": "series",
     "submitter": "Paul Louvel",
     "version": 5,
-    "summary": "该系列围绕 crypto: talitos - Driver cleanup，具体包括talitos/hash - Use CRYPTO_AHASH_BLOCK_ONLY API、talitos - Add missing includes to driver header file、talitos - Move driver into dedicated directory、talitos/hwrng - Move into separate file、talitos - Prepare crypto implementation file splitting。",
+    "summary": "改用 CRYPTO_AHASH_BLOCK_ONLY API、新增 missing includes to driver header file、Move driver into dedicated directory、Move into separate file，并Prepare crypto implementation file splitting。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907-7-1-rc1_talitos_cleanup-v5-1-860f43cd7317@bootlin.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1159783/mbox/",
@@ -2156,7 +2114,7 @@
     "state": "series",
     "submitter": "Marco Baffo",
     "version": 1,
-    "summary": "该系列围绕 lib/crypto: add HKDF and convert fscrypt and NVMe，具体包括lib/crypto: tests 中新增 HKDF KUnit tests、新增 HKDF-SHA{256,384,512}。",
+    "summary": "在 lib/crypto 中新增 HKDF-SHA256/384/512 extract/expand 库接口和 KUnit 覆盖，并把 fscrypt 与 NVMe 的密钥派生逻辑迁移到统一 HKDF helper。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260721140644.780006-3-marco@mandelbit.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1131721/mbox/",
@@ -2173,9 +2131,7 @@
       "[2/5] lib/crypto: tests: add HKDF KUnit tests",
       "[1/5] lib/crypto: add HKDF-SHA{256,384,512}"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 lib/crypto 新增 HKDF-SHA256/384/512 实现及 KUnit 测试，并让 fscrypt 和 NVMe 改用该 HKDF 接口进行密钥派生。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2189,7 +2145,7 @@
     "state": "series",
     "submitter": "Richard Weinberger",
     "version": 1,
-    "summary": "该系列围绕 crypto: caam: Fix DMA mapping leak in the cbc(paes) job path，具体包括Map the paes protected key once per tfm、Validate the protected key header in setkey、修复 DMA mapping leak in the cbc(paes) job path。",
+    "summary": "Map the paes protected key once per tfm、Validate the protected key header in setkey，并修复 DMA mapping leak in the cbc(paes) job path。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260726081504.2182951-2-richard@nod.at/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1134594/mbox/",
@@ -2206,9 +2162,7 @@
       "[3/3] crypto: caam: Validate the protected key header in setkey",
       "[1/3] crypto: caam: Fix DMA mapping leak in the cbc(paes) job path"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"将 CAAM 的 cbc(paes) 路径改为按每个 tfm 只映射一次 paes 受保护密钥，并在 setkey 时校验该密钥的头部格式，修复每次加解密作业重复映射导致的 DMA 映射泄漏。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2222,7 +2176,7 @@
     "state": "series",
     "submitter": "Eric Biggers",
     "version": 5,
-    "summary": "该系列围绕 x86: Remove cpu_has_xfeatures() and add AVX-512 xor_gen()，具体包括crypto 中x86 - Stop using cpu_has_xfeatures()、lib/crypto: x86 中Stop using cpu_has_xfeatures()。",
+    "summary": "crypto 中Stop using cpu_has_xfeatures()，并lib/crypto: x86 中Stop using cpu_has_xfeatures()。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901145740.42337-4-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1155439/mbox/",
@@ -2253,7 +2207,7 @@
     "state": "series",
     "submitter": "Jihong Min",
     "version": 1,
-    "summary": "该系列围绕 crypto: introduce generic dynamic software fallback and EIP93 support，具体包括move cycle benchmark helpers out of tcrypt、引入 dynamic software fallback、eip93 - add dynamic software fallback support、eliminate fallback proxy overhead while disabled。",
+    "summary": "move cycle benchmark helpers out of tcrypt、引入 dynamic software fallback、新增 dynamic software fallback support，并eliminate fallback proxy overhead while disabled。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/e0ce93088c1d9772e928fcbd113a446b7fb7442f.1785226804.git.hurryman2212@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1135740/mbox/",
@@ -2274,9 +2228,7 @@
       "[3/4] crypto: eip93 - add dynamic software fallback support",
       "[4/4] crypto: eliminate fallback proxy overhead while disabled"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"从 tcrypt 移出 cycle 计数基准辅助函数，在 crypto 核心提供通用软件动态回退机制并将 EIP93 驱动接入，关闭回退时不再执行代理层调用以便消除额外开销。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2290,7 +2242,7 @@
     "state": "series",
     "submitter": "Thorsten Blum",
     "version": 1,
-    "summary": "该系列围绕 crypto: atmel-ecc - simplify control flow in atmel_ecdh_set_secret，具体包括atmel-ecc - simplify control flow in atmel_ecdh_set_secret、atmel-ecc - drop redundant return variable。",
+    "summary": "simplify control flow in atmel_ecdh_set_secret，并删除 redundant return variable。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260728205825.471233-3-thorsten.blum@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1136185/mbox/",
@@ -2306,9 +2258,7 @@
       "[1/2] crypto: atmel-ecc - simplify control flow in atmel_ecdh_set_secret",
       "[2/2] crypto: atmel-ecc - drop redundant return variable"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 atmel-ecc 驱动的 atmel_ecdh_set_secret() 中删除冗余 ret 返回变量，将错误处理改为直接返回各步调用结果并合并重复分支，以简化 ECDH 私钥设置的控制流。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2322,7 +2272,7 @@
     "state": "series",
     "submitter": "Eric Biggers",
     "version": 2,
-    "summary": "该系列围绕 lib/crypto: KUnit tests for AES-CCM and AES-GCM，具体包括lib/crypto: tests 中Create test-utils.h、lib/crypto: tests 中改用 per-test-case buffers in hash tests、lib/crypto: tests 中新增 KUnit test suite for AES-CCM、lib/crypto: tests 中新增 KUnit test suite for AES-GCM、lib/crypto: tests 中新增 aead-test-template.h。",
+    "summary": "为 lib/crypto 的 AES-CCM 与 AES-GCM 库接口新增 KUnit 测试，抽出 aead-test-template.h/test-utils.h 复用测试模板，并让 hash 测试改为每个用例独立分配缓冲区。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260802233005.161467-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139037/mbox/",
@@ -2345,9 +2295,7 @@
       "[v2,5/5] lib/crypto: tests: Add KUnit test suite for AES-GCM",
       "[v2,3/5] lib/crypto: tests: Add aead-test-template.h"
     ],
-    "qualified_has_more": false,
-    "table_summary": "该系列围绕 lib/crypto: KUnit tests for AES-CCM and AES-GCM，具体包括lib/crypto: tests 中Create test-utils.h、lib/crypto: tests 中改用 per-test-case buffers in hash tests、lib/crypto: tests 中新增 KUnit test suite for AES-CCM、lib/crypto: tests 中新增 KUnit test suite for AES-GCM、lib/crypto: tests 中新增 aead-test-template.h。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2361,7 +2309,7 @@
     "state": "series",
     "submitter": "Thorsten Blum",
     "version": 1,
-    "summary": "该系列围绕 crypto: qce - simplify devm_qce_register_algs，具体包括qce - simplify qce_handle_request、qce - simplify devm_qce_register_algs。",
+    "summary": "simplify qce_handle_request，并simplify devm_qce_register_algs。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260731102532.742739-4-thorsten.blum@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1138070/mbox/",
@@ -2378,9 +2326,7 @@
       "[2/2] crypto: qce - simplify qce_handle_request",
       "[1/2] crypto: qce - simplify devm_qce_register_algs"
     ],
-    "qualified_has_more": false,
-    "table_summary": "该补丁系列简化 crypto/qce：将 qce_handle_request() 中分算法处理的公共判断提前到函数入口，并把 devm_qce_register_algs() 对多个算法的注册错误改为集中返回，去除重复的注册/清理分支。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2394,7 +2340,7 @@
     "state": "series",
     "submitter": "Eric Biggers",
     "version": 1,
-    "summary": "该系列围绕 lib/crypto: FIPS self-tests for AES encryption modes，具体包括拆分 fips.h into fips-aes.h and fips-sha.h、lib/crypto: aes 中新增 FIPS self-tests for unauthenticated modes、lib/crypto: aes 中新增 FIPS self-tests for GCM and CCM。",
+    "summary": "为 lib/crypto/aes.c 增加 AES 模式 FIPS 启动自检，覆盖 ECB、GCM、CCM 等加解密向量校验，并将 fips.h 拆分为 fips-aes.h 与 fips-sha.h；自检失败时触发 panic。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260802222408.91757-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139018/mbox/",
@@ -2413,9 +2359,7 @@
       "[2/3] lib/crypto: aes: Add FIPS self-tests for unauthenticated modes",
       "[3/3] lib/crypto: aes: Add FIPS self-tests for GCM and CCM"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 lib/crypto 中将 fips.h 拆分为 fips-aes.h 与 fips-sha.h，并为 AES 未认证模式和 GCM/CCM 增加 FIPS 自测试。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2429,7 +2373,7 @@
     "state": "series",
     "submitter": "Eric Biggers",
     "version": 1,
-    "summary": "该系列围绕 crypto: af_alg_restrict cleanups，具体包括af_alg - Make cbc(paes) privileged-only、af_alg - Replace 'bool privileged'（携带 flags）、af_alg - Stop（在 finding name in allowlist 后）。",
+    "summary": "清理 AF_ALG 限制列表逻辑：将 cbc(paes) 标记为非特权可用，并调整 af_alg_check_restriction() 的同名条目匹配流程，避免无特权时继续遍历后续 allowlist 项造成权限判断歧义。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260802230055.100746-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139028/mbox/",
@@ -2447,9 +2391,7 @@
       "[2/3] crypto: af_alg - Replace 'bool privileged' with flags",
       "[3/3] crypto: af_alg - Stop after finding name in allowlist"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 AF_ALG 算法白名单中将 cbc(paes) 设为仅特权可用，用 flags 位替换原有 privileged bool，并使白名单查询在找到目标名称后立刻停止遍历。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2463,7 +2405,7 @@
     "state": "series",
     "submitter": "Thomas Huth",
     "version": 5,
-    "summary": "该系列围绕 crypto: Provide a function for zeroizing crypto_aes_ctx，具体包括aspeed - clear the crypto_aes_ctx（当 done 时）、padlock-aes - clear the crypto_aes_ctx（当 done 时）、sa2ul - clear the crypto_aes_ctx（当 done 时）、arm/aes-neonbs - clear the crypto_aes_ctx（当 done 时）、arm64/aes-neonbs - clear the crypto_aes_ctx（当 done 时）。",
+    "summary": "新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260810093009.608090-3-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1143213/mbox/",
@@ -2491,9 +2433,7 @@
       "[v5,08/10] crypto: safexcel - Simplify the check for a valid AES key",
       "[v5,10/10] crypto: eip93 - Simplify the check for a valid AES key"
     ],
-    "qualified_has_more": true,
-    "table_summary": "该系列围绕 crypto: Provide a function for zeroizing crypto_aes_ctx，具体包括aspeed - clear the crypto_aes_ctx（当 done 时）、padlock-aes - clear the crypto_aes_ctx（当 done 时）、sa2ul - clear the crypto_aes_ctx（当 done 时）、arm/aes-neonbs - clear the crypto_aes_ctx（当 done 时）、arm64/aes-neonbs - clear the crypto_aes_ctx（当 done 时）。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": true
   },
   {
     "id": null,
@@ -2507,7 +2447,7 @@
     "state": "series",
     "submitter": "Thomas Huth",
     "version": 2,
-    "summary": "该系列围绕 crypto: Provide a wrapper for zeroizing crypto_aes_ctx，具体包括提供 a wrapper for zeroizing crypto_aes_ctx、safexcel - zeroize crypto_aes_ctx（携带 __cleanup(aes_clear_ctx)）、qat - zeroize crypto_aes_ctx（携带 __cleanup(aes_clear_ctx)）。",
+    "summary": "新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260803094432.70505-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139247/mbox/",
@@ -2538,7 +2478,7 @@
     "state": "series",
     "submitter": "Thomas Huth",
     "version": 2,
-    "summary": "该系列围绕 crypto: Add __cleanup functions for zeroizing aes_cmac_key & aes_cmac_ctx，具体包括提供 wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx、lib/crypto: aes 中为 aes_cmac_key instead of memzero_explicit() 改用 __cleanup()。",
+    "summary": "提供 wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx，并lib/crypto: aes 中为 aes_cmac_key instead of memzero_explicit() 改用 __cleanup()。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260807125845.1477067-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142201/mbox/",
@@ -2554,9 +2494,7 @@
       "[v2,1/6] crypto: Provide wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx",
       "[v2,5/6] lib/crypto: aes: Use __cleanup() for aes_cmac_key instead of memzero_explicit()"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"为 aes_cmac_key 和 aes_cmac_ctx 提供清零封装函数，并在 lib/crypto/aes 中把 aes_cmac_key 的显式 memzero_explicit() 改为 __cleanup() 变量声明，使其在离开作用域时自动归零。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2570,7 +2508,7 @@
     "state": "series",
     "submitter": "T Pratham",
     "version": 7,
-    "summary": "该系列围绕 Add support for hashing algorithms in TI DTHE V2，具体包括crypto 中ti - Add support for SHA224/256/384/512 in DTHEv2 driver、crypto 中ti - Add support for HMAC in DTHEv2 driver。",
+    "summary": "crypto 中增加 SHA224/256/384/512 in DTHEv2 driver 支持，并crypto 中增加 HMAC in DTHEv2 driver 支持。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260827133542.619717-2-t-pratham@ti.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1152658/mbox/",
@@ -2587,9 +2525,7 @@
       "[v7,1/2] crypto: ti - Add support for SHA224/256/384/512 in DTHEv2 driver",
       "[v7,2/2] crypto: ti - Add support for HMAC in DTHEv2 driver"
     ],
-    "qualified_has_more": false,
-    "table_summary": "\"在 TI DTHE V2 驱动中增加 SHA-224/256/384/512 算法支持，并基于这些摘要流程补充 HMAC 处理，使相应 ahash/HMAC 请求可由该硬件完成。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2603,7 +2539,7 @@
     "state": "series",
     "submitter": "David C.C.M. Gall",
     "version": 1,
-    "summary": "该系列围绕 crypto: keembay - use crypto_memneq() to compare GCM AEAD tags，具体包括keembay - use crypto_memneq() to compare GCM AEAD tags、keembay - use crypto_memneq() to compare CCM AEAD tags。",
+    "summary": "改用 crypto_memneq() to compare GCM AEAD tags，并改用 crypto_memneq() to compare CCM AEAD tags。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/anYEQOzunX0Lm3N1@david.gall/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142330/mbox/",
@@ -2620,9 +2556,7 @@
       "[1/2] crypto: keembay - use crypto_memneq() to compare GCM AEAD tags",
       "[2/2] crypto: keembay - use crypto_memneq() to compare CCM AEAD tags"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 keembay 驱动的 AEAD 完成路径中，将 GCM 和 CCM 两种模式的认证 tag 比较从 memcmp() 替换为常数时间 crypto_memneq()，消除认证标签比较时间侧信道风险。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2636,7 +2570,7 @@
     "state": "series",
     "submitter": "Rosen Penev",
     "version": 1,
-    "summary": "该系列围绕 crypto: img-hash: clean up probe，具体包括fetch resources into locals（在 probe body 前）、修复 IRQ teardown ordering and fetch clocks early。",
+    "summary": "fetch resources into locals（在 probe body 前），并修复 IRQ teardown ordering and fetch clocks early。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811212030.20057-2-rosenp@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144334/mbox/",
@@ -2652,9 +2586,7 @@
       "[1/2] crypto: img-hash: fetch resources into locals before probe body",
       "[2/2] crypto: img-hash: fix IRQ teardown ordering and fetch clocks early"
     ],
-    "qualified_has_more": false,
-    "table_summary": "该系列围绕 crypto: img-hash: clean up probe，具体包括fetch resources into locals（在 probe body 前）、修复 IRQ teardown ordering and fetch clocks early。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2668,7 +2600,7 @@
     "state": "series",
     "submitter": "Thomas Huth",
     "version": 1,
-    "summary": "该系列围绕 lib/crypto: Provide a function for zeroizing hmac_sha1_ctx，具体包括提供 a wrapper for zeroizing hmac_sha1_ctx、lib/crypto: sha1 中改用 hmac_sha1_zeroize_ctx() instead of memzero_explicit()。",
+    "summary": "提供 a wrapper for zeroizing hmac_sha1_ctx，并lib/crypto: sha1 中改用 hmac_sha1_zeroize_ctx() instead of memzero_explicit()。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260812163336.3103835-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144861/mbox/",
@@ -2699,7 +2631,7 @@
     "state": "series",
     "submitter": "Thomas Huth",
     "version": 1,
-    "summary": "该系列围绕 libcrypto: Provide more __cleanup functions for zeroizing data，具体包括lib/crypto: aes 中提供 a wrapper function for zeroizing crypto_aes_ctx、lib/crypto: aes 中改用 aes_zeroize_*key() instead of memzero_explicit()、lib/crypto: aes 中提供 functions for zeroizing aes_key and aes_enckey、lib/crypto: md5 中改用 hmac_md5_zeroize_ctx() instead of memzero_explicit()、lib/crypto: sha1 中提供 a wrapper for zeroizing hmac_sha1_ctx。",
+    "summary": "新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260813134953.979481-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1145473/mbox/",
@@ -2724,9 +2656,7 @@
       "[11/11] lib/crypto: sha2: Provide wrappers for zeroizing SHA2 hmac_sha*_ctx structures",
       "[06/11] lib/crypto: md5: Provide a function for zeroizing hmac_md5_ctx structures"
     ],
-    "qualified_has_more": true,
-    "table_summary": "\"为 lib/crypto 的 AES 密钥结构以及 HMAC 的 MD5/SHA1/SHA2 上下文新增清零封装函数以替代直接 memzero_explicit()，使这些上下文可通过 __cleanup 属性在作用域结束时自动清除。\"",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": true
   },
   {
     "id": null,
@@ -2740,7 +2670,7 @@
     "state": "series",
     "submitter": "Fabrice Derepas",
     "version": 2,
-    "summary": "该系列围绕 crypto: asymmetric_keys - fix OOB read in pefile_parse_binary，具体包括asymmetric_keys - fix OOB read in pefile_parse_binary、asymmetric_keys - add KUnit tests for the PE parser。",
+    "summary": "修复 asymmetric_keys 中 pefile_parse_binary() 对 PE 安全目录和 section 范围校验不足导致的越界读，并补充 PE parser KUnit 用例覆盖异常输入。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/fcbc6b4d5855ba42a0fccf335b2604ef0b36f092.1786802052.git.fabrice.derepas@canonical.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1146522/mbox/",
@@ -2756,9 +2686,7 @@
       "[v2,1/2] crypto: asymmetric_keys - fix OOB read in pefile_parse_binary",
       "[v2,2/2] crypto: asymmetric_keys - add KUnit tests for the PE parser"
     ],
-    "qualified_has_more": false,
-    "table_summary": "该系列围绕 crypto: asymmetric_keys - fix OOB read in pefile_parse_binary，具体包括asymmetric_keys - fix OOB read in pefile_parse_binary、asymmetric_keys - add KUnit tests for the PE parser。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2772,7 +2700,7 @@
     "state": "series",
     "submitter": "Mohamad Raizudeen",
     "version": 1,
-    "summary": "该系列围绕 crypto: amlogic: Fix IRQ handler return value and fallthrough logic，具体包括修复 IRQ handler return value and fallthrough logic、为 clock and engine management 改用 devm APIs。",
+    "summary": "修复 IRQ handler return value and fallthrough logic，并为 clock and engine management 改用 devm APIs。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260821151243.8125-1-raizudeen.kerneldev@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1149897/mbox/",
@@ -2802,7 +2730,7 @@
     "state": "series",
     "submitter": "Timofei Novikov",
     "version": 1,
-    "summary": "该系列围绕 Add X.509 CRL support，具体包括x509 中新增 CRL parser（携带 indirect CRL support）、x509 中新增 CRL signature verification support。",
+    "summary": "x509 中新增 CRL parser（携带 indirect CRL support），并x509 中新增 CRL signature verification support。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260822082642.48936-3-tnovikov@astralinux.ru/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1150139/mbox/",
@@ -2818,9 +2746,7 @@
       "[2/3] x509: add CRL parser with indirect CRL support",
       "[3/3] x509: add CRL signature verification support"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 X.509 解析中新增 CRL 解析器，支持间接 CRL，并增加 CRL 签名验证功能。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2834,7 +2760,7 @@
     "state": "series",
     "submitter": "Usama Arif",
     "version": 1,
-    "summary": "该系列围绕 crypto: zstd - avoid initializing the workspace twice，具体包括zstd - Avoid redundant cstream initialization、zstd - Avoid redundant dstream initialization。",
+    "summary": "避免 redundant cstream initialization，并避免 redundant dstream initialization。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260825220616.3842633-2-usama.arif@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1151765/mbox/",
@@ -2851,9 +2777,7 @@
       "[1/2] crypto: zstd - Avoid redundant cstream initialization",
       "[2/2] crypto: zstd - Avoid redundant dstream initialization"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 crypto/zstd 中避免对压缩流和解压流工作区进行重复初始化，移除冗余的 ZSTD_CStream/DStream 初始化操作。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2867,7 +2791,7 @@
     "state": "series",
     "submitter": "Jérémy Jean",
     "version": 1,
-    "summary": "该系列围绕 crypto: rsassa-pkcs1: fix undersized key handling，具体包括拒绝 undersized keys（当 signing 时）、拒绝 undersized keys（当 verifying 时）。",
+    "summary": "拒绝 undersized keys（当 signing 时），并拒绝 undersized keys（当 verifying 时）。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260826103744.1554131-2-Jeremy.Jean@oss.cyber.gouv.fr/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1152006/mbox/",
@@ -2884,9 +2808,7 @@
       "[1/2] crypto: rsassa-pkcs1: reject undersized keys when signing",
       "[2/2] crypto: rsassa-pkcs1: reject undersized keys when verifying"
     ],
-    "qualified_has_more": false,
-    "table_summary": "在 crypto/rsassa-pkcs1 的签名与验证路径中增加对过小 RSA 密钥的拒绝检查，避免因密钥长度不足产生错误结果。",
-    "table_summary_source": "llm-mail-batch"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2900,7 +2822,7 @@
     "state": "series",
     "submitter": "T Pratham",
     "version": 2,
-    "summary": "该系列围绕 Fix several issues in DTHEv2 driver，具体包括crypto 中ti - Trim scatterlists to correct length in AES、crypto 中ti - Fix use-after-free of dev_data on DTHEv2 driver removal、crypto 中ti - Use list_first_entry_or_null() in dthe_get_dev()、crypto 中ti - Fix potential memory corruption on highmem pages、crypto 中ti - Fix potential deadlock bug in DTHEv2。",
+    "summary": "crypto 中Trim scatterlists to correct length in AES、crypto 中修复 use-after-free of dev_data on DTHEv2 driver removal、crypto 中改用 list_first_entry_or_null() in dthe_get_dev()、crypto 中修复 potential memory corruption on highmem pages，并crypto 中修复 potential deadlock bug in DTHEv2。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260827132318.613876-5-t-pratham@ti.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1152650/mbox/",
@@ -2922,9 +2844,7 @@
       "[v2,7/7] crypto: ti - Validate sg_nents_for_len() return value in DTHEv2 AEAD",
       "[v2,6/7] crypto: ti - Validate sg_nents_for_len() return value in DTHEv2 AES"
     ],
-    "qualified_has_more": false,
-    "table_summary": "该系列围绕 Fix several issues in DTHEv2 driver，具体包括crypto 中ti - Trim scatterlists to correct length in AES、crypto 中ti - Fix use-after-free of dev_data on DTHEv2 driver removal、crypto 中ti - Use list_first_entry_or_null() in dthe_get_dev()、crypto 中ti - Fix potential memory corruption on highmem pages、crypto 中ti - Fix potential deadlock bug in DTHEv2。",
-    "table_summary_source": "fallback"
+    "qualified_has_more": false
   },
   {
     "id": null,
@@ -2938,7 +2858,7 @@
     "state": "series",
     "submitter": "Pawel Zalewski",
     "version": 1,
-    "summary": "该系列围绕 crypto: use designated initializers for acpi_device_id，具体包括crypto: ccp 中为 acpi_device_id 改用 named initializers、crypto: hisilicon/sec 中为 acpi_device_id 改用 named initializers。",
+    "summary": "crypto: ccp 中为 acpi_device_id 改用 named initializers，并crypto: hisilicon/sec 中为 acpi_device_id 改用 named initializers。",
     "summary_source": "fallback",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260903-acpi-crypto-v1-1-253cc6fd9836@thegoodpenguin.co.uk/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1157233/mbox/",
