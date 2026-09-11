@@ -4,20 +4,23 @@
     "title": "[v4,10/10] vfio/pci: Add mmap() attributes to DMABUF feature",
     "url": "https://patchwork.kernel.org/project/kvm/patch/20260701171245.90111-11-matt@ozlabs.org/",
     "date": "2026-07-01",
-    "organization": "Individual Contributor",
+    "organization": "OzLabs Community",
     "subsystem": "VFIO PCI",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Matt Evans",
     "email": "matt@ozlabs.org",
     "version": 4,
-    "summary": "新增mmap() attributes，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为 vfio-pci 导出的 DMABUF 增加内存属性设置接口，允许用户选择后续映射该缓冲区时使用非缓存或写合并页表属性。默认仍为非缓存，选择写合并后 BAR 区域映射会采用写合并属性，且只影响之后新建的映射，不改变已存在的映射。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260701171245.90111-11-matt@ozlabs.org/mbox/",
     "series_id": 1120029,
     "series_name": "vfio/pci: Add mmap() for DMABUFs",
     "series_version": 4,
     "series_mbox": "https://patchwork.kernel.org/series/1120029/mbox/",
-    "series_total": 10
+    "series_total": 10,
+    "table_summary": "为 vfio-pci 导出的 DMABUF 增加内存属性设置接口，允许用户选择后续映射该缓冲区时使用非缓存或写合并页表属性。默认仍为非缓存，选择写合并后 BAR 区域映射会采用写合并属性，且只影响之后新建的映射，不改变已存在的映射。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14666079,
@@ -31,13 +34,16 @@
     "submitter": "Steffen Eiden",
     "email": "seiden@linux.ibm.com",
     "version": 4,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 VFIO 获取 KVM 引用时显式保存并增加 KVM 模块引用，替代原先依赖符号获取隐式维持模块存活的做法，为后续移除符号获取机制做准备。获取失败时按顺序回退释放模块引用，避免模块被卸载后仍被使用。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260706085229.979525-2-seiden@linux.ibm.com/mbox/",
     "series_id": 1122146,
     "series_name": "KVM: s390: Introduce arm64 KVM",
     "series_version": 4,
     "series_mbox": "https://patchwork.kernel.org/series/1122146/mbox/",
-    "series_total": 27
+    "series_total": 27,
+    "table_summary": "在 VFIO 获取 KVM 引用时显式保存并增加 KVM 模块引用，替代原先依赖符号获取隐式维持模块存活的做法，为后续移除符号获取机制做准备。获取失败时按顺序回退释放模块引用，避免模块被卸载后仍被使用。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14719329,
@@ -51,13 +57,16 @@
     "submitter": "Josh Hilke",
     "email": "jrhilke@google.com",
     "version": 8,
-    "summary": "添加测试用例，验证关键功能的正确性和稳定性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为 82576 网卡的 VFIO 自测驱动改用 PHY 内部环回：原代码等待自协商后启用 MAC 环回，但该芯片手册明确不支持 MAC 环回，真实硬件上描述符引擎不工作。现改为配置 PHY 环回并强制 MAC 链路为千兆全双工，同时保留 MAC 环回位以兼容 QEMU 模拟，使自测在真机和模拟环境都能收发环回帧。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260729-igb_v3_b4-v8-2-3ed236272b4e@google.com/mbox/",
     "series_id": 1136952,
     "series_name": "vfio: selftests: Add driver for Intel Ethernet Gigabit Controller (IGB)",
     "series_version": 8,
     "series_mbox": "https://patchwork.kernel.org/series/1136952/mbox/",
-    "series_total": 6
+    "series_total": 6,
+    "table_summary": "为 82576 网卡的 VFIO 自测驱动改用 PHY 内部环回：原代码等待自协商后启用 MAC 环回，但该芯片手册明确不支持 MAC 环回，真实硬件上描述符引擎不工作。现改为配置 PHY 环回并强制 MAC 链路为千兆全双工，同时保留 MAC 环回位以兼容 QEMU 模拟，使自测在真机和模拟环境都能收发环回帧。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14687675,
@@ -71,13 +80,16 @@
     "submitter": "Aaron Lewis",
     "email": "aaronlewis@google.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 VFIO 类型一 IOMMU 解除大块 DMA 映射时，原先连续遍历物理页可能长时间不让出 CPU，触发调度延迟告警。现改为每处理一定数量的页就尝试重新调度，使单次解除映射不再长时间独占处理器。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-2-aaronlewis@google.com/mbox/",
     "series_id": 1127741,
     "series_name": "vfio/iommufd: Prevent scheduler warnings when unmapping large regions",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1127741/mbox/",
-    "series_total": 2
+    "series_total": 2,
+    "table_summary": "在 VFIO 类型一 IOMMU 解除大块 DMA 映射时，原先连续遍历物理页可能长时间不让出 CPU，触发调度延迟告警。现改为每处理一定数量的页就尝试重新调度，使单次解除映射不再长时间独占处理器。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14706634,
@@ -91,13 +103,16 @@
     "submitter": "Samuel Crossley",
     "email": "samuelcrossley@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "解除大块设备直通 DMA 映射时，保留内存映射的逐页释放循环没有重新调度点，曾导致 GPU 直通主机在释放上百 GiB 设备内存时软锁死。现把释放工作分批处理并在批间让出 CPU，使单次解除映射不会长时间卡住处理器。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260723-vfio-v1-1-3b59579916c6@gmail.com/mbox/",
     "series_id": 1133339,
     "series_name": "vfio/type1: conditional rescheduling while unpinning",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1133339/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "解除大块设备直通 DMA 映射时，保留内存映射的逐页释放循环没有重新调度点，曾导致 GPU 直通主机在释放上百 GiB 设备内存时软锁死。现把释放工作分批处理并在批间让出 CPU，使单次解除映射不会长时间卡住处理器。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14711000,
@@ -111,13 +126,16 @@
     "submitter": "Michael Gur",
     "email": "michaelgur@nvidia.com",
     "version": 1,
-    "summary": "启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性",
+    "summary": "为 mlx5 的 VFIO 热迁移数据内存键启用宽松排序。由于固件保证设备发出的数据写入在完成事件上报前已完成，无需强排序，启用后可在限制严格排序内存注册的硬件上支持热迁移，并改善性能。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260726092943.2880176-10-michaelgur@nvidia.com/mbox/",
     "series_id": 1134615,
     "series_name": "[rdma-next,09/15] vfio/mlx5: Enable relaxed ordering on the live migration data mkey",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1134615/mbox/",
-    "series_total": 15
+    "series_total": 15,
+    "table_summary": "为 mlx5 的 VFIO 热迁移数据内存键启用宽松排序。由于固件保证设备发出的数据写入在完成事件上报前已完成，无需强排序，启用后可在限制严格排序内存注册的硬件上支持热迁移，并改善性能。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14719029,
@@ -131,13 +149,16 @@
     "submitter": "Farhan Ali",
     "email": "alifm@linux.ibm.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为 s390 的 ISM 等 BAR 无法被 CPU 映射的设备跳过 BAR 映射，避免其 256 TiB 的 BAR 触发地址范围受限告警。该标志由 PCI 核心在枚举时设置，此前已在探测映射路径使用，现在映射 BAR 资源时同样遵循。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260729181116.1373-1-alifm@linux.ibm.com/mbox/",
     "series_id": 1136852,
     "series_name": "[v1] vfio/pci: Avoid mapping BARs for devices with non-mappable BARs",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1136852/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "为 s390 的 ISM 等 BAR 无法被 CPU 映射的设备跳过 BAR 映射，避免其 256 TiB 的 BAR 触发地址范围受限告警。该标志由 PCI 核心在枚举时设置，此前已在探测映射路径使用，现在映射 BAR 资源时同样遵循。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14778103,
@@ -151,13 +172,16 @@
     "submitter": "Steffen Eiden",
     "email": "seiden@linux.ibm.com",
     "version": 7,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "把 VFIO 与 KVM 之间的引用计数从手动模块符号引用改为基于文件引用计数，接口改为传递虚拟机文件指针，并让分组和设备文件各自持有引用，避免文件被回收后残留指针指向无关对象。这样去掉了 VFIO 对外导出的 KVM 符号，为同时加载第二个 KVM 模块铺路。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260831144802.834315-2-seiden@linux.ibm.com/mbox/",
     "series_id": 1154592,
     "series_name": "KVM: s390: Introduce arm64 KVM",
     "series_version": 7,
     "series_mbox": "https://patchwork.kernel.org/series/1154592/mbox/",
-    "series_total": 23
+    "series_total": 23,
+    "table_summary": "把 VFIO 与 KVM 之间的引用计数从手动模块符号引用改为基于文件引用计数，接口改为传递虚拟机文件指针，并让分组和设备文件各自持有引用，避免文件被回收后残留指针指向无关对象。这样去掉了 VFIO 对外导出的 KVM 符号，为同时加载第二个 KVM 模块铺路。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14731187,
@@ -171,13 +195,16 @@
     "submitter": "Samiullah Khawaja",
     "email": "skhawaja@google.com",
     "version": 1,
-    "summary": "禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性",
+    "summary": "关闭 SR-IOV 物理功能的 VFIO 设备文件时，原先直接复位硬件，会打断已绑定主机驱动或其它 VFIO 实例的虚拟功能，造成内核状态与硬件不一致。现改为在复位前先关闭该设备的 SR-IOV，让虚拟功能在软件层面完成拆除和移除。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260805003355.728299-2-skhawaja@google.com/mbox/",
     "series_id": 1140420,
     "series_name": "vfio/pci: Disable sriov on PF device close",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1140420/mbox/",
-    "series_total": 1
+    "series_total": 1,
+    "table_summary": "关闭 SR-IOV 物理功能的 VFIO 设备文件时，原先直接复位硬件，会打断已绑定主机驱动或其它 VFIO 实例的虚拟功能，造成内核状态与硬件不一致。现改为在复位前先关闭该设备的 SR-IOV，让虚拟功能在软件层面完成拆除和移除。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14738024,
@@ -191,53 +218,62 @@
     "submitter": "Pranjal Shrivastava",
     "email": "praan@google.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 vfio-pci 中实现 PCI 错误处理器的复位准备与复位完成回调，使通过 sysfs 触发的设备复位（FLR 或 SBR）能通知驱动。此前这类复位不经过驱动，已导出的 DMA 缓冲和 BAR 映射不会被撤销，导入方仍可继续使用；现在复位前在持有内存写锁的情况下撤销 BAR 与已导出 DMA 缓冲，复位后再恢复，并相应调整热复位流程的加锁与解锁顺序。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260807201405.3717430-2-praan@google.com/mbox/",
     "series_id": 1142413,
     "series_name": "vfio/pci: Revoke BARs and DMABUFs during sysfs-triggered PCI reset",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1142413/mbox/",
-    "series_total": 1
+    "series_total": 1,
+    "table_summary": "在 vfio-pci 中实现 PCI 错误处理器的复位准备与复位完成回调，使通过 sysfs 触发的设备复位（FLR 或 SBR）能通知驱动。此前这类复位不经过驱动，已导出的 DMA 缓冲和 BAR 映射不会被撤销，导入方仍可继续使用；现在复位前在持有内存写锁的情况下撤销 BAR 与已导出 DMA 缓冲，复位后再恢复，并相应调整热复位流程的加锁与解锁顺序。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
-    "id": 14788408,
-    "title": "[v2] vfio: selftests: Add documentation",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260903183814.2111748-1-dmatlack@google.com/",
-    "date": "2026-09-03",
+    "id": 14754391,
+    "title": "vfio: selftests: Add documentation",
+    "url": "https://patchwork.kernel.org/project/kvm/patch/20260818000550.2526247-1-dmatlack@google.com/",
+    "date": "2026-08-18",
     "organization": "Google",
     "subsystem": "VFIO Selftests",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "David Matlack",
     "email": "dmatlack@google.com",
-    "version": 2,
-    "summary": "新增documentation，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260903183814.2111748-1-dmatlack@google.com/mbox/",
-    "series_id": 1157341,
-    "series_name": "[v2] vfio: selftests: Add documentation",
-    "series_version": 2,
-    "series_mbox": "https://patchwork.kernel.org/series/1157341/mbox/",
-    "series_total": null
+    "version": 1,
+    "summary": "为 VFIO 自测补充文档，说明如何挑选和绑定设备、运行与清理测试、编写测试用例，以及辅助库提供的核心对象和驱动抽象，并加入驱动 API 索引和维护者条目，方便内核开发者上手使用这套基于真实 PCI 设备的用户态测试框架。",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260818000550.2526247-1-dmatlack@google.com/mbox/",
+    "series_id": 1147470,
+    "series_name": "vfio: selftests: Add documentation",
+    "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1147470/mbox/",
+    "series_total": null,
+    "table_summary": "为 VFIO 自测补充文档，说明如何挑选和绑定设备、运行与清理测试、编写测试用例，以及辅助库提供的核心对象和驱动抽象，并加入驱动 API 索引和维护者条目，方便内核开发者上手使用这套基于真实 PCI 设备的用户态测试框架。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
-    "id": 14794116,
-    "title": "[v4] vfio/platform: prevent read-only region mappings from becoming writable",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260906123239.10858-1-suruurism@gmail.com/",
-    "date": "2026-09-06",
+    "id": 14756896,
+    "title": "vfio/platform: prevent read-only region mappings from becoming writable",
+    "url": "https://patchwork.kernel.org/project/kvm/patch/20260819083940.1374-1-suruurism@gmail.com/",
+    "date": "2026-08-19",
     "organization": "Individual Contributor",
     "subsystem": "VFIO Platform",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Abdifatah Suruur",
     "email": "suruurism@gmail.com",
-    "version": 4,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260906123239.10858-1-suruurism@gmail.com/mbox/",
-    "series_id": 1159027,
-    "series_name": "[v4] vfio/platform: prevent read-only region mappings from becoming writable",
-    "series_version": 4,
-    "series_mbox": "https://patchwork.kernel.org/series/1159027/mbox/",
-    "series_total": null
+    "version": 1,
+    "summary": "修复 vfio 平台设备只读区域映射可被改写的问题。此前只读区域虽拒绝可写映射，但映射仍保留可写标志，用户可先只读映射再用内存保护调用升级为可写，从而写入平台标记为只读的 MMIO 区域；现在对无写权限的区域清除该标志，使这类升级不再可行。",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260819083940.1374-1-suruurism@gmail.com/mbox/",
+    "series_id": 1148311,
+    "series_name": "vfio/platform: prevent read-only region mappings from becoming writable",
+    "series_version": 1,
+    "series_mbox": "https://patchwork.kernel.org/series/1148311/mbox/",
+    "series_total": null,
+    "table_summary": "修复 vfio 平台设备只读区域映射可被改写的问题。此前只读区域虽拒绝可写映射，但映射仍保留可写标志，用户可先只读映射再用内存保护调用升级为可写，从而写入平台标记为只读的 MMIO 区域；现在对无写权限的区域清除该标志，使这类升级不再可行。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14756897,
@@ -251,79 +287,22 @@
     "submitter": "Abdifatah Suruur",
     "email": "suruurism@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "修复 vfio 的 CDX 总线设备只读区域映射可被改写的问题。此前只读区域拒绝可写映射后仍保留可写标志，用户可先只读映射再升级为可写，写入设备标记为只读的 MMIO 区域；现在对无写权限的区域清除该标志，阻止这种升级。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260819083943.1391-1-suruurism@gmail.com/mbox/",
     "series_id": 1148312,
     "series_name": "vfio/cdx: prevent read-only region mappings from becoming writable",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1148312/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "修复 vfio 的 CDX 总线设备只读区域映射可被改写的问题。此前只读区域拒绝可写映射后仍保留可写标志，用户可先只读映射再升级为可写，写入设备标记为只读的 MMIO 区域；现在对无写权限的区域清除该标志，阻止这种升级。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
-    "id": 14787261,
-    "title": "[v3] vfio/fsl-mc: prevent read-only region mappings from becoming writable",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260903092912.444-1-suruurism@gmail.com/",
-    "date": "2026-09-03",
-    "organization": "Individual Contributor",
-    "subsystem": "VFIO FSL-MC",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Abdifatah Suruur",
-    "email": "suruurism@gmail.com",
-    "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260903092912.444-1-suruurism@gmail.com/mbox/",
-    "series_id": 1156929,
-    "series_name": "[v3] vfio/fsl-mc: prevent read-only region mappings from becoming writable",
-    "series_version": 3,
-    "series_mbox": "https://patchwork.kernel.org/series/1156929/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14778659,
-    "title": "[v5,1/4] s390/vfio-ap: Fix leak of pinned NIB and registered NISC in vfio_ap_irq_enable/disable()",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260831171443.222225-2-akrowiak@linux.ibm.com/",
-    "date": "2026-08-31",
-    "organization": "IBM",
-    "subsystem": "VFIO AP (s390)",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Anthony Krowiak",
-    "email": "akrowiak@linux.ibm.com",
-    "version": 5,
-    "summary": "修复leak of pinned nib and registered nisc，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260831171443.222225-2-akrowiak@linux.ibm.com/mbox/",
-    "series_id": 1154702,
-    "series_name": "s390/vfio-ap: Fix pre-existing bugs in vfio_ap device driver",
-    "series_version": 5,
-    "series_mbox": "https://patchwork.kernel.org/series/1154702/mbox/",
-    "series_total": 4
-  },
-  {
-    "id": 14782696,
-    "title": "[1/4] vfio: Reject a second cdev open before mutating shared device state",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260901215358.2421359-2-alex.williamson@nvidia.com/",
-    "date": "2026-09-01",
-    "organization": "NVIDIA",
-    "subsystem": "VFIO CDEV",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Alex Williamson",
-    "email": "alex.williamson@nvidia.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260901215358.2421359-2-alex.williamson@nvidia.com/mbox/",
-    "series_id": 1155682,
-    "series_name": "vfio: Fix cdev second-open and harden selftests",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1155682/mbox/",
-    "series_total": 4
-  },
-  {
-    "id": 14787262,
-    "title": "vfio/fsl-mc: keep logical vm_pgoff in MMIO region mmap",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260903092922.470-1-suruurism@gmail.com/",
-    "date": "2026-09-03",
+    "id": 14756898,
+    "title": "vfio/fsl-mc: prevent read-only region mappings from becoming writable",
+    "url": "https://patchwork.kernel.org/project/kvm/patch/20260819083949.1408-1-suruurism@gmail.com/",
+    "date": "2026-08-19",
     "organization": "Individual Contributor",
     "subsystem": "VFIO FSL-MC",
     "status": "社区讨论中",
@@ -331,133 +310,16 @@
     "submitter": "Abdifatah Suruur",
     "email": "suruurism@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260903092922.470-1-suruurism@gmail.com/mbox/",
-    "series_id": 1156930,
-    "series_name": "vfio/fsl-mc: keep logical vm_pgoff in MMIO region mmap",
+    "summary": "修复 vfio 的 fsl-mc 设备只读区域映射可被改写的问题。此前只读区域拒绝可写映射后仍保留可写标志，用户可先只读映射再升级为可写，写入设备标记为只读的 MMIO 区域（如响应门户）；现在对无写权限的区域清除该标志，阻止这种升级。",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260819083949.1408-1-suruurism@gmail.com/mbox/",
+    "series_id": 1148313,
+    "series_name": "vfio/fsl-mc: prevent read-only region mappings from becoming writable",
     "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1156930/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14787263,
-    "title": "vfio/platform: keep logical vm_pgoff in MMIO region mmap",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260903092927.502-1-suruurism@gmail.com/",
-    "date": "2026-09-03",
-    "organization": "Individual Contributor",
-    "subsystem": "VFIO Platform",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Abdifatah Suruur",
-    "email": "suruurism@gmail.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260903092927.502-1-suruurism@gmail.com/mbox/",
-    "series_id": 1156931,
-    "series_name": "vfio/platform: keep logical vm_pgoff in MMIO region mmap",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1156931/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14787264,
-    "title": "vfio/cdx: keep logical vm_pgoff in MMIO region mmap",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260903092932.526-1-suruurism@gmail.com/",
-    "date": "2026-09-03",
-    "organization": "Individual Contributor",
-    "subsystem": "VFIO CDX",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Abdifatah Suruur",
-    "email": "suruurism@gmail.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260903092932.526-1-suruurism@gmail.com/mbox/",
-    "series_id": 1156932,
-    "series_name": "vfio/cdx: keep logical vm_pgoff in MMIO region mmap",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1156932/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14790100,
-    "title": "[v6,1/5] s390/vfio-ap: Fix leak of pinned NIB and registered GISC in vfio_ap_irq_enable/disable()",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260904093435.1161402-2-akrowiak@linux.ibm.com/",
-    "date": "2026-09-04",
-    "organization": "IBM",
-    "subsystem": "VFIO AP (s390)",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Anthony Krowiak",
-    "email": "akrowiak@linux.ibm.com",
-    "version": 6,
-    "summary": "修复leak of pinned nib and registered gisc，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260904093435.1161402-2-akrowiak@linux.ibm.com/mbox/",
-    "series_id": 1157776,
-    "series_name": "s390/vfio-ap: Fix pre-existing bugs in vfio_ap device driver",
-    "series_version": 6,
-    "series_mbox": "https://patchwork.kernel.org/series/1157776/mbox/",
-    "series_total": 5
-  },
-  {
-    "id": 14792828,
-    "title": "[12/13] vfio/nvidia-vgpu: add the NVIDIA vGPU VFIO variant driver",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260905081116.106613-13-zhiw@nvidia.com/",
-    "date": "2026-09-05",
-    "organization": "NVIDIA",
-    "subsystem": "VFIO Core",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Zhi Wang",
-    "email": "zhiw@nvidia.com",
-    "version": 1,
-    "summary": "新增the nvidia vgpu vfio variant driver，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260905081116.106613-13-zhiw@nvidia.com/mbox/",
-    "series_id": 1158538,
-    "series_name": "Introduce NVIDIA vGPU manager and VFIO variant driver",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1158538/mbox/",
-    "series_total": 13
-  },
-  {
-    "id": 14794117,
-    "title": "vfio/cdx: reject non-shared MMIO mmaps",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260906123245.10884-1-suruurism@gmail.com/",
-    "date": "2026-09-06",
-    "organization": "Individual Contributor",
-    "subsystem": "VFIO CDX",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Abdifatah Suruur",
-    "email": "suruurism@gmail.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260906123245.10884-1-suruurism@gmail.com/mbox/",
-    "series_id": 1159028,
-    "series_name": "vfio/cdx: reject non-shared MMIO mmaps",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1159028/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14798259,
-    "title": "[RFC] vfio/pci: Block for the upstream bridge lock in vfio_pci_core_disable()",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260908080946.2235849-1-YuanShang.Mao@amd.com/",
-    "date": "2026-09-08",
-    "organization": "AMD",
-    "subsystem": "VFIO PCI",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "YuanShang",
-    "email": "YuanShang.Mao@amd.com",
-    "version": 1,
-    "summary": "禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260908080946.2235849-1-YuanShang.Mao@amd.com/mbox/",
-    "series_id": 1160264,
-    "series_name": "[RFC] vfio/pci: Block for the upstream bridge lock in vfio_pci_core_disable()",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1160264/mbox/",
-    "series_total": null
+    "series_mbox": "https://patchwork.kernel.org/series/1148313/mbox/",
+    "series_total": null,
+    "table_summary": "修复 vfio 的 fsl-mc 设备只读区域映射可被改写的问题。此前只读区域拒绝可写映射后仍保留可写标志，用户可先只读映射再升级为可写，写入设备标记为只读的 MMIO 区域（如响应门户）；现在对无写权限的区域清除该标志，阻止这种升级。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -465,14 +327,21 @@
     "url": "https://patchwork.kernel.org/project/kvm/patch/20260715174737.15287-4-matt@ozlabs.org/",
     "date": "2026-07-15",
     "date_end": "2026-07-15",
-    "organization": "Individual Contributor",
+    "organization": "OzLabs Community",
     "subsystem": "VFIO PCI",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Matt Evans",
+    "email": "matt@ozlabs.org",
+    "authors": [
+      {
+        "name": "Matt Evans",
+        "email": "matt@ozlabs.org"
+      }
+    ],
     "version": 5,
-    "summary": "新增用于查找 DMABUF 的 PFN 的 helper、新增用于创建 DMABUF for a BAR-map VMA 的 helper、将 BAR mmap() 改为使用 DMABUF、提供 BAR 映射的用户可见名称，并清理 BAR zap and revocation。",
-    "summary_source": "fallback",
+    "summary": "让 VFIO 的 PCI BAR 映射改用 DMABUF 承载，并支持对导出的 DMABUF 直接做 mmap，使进程可以只把某个 BAR 子范围委托给其他客户端，而不必交出整个设备文件。新增按请求永久吊销 DMABUF 的能力，吊销后该缓冲区无法再被导入、附加或映射，已建立的映射也会失效，便于收回借出的 BAR 资源；同时把 BAR 撤销与清理路径合并，避免调用方遗漏其中一步。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260715174737.15287-4-matt@ozlabs.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1128316/mbox/",
     "is_cover_letter": true,
@@ -496,7 +365,18 @@
       "[v5,8/9] vfio/pci: Support mmap() of a VFIO DMABUF",
       "[v5,9/9] vfio/pci: Permanently revoke a DMABUF on request"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14689501,
+      14689502,
+      14689503,
+      14689504,
+      14689505,
+      14689506,
+      14689507
+    ],
+    "qualified_has_more": true,
+    "table_summary": "让 VFIO 的 PCI BAR 映射改用 DMABUF 承载，并支持对导出的 DMABUF 直接做 mmap，使进程可以只把某个 BAR 子范围委托给其他客户端，而不必交出整个设备文件。新增按请求永久吊销 DMABUF 的能力，吊销后该缓冲区无法再被导入、附加或映射，已建立的映射也会失效，便于收回借出的 BAR 资源；同时把 BAR 撤销与清理路径合并，避免调用方遗漏其中一步。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -509,9 +389,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Aaron Lewis",
+    "email": "aaronlewis@google.com",
+    "authors": [
+      {
+        "name": "Aaron Lewis",
+        "email": "aaronlewis@google.com"
+      }
+    ],
     "version": 2,
-    "summary": "在 VFIO selftests 中新增 vfio_dma_mapping_perf_test，用可配置映射大小和 memfd 场景测量 VFIO DMA map/unmap 性能，并断言 iommu_unmap() 后 region 已正确解除映射。",
-    "summary_source": "fallback",
+    "summary": "为 VFIO 自测新增 DMA 映射性能测试，直接报告映射与解映射各阶段的耗时而非判定通过失败，避免延迟阈值带来的不稳定。测试支持指定 DMA 区域大小，并新增基于内存文件描述符的映射用例，用于比较不同映射方式的延迟；同时把解映射完整性检查集中到公共库中，简化各测试的校验。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260804165748.1060476-3-aaronlewis@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1140261/mbox/",
     "is_cover_letter": true,
@@ -530,7 +417,15 @@
       "[v2,4/4] vfio: selftests: Allow a size for vfio_dma_mapping_perf_test",
       "[v2,1/4] vfio: selftests: Assert the region was unmapped in iommu_unmap()"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14730596,
+      14730594,
+      14730597,
+      14730595
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 VFIO 自测新增 DMA 映射性能测试，直接报告映射与解映射各阶段的耗时而非判定通过失败，避免延迟阈值带来的不稳定。测试支持指定 DMA 区域大小，并新增基于内存文件描述符的映射用例，用于比较不同映射方式的延迟；同时把解映射完整性检查集中到公共库中，简化各测试的校验。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -543,9 +438,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "fengchengwen",
+    "email": "fengchengwen@huawei.com",
+    "authors": [
+      {
+        "name": "fengchengwen",
+        "email": "fengchengwen@huawei.com"
+      }
+    ],
     "version": 19,
-    "summary": "在 vfio/pci 中虚拟化 PCIe TPH capability 与 ST 表访问权限，新增 TPH_ST/DMA_BUF_TPH 设备特性和 IV-ST/NO-ST 策略控制，并在设备启停和 reset 路径同步硬件 TPH 状态。",
-    "summary_source": "fallback",
+    "summary": "为 vfio-pci 增加 PCIe TPH（事务层处理提示）支持，让用户态可查询和控制设备的 TPH 能力。此前 TPH 能力对用户不可见且相关寄存器写入被丢弃；现在按策略分级开放，虚拟化 TPH 能力寄存器，支持从 DMA 缓冲或 CPU 来源解析处理提示与转向标签，并支持批量编程转向标签表，同时修正了内核 TPH 辅助函数中转向标签表位置提取和并发更新问题。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260702124224.57168-10-fengchengwen@huawei.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1120487/mbox/",
     "is_cover_letter": true,
@@ -571,7 +473,21 @@
       "[v19,10/18] vfio/pci: Introduce tph policy parameter for staged TPH feature enablement",
       "[v19,15/18] vfio/pci: Implement TPH_RESOLVE feature for DMABUF and CPU source resolving"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14659251,
+      14659253,
+      14659254,
+      14659256,
+      14659257,
+      14659258,
+      14659259,
+      14659260,
+      14659262,
+      14659263
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 vfio-pci 增加 PCIe TPH（事务层处理提示）支持，让用户态可查询和控制设备的 TPH 能力。此前 TPH 能力对用户不可见且相关寄存器写入被丢弃；现在按策略分级开放，虚拟化 TPH 能力寄存器，支持从 DMA 缓冲或 CPU 来源解析处理提示与转向标签，并支持批量编程转向标签表，同时修正了内核 TPH 辅助函数中转向标签表位置提取和并发更新问题。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -584,9 +500,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Josh Hilke",
+    "email": "jrhilke@google.com",
+    "authors": [
+      {
+        "name": "Josh Hilke",
+        "email": "jrhilke@google.com"
+      }
+    ],
     "version": 4,
-    "summary": "vfio: selftests: igb 中新增 driver for IGB QEMU device、vfio: selftests: igb 中改用 advanced TX and RX descriptors、vfio: selftests: igb 中Program MSI-X interrupt routing、vfio: selftests: igb 中Extend memcpy completion timeout for line-rate hardware，并vfio: selftests: igb 中禁用 PCIe completion timeout 重试。",
-    "summary_source": "fallback",
+    "summary": "为 VFIO 自测新增 Intel 千兆以太网控制器（IGB）驱动，使自测可在 QEMU 模拟的 IGB 设备上运行而无需真实硬件。驱动用回环模式实现内存拷贝，并针对真实 82576 硬件改用 PHY 内部回环、高级收发描述符、完整的 MSI-X 中断路由，延长拷贝完成等待时间并关闭 PCIe 完成超时重试，以兼容物理设备。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260710-igb_v3_b4-v4-1-56e7e2576cc1@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1125643/mbox/",
     "is_cover_letter": true,
@@ -605,7 +528,16 @@
       "[v4,5/9] vfio: selftests: igb: Extend memcpy completion timeout for line-rate hardware",
       "[v4,6/9] vfio: selftests: igb: Disable PCIe completion timeout retries"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14680001,
+      14680003,
+      14680004,
+      14680005,
+      14680006
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 VFIO 自测新增 Intel 千兆以太网控制器（IGB）驱动，使自测可在 QEMU 模拟的 IGB 设备上运行而无需真实硬件。驱动用回环模式实现内存拷贝，并针对真实 82576 硬件改用 PHY 内部回环、高级收发描述符、完整的 MSI-X 中断路由，延长拷贝完成等待时间并关闭 PCIe 完成超时重试，以兼容物理设备。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -618,9 +550,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Vipin Sharma",
+    "email": "vipinsh@google.com",
+    "authors": [
+      {
+        "name": "Vipin Sharma",
+        "email": "vipinsh@google.com"
+      }
+    ],
     "version": 5,
-    "summary": "为 vfio-pci 接入 Live Update 基础机制：注册 live update 文件处理器，在设备冻结时阻止 MMIO/配置访问，保存并恢复 vfio cdev 与 iommufd 状态，让设备节点可跨更新保留。",
-    "summary_source": "fallback",
+    "summary": "为 vfio-pci 增加基础 Live Update 支持，使绑定该驱动的设备在主机经 kexec 进行 Live Update 时可不中断运行。冻结阶段撤销 DMA 缓冲并复位设备，把设备的 PCI 段号与总线设备功能号序列化后经 Kexec-Handover 与 Live Update 编排器保留；新内核启动后用户态可通过检索接口取回被保留的设备文件，且必须经该接口获取而不能直接打开字符设备。该支持目前为实验性且默认关闭。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260714151505.3466855-2-vipinsh@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1127529/mbox/",
     "is_cover_letter": true,
@@ -655,7 +594,29 @@
       "[v5,19/20] vfio: selftests: Verify that opening VFIO device fails during Live Update",
       "[v5,20/20] vfio: selftests: Add continuous DMA to vfio_pci_liveupdate_kexec_test"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14686814,
+      14686815,
+      14686816,
+      14686818,
+      14686819,
+      14686820,
+      14686821,
+      14686822,
+      14686823,
+      14686824,
+      14686825,
+      14686827,
+      14686828,
+      14686829,
+      14686830,
+      14686831,
+      14686832,
+      14686833
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 vfio-pci 增加基础 Live Update 支持，使绑定该驱动的设备在主机经 kexec 进行 Live Update 时可不中断运行。冻结阶段撤销 DMA 缓冲并复位设备，把设备的 PCI 段号与总线设备功能号序列化后经 Kexec-Handover 与 Live Update 编排器保留；新内核启动后用户态可通过检索接口取回被保留的设备文件，且必须经该接口获取而不能直接打开字符设备。该支持目前为实验性且默认关闭。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -668,9 +629,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Eric Farman",
+    "email": "farman@linux.ibm.com",
+    "authors": [
+      {
+        "name": "Eric Farman",
+        "email": "farman@linux.ibm.com"
+      }
+    ],
     "version": 9,
-    "summary": "限制 channel program segment 数量、free all memory if cp_init() fails、修复 out of bounds check on CCW array、确保 读写 region 索引在范围内，并实现 a crw lock。",
-    "summary_source": "fallback",
+    "summary": "为 s390 的 vfio-ccw 通道程序处理修复多处缺陷：初始化失败时不再只释放当前段而泄漏其他段，限制单个通道程序的段数以防递归过深，修正 CCW 数组越界检查、读写区域索引范围、首个 IDAW 一致性及 IDAL 长度按格式计算，并在设备释放时取消工作队列、把清理移出不可操作路径、扩大互斥锁范围并新增 CRW 锁，避免释放后仍派发工作或并发访问。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260728033022.2658232-3-farman@linux.ibm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1135587/mbox/",
     "is_cover_letter": true,
@@ -697,7 +665,21 @@
       "[v9,07/10] s390/vfio_ccw: cancel existing workqueues",
       "[v9,09/10] s390/vfio_ccw: selectively expand io_mutex"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14714430,
+      14714429,
+      14714426,
+      14714432,
+      14714433,
+      14714428,
+      14714434,
+      14714431,
+      14714427,
+      14714448
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 s390 的 vfio-ccw 通道程序处理修复多处缺陷：初始化失败时不再只释放当前段而泄漏其他段，限制单个通道程序的段数以防递归过深，修正 CCW 数组越界检查、读写区域索引范围、首个 IDAW 一致性及 IDAL 长度按格式计算，并在设备释放时取消工作队列、把清理移出不可操作路径、扩大互斥锁范围并新增 CRW 锁，避免释放后仍派发工作或并发访问。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -710,9 +692,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jason Gunthorpe",
+    "email": "jgg@nvidia.com",
+    "authors": [
+      {
+        "name": "Jason Gunthorpe",
+        "email": "jgg@nvidia.com"
+      }
+    ],
     "version": 4,
-    "summary": "在 VFIO selftests 中新增 mlx5 用户态测试驱动，通过 BAR0 命令接口创建 PD/MR/QP/CQ/EQ 等对象，分配 DMA 缓冲区并用 RDMA WRITE 自环回验证设备 DMA 路径。",
-    "summary_source": "fallback",
+    "summary": "为 VFIO 自测框架新增 mlx5 ConnectX 驱动支持：把 mlx5 的 WQE/CQE 布局、硬件常量和寄存器访问宏整理成可被自测引用的头文件，补充大端 MMIO 与内存屏障等工具函数，允许驱动声明所需 DMA 区域大小，并实现命令接口、HCA 初始化、队列创建、RDMA 回环拷贝及通过 MSI-X 触发中断，使自测能覆盖该网卡的 DMA 与中断路径。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/6-v4-021df3fb5a3f+98e-mlx5st_jgg@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144814/mbox/",
     "is_cover_letter": true,
@@ -732,7 +721,16 @@
       "[v4,10/10] vfio: selftests: mlx5 driver - add send_msi support",
       "[v4,08/10] vfio: selftests: Add mlx5 driver - HW init and command interface"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14746059,
+      14746057,
+      14746058,
+      14746061,
+      14746063
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 VFIO 自测框架新增 mlx5 ConnectX 驱动支持：把 mlx5 的 WQE/CQE 布局、硬件常量和寄存器访问宏整理成可被自测引用的头文件，补充大端 MMIO 与内存屏障等工具函数，允许驱动声明所需 DMA 区域大小，并实现命令接口、HCA 初始化、队列创建、RDMA 回环拷贝及通过 MSI-X 触发中断，使自测能覆盖该网卡的 DMA 与中断路径。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -745,9 +743,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Claudio Imbrenda",
+    "email": "imbrenda@linux.ibm.com",
+    "authors": [
+      {
+        "name": "Claudio Imbrenda",
+        "email": "imbrenda@linux.ibm.com"
+      }
+    ],
     "version": 1,
-    "summary": "限制 channel program segment 数量、根据 IDAW 类型计算 IDAL 长度、取消已存在的 workqueue、Move cp cleanup out of not operational，并Free all memory if cp_init() fails。",
-    "summary_source": "fallback",
+    "summary": "为 s390 的 vfio-ccw 修复通道程序处理缺陷，包括初始化失败时释放全部已分配段、限制通道程序段数、修正 CCW 数组越界与读写区域索引范围、校验首个 IDAW 一致并按格式计算 IDAL 长度，同时在设备释放时取消工作队列、把清理移出不可操作路径、扩大互斥锁并新增 CRW 锁；该系列还包含若干 s390 KVM 的独立修复。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260803160924.236807-3-imbrenda@linux.ibm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139531/mbox/",
     "is_cover_letter": true,
@@ -774,7 +779,21 @@
       "[GIT,PULL,v1,10/23] s390/vfio_ccw: Implement a crw lock",
       "[GIT,PULL,v1,04/23] s390/vfio_ccw: Ensure first IDAW remains constant"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14727983,
+      14727984,
+      14727985,
+      14727986,
+      14727987,
+      14727988,
+      14727989,
+      14728000,
+      14728003,
+      14728006
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 s390 的 vfio-ccw 修复通道程序处理缺陷，包括初始化失败时释放全部已分配段、限制通道程序段数、修正 CCW 数组越界与读写区域索引范围、校验首个 IDAW 一致并按格式计算 IDAL 长度，同时在设备释放时取消工作队列、把清理移出不可操作路径、扩大互斥锁并新增 CRW 锁；该系列还包含若干 s390 KVM 的独立修复。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -787,9 +806,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Samiullah Khawaja",
+    "email": "skhawaja@google.com",
+    "authors": [
+      {
+        "name": "Samiullah Khawaja",
+        "email": "skhawaja@google.com"
+      }
+    ],
     "version": 4,
-    "summary": "vfio/pci 中保留 vfio cdev 的 iommufd 状态，并iommufd 中新增 保存/取消保存 vfio cdev 的 API。",
-    "summary_source": "fallback",
+    "summary": "为内核热更新保留设备的 IOMMU 页表、域标识和进程地址空间标识表，在新内核恢复地址转换并重新挂接设备；保留期间禁止修改映射或更换地址空间。已实现底层恢复，但面向用户的 IOMMU 文件接口恢复流程仍待补齐，并附带状态保留测试。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-18-skhawaja@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142491/mbox/",
     "is_cover_letter": true,
@@ -805,7 +831,13 @@
       "[v4,17/18] vfio/pci: Preserve the iommufd state of the vfio cdev",
       "[v4,16/18] iommufd: Add APIs to preserve/unpreserve a vfio cdev"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14738441,
+      14738442
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为内核热更新保留设备的 IOMMU 页表、域标识和进程地址空间标识表，在新内核恢复地址转换并重新挂接设备；保留期间禁止修改映射或更换地址空间。已实现底层恢复，但面向用户的 IOMMU 文件接口恢复流程仍待补齐，并附带状态保留测试。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -818,9 +850,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Alex Williamson",
+    "email": "alex.williamson@nvidia.com",
+    "authors": [
+      {
+        "name": "Alex Williamson",
+        "email": "alex.williamson@nvidia.com"
+      }
+    ],
     "version": 1,
-    "summary": "vfio/pci 中拒绝重置仍启用 VF 的 SR-IOV PF，并vfio/pci 中用 pci_reset_supported() 替代 reset_works。",
-    "summary_source": "fallback",
+    "summary": "让 PCI 函数级复位在 SR-IOV 物理功能仍有启用虚拟功能时被拒绝，避免复位波及未纳入影响范围的虚拟功能；同时新增可在复位前对受影响设备做检查的槽位或总线复位接口，vfio-pci 热复位据此要求先拆除虚拟功能。此外不再缓存复位是否可用，改为每次查询设备当前是否具备复位方法，避免管理操作使缓存失效。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260812045325.2733631-4-alex.williamson@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144449/mbox/",
     "is_cover_letter": true,
@@ -836,7 +875,13 @@
       "[RFC,3/5] vfio/pci: Refuse to reset an SR-IOV PF with enabled VFs",
       "[RFC,5/5] vfio/pci: Use pci_reset_supported() in place of reset_works"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14744693,
+      14744695
+    ],
+    "qualified_has_more": false,
+    "table_summary": "让 PCI 函数级复位在 SR-IOV 物理功能仍有启用虚拟功能时被拒绝，避免复位波及未纳入影响范围的虚拟功能；同时新增可在复位前对受影响设备做检查的槽位或总线复位接口，vfio-pci 热复位据此要求先拆除虚拟功能。此外不再缓存复位是否可用，改为每次查询设备当前是否具备复位方法，避免管理操作使缓存失效。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -849,9 +894,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Manish Honap",
+    "email": "mhonap@nvidia.com",
+    "authors": [
+      {
+        "name": "Manish Honap",
+        "email": "mhonap@nvidia.com"
+      }
+    ],
     "version": 4,
-    "summary": "新增 a function-scoped reset entry for vfio-pci、新增 CXL ops registration interface、vfio/cxl 中新增 the vfio-cxl module skeleton、vfio/cxl 中绑定时创建 CXL memory device，并检测 CXL devices 并按需加载 vfio-cxl。",
-    "summary_source": "fallback",
+    "summary": "为 vfio-pci 增加 CXL Type-2 设备直通支持：新增按需加载的 vfio-cxl 模块，在绑定后创建 CXL 内存设备并接管整个组件寄存器 BAR，拒绝多解码器或交织拓扑，把 HDM 解码器寄存器从直接映射中排除并改为陷阱模拟，虚拟化 DVSEC、模拟提交握手、在复位和电源切换时撤销映射，并向用户态暴露 HDM 区域与解码器几何信息。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260813093631.2288172-6-mhonap@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1145305/mbox/",
     "is_cover_letter": true,
@@ -890,7 +942,33 @@
       "[v4,24/27] vfio/cxl: Service a guest-triggered CXL reset",
       "[v4,21/27] vfio/cxl: Describe the CXL device and decoder geometry to userspace"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14747688,
+      14747690,
+      14747691,
+      14747692,
+      14747693,
+      14747694,
+      14747695,
+      14747783,
+      14747784,
+      14747785,
+      14747786,
+      14747787,
+      14747788,
+      14747789,
+      14747790,
+      14747791,
+      14747792,
+      14747793,
+      14747794,
+      14747795,
+      14747796,
+      14747798
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 vfio-pci 增加 CXL Type-2 设备直通支持：新增按需加载的 vfio-cxl 模块，在绑定后创建 CXL 内存设备并接管整个组件寄存器 BAR，拒绝多解码器或交织拓扑，把 HDM 解码器寄存器从直接映射中排除并改为陷阱模拟，虚拟化 DVSEC、模拟提交握手、在复位和电源切换时撤销映射，并向用户态暴露 HDM 区域与解码器几何信息。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -903,9 +981,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Longfang Liu",
+    "email": "liulongfang@huawei.com",
+    "authors": [
+      {
+        "name": "Longfang Liu",
+        "email": "liulongfang@huawei.com"
+      }
+    ],
     "version": 3,
-    "summary": "修复 live migration enable conditions for PF passthrough、拒绝 QM_HW_V3 硬件在 64KB 页配置下执行 live migration，并清除 set_reset_flag（在 reset completed 后）。",
-    "summary_source": "fallback",
+    "summary": "修复海思加速器直通与热迁移的三处问题：物理功能直通时检查迁移状态，避免错误回调访问空指针；复位后清除本次持锁标记，防止后续超时复位误释放他人的锁；第三代队列管理硬件搭配 64KB 内存页时禁用热迁移，避免寄存器隔离不足及客户机访存异常，其他配置的直通不受影响。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260831090951.844569-2-liulongfang@huawei.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1154329/mbox/",
     "is_cover_letter": true,
@@ -922,57 +1007,56 @@
       "[v3,3/3] hisi_acc_vfio_pci: reject live migration on 64KB page with QM_HW_V3 hardware",
       "[v3,2/3] hisi_acc_vfio_pci: clear set_reset_flag after reset completed"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14777174,
+      14777180,
+      14777175
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复海思加速器直通与热迁移的三处问题：物理功能直通时检查迁移状态，避免错误回调访问空指针；复位后清除本次持锁标记，防止后续超时复位误释放他人的锁；第三代队列管理硬件搭配 64KB 内存页时禁用热迁移，避免寄存器隔离不足及客户机访存异常，其他配置的直通不受影响。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
-    "title": "vfio/pci: Handle PCI error recovery and report state to userspace",
-    "url": "https://patchwork.kernel.org/project/kvm/patch/20260901093217.8539-2-skolothumtho@nvidia.com/",
-    "date": "2026-09-01",
-    "date_end": "2026-09-01",
-    "organization": "NVIDIA",
-    "subsystem": "VFIO PCI",
+    "title": "s390/vfio-ap: Fix pre-existing bugs in vfio_ap device driver",
+    "url": "https://patchwork.kernel.org/project/kvm/patch/20260831171443.222225-5-akrowiak@linux.ibm.com/",
+    "date": "2026-08-31",
+    "date_end": "2026-08-31",
+    "organization": "IBM",
+    "subsystem": "VFIO Mediated Device",
     "status": "社区讨论中",
     "state": "series",
-    "submitter": "Shameer Kolothum Thodi",
-    "version": 1,
-    "summary": "新增 PCI error recovery support state、Serialize generic device lifetime（携带 recovery）、新增 PCI recovery access guards、Serialize function reset（携带 recovery），并Serialize ioeventfd writes（携带 recovery）。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260901093217.8539-2-skolothumtho@nvidia.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1155216/mbox/",
+    "submitter": "Anthony Krowiak",
+    "email": "akrowiak@linux.ibm.com",
+    "authors": [
+      {
+        "name": "Anthony Krowiak",
+        "email": "akrowiak@linux.ibm.com"
+      }
+    ],
+    "version": 5,
+    "summary": "修复 s390 vfio-ap 驱动的既有缺陷：启用中断失败时不再错误地关闭原有可用配置，而是只清理本次调用的通知资源；设备关闭时释放用户态注册的中断通知 eventfd 引用，避免内核长期泄漏；队列复位轮询增加两秒上限，防止硬件持续返回忙时无限循环并阻塞全局锁导致其他客户机挂起；域位图改用域数量常量以保持一致。",
+    "summary_source": "llm-mail-batch",
+    "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260831171443.222225-5-akrowiak@linux.ibm.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154702/mbox/",
     "is_cover_letter": true,
-    "series_id": 1155216,
-    "patch_count": 19,
-    "series_total": 19,
-    "qualified_count": 15,
+    "series_id": 1154702,
+    "patch_count": 2,
+    "series_total": 4,
+    "qualified_count": 1,
     "qualified_titles": [
-      "[RFC,02/19] vfio/pci: Serialize generic device lifetime with recovery",
-      "[RFC,04/19] vfio/pci: Serialize function reset with recovery",
-      "[RFC,06/19] vfio/pci: Serialize ioeventfd writes with recovery",
-      "[RFC,07/19] vfio/pci: Retry BAR faults after temporary recovery",
-      "[RFC,08/19] vfio/pci: Serialize BAR and ROM access with recovery"
+      "[v5,1/4] s390/vfio-ap: Fix leak of pinned NIB and registered NISC in vfio_ap_irq_enable/disable()"
     ],
     "member_titles": [
-      "[RFC,01/19] vfio/pci: Add PCI error recovery support state",
-      "[RFC,02/19] vfio/pci: Serialize generic device lifetime with recovery",
-      "[RFC,03/19] vfio/pci: Add PCI recovery access guards",
-      "[RFC,04/19] vfio/pci: Serialize function reset with recovery",
-      "[RFC,06/19] vfio/pci: Serialize ioeventfd writes with recovery",
-      "[RFC,07/19] vfio/pci: Retry BAR faults after temporary recovery",
-      "[RFC,08/19] vfio/pci: Serialize BAR and ROM access with recovery",
-      "[RFC,10/19] vfio/pci: Serialize hot reset with recovery",
-      "[RFC,09/19] vfio/pci: Serialize interrupt operations with recovery",
-      "[RFC,11/19] vfio/pci: Serialize runtime PM with recovery",
-      "[RFC,12/19] vfio/pci: Serialize physical device information queries with recovery",
-      "[RFC,14/19] vfio/pci: Add generic PCI error slot reset handling",
-      "[RFC,15/19] vfio/pci: Add INTx helpers for PCI recovery",
-      "[RFC,16/19] vfio/pci: Quiesce INTx during PCI recovery",
-      "[RFC,13/19] vfio/pci: Serialize DMA-BUF export with recovery",
-      "[RFC,17/19] vfio/pci: Add generic PCI error resume handling",
-      "[RFC,19/19] vfio/pci: Expose and enable host PCI error recovery",
-      "[RFC,18/19] vfio/pci: Coordinate generic device access with host recovery",
-      "[RFC,05/19] vfio/pci: Serialize config access with recovery"
+      "[v5,4/4] s390/vfio-ap: Use AP_DOMAINS for adm_add bitmap size in vfio_ap_mdev_cfg_add()",
+      "[v5,1/4] s390/vfio-ap: Fix leak of pinned NIB and registered NISC in vfio_ap_irq_enable/disable()"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14778662,
+      14778659
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 s390 vfio-ap 驱动的既有缺陷：启用中断失败时不再错误地关闭原有可用配置，而是只清理本次调用的通知资源；设备关闭时释放用户态注册的中断通知 eventfd 引用，避免内核长期泄漏；队列复位轮询增加两秒上限，防止硬件持续返回忙时无限循环并阻塞全局锁导致其他客户机挂起；域位图改用域数量常量以保持一致。",
+    "table_summary_source": "llm-mail-batch"
   }
 ]

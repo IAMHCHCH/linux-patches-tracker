@@ -31,33 +31,39 @@
     "submitter": "Thomas Huth",
     "email": "thuth@redhat.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "pcrypt 并行加密包装器允许被嵌套使用，在并发自测场景下可能因递归分配失败而触发内核告警。现在在初始化实例时检测算法名中是否已含 pcrypt，若已嵌套则直接拒绝，避免递归包装导致的资源耗尽和调用栈异常。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260701143947.944593-1-thuth@redhat.com/mbox/",
     "series_id": 1119901,
     "series_name": "[RFC] crypto: pcrypt - Disallow nesting of the pcrypt wrapper",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1119901/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "pcrypt 并行加密包装器允许被嵌套使用，在并发自测场景下可能因递归分配失败而触发内核告警。现在在初始化实例时检测算法名中是否已含 pcrypt，若已嵌套则直接拒绝，避免递归包装导致的资源耗尽和调用栈异常。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14657022,
     "title": "[5.10/5.15] crypto: af_alg - Set merge to zero early in af_alg_sendmsg",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260701160121.100720-1-mdmitrichenko@astralinux.ru/",
     "date": "2026-07-01",
-    "organization": "Individual Contributor",
+    "organization": "Astra Linux",
     "subsystem": "AF_ALG API",
     "status": "社区讨论中",
     "state": "handled-elsewhere",
     "submitter": "Mikhail Dmitrichenko",
     "email": "mdmitrichenko@astralinux.ru",
     "version": 1,
-    "summary": "修改将 merge 配置为 zero，调整运行参数，持续改进代码质量和功能完备性",
+    "summary": "用户态加密套接字在发送消息出错中止后，合并标志可能残留上一轮循环的无效值，下次进入发送流程时可能因无法完成的合并操作而崩溃。现在在循环开头提前将该标志清零，使出错后的下一次调用不再沿用旧状态。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260701160121.100720-1-mdmitrichenko@astralinux.ru/mbox/",
     "series_id": 1119967,
     "series_name": "[5.10/5.15] crypto: af_alg - Set merge to zero early in af_alg_sendmsg",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1119967/mbox/",
-    "series_total": 5
+    "series_total": 5,
+    "table_summary": "用户态加密套接字在发送消息出错中止后，合并标志可能残留上一轮循环的无效值，下次进入发送流程时可能因无法完成的合并操作而崩溃。现在在循环开头提前将该标志清零，使出错后的下一次调用不再沿用旧状态。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14729575,
@@ -71,13 +77,16 @@
     "submitter": "Thomas Richard (TI)",
     "email": "thomas.richard@bootlin.com",
     "version": 5,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "硬件随机数内核线程在系统挂起期间仍会访问已挂起的随机数设备，在 J721S2 等平台上触发错误；现在通过电源管理通知在挂起前停止该线程、恢复后重启，避免挂起过程中访问设备。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260804-hw-random-fix-hwrng-fillfn-crash-suspend-resume-v5-1-c4769b3c007b@bootlin.com/mbox/",
     "series_id": 1139990,
     "series_name": "[v5] hwrng: core - Stop/start hwrng_fillfn() kthread before/after suspend-resume",
     "series_version": 5,
     "series_mbox": "https://patchwork.kernel.org/series/1139990/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "硬件随机数内核线程在系统挂起期间仍会访问已挂起的随机数设备，在 J721S2 等平台上触发错误；现在通过电源管理通知在挂起前停止该线程、恢复后重启，避免挂起过程中访问设备。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14664539,
@@ -91,13 +100,16 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
+    "summary": "Intel QAT 驱动解析服务配置字符串时，原先先清零缓冲区再拷贝并单独检查长度，流程冗余。现改用带填充的字符串拷贝一步完成，并用其返回值判断是否截断，同时去掉不再需要的长度参数和多余的长度计算。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260705133842.241401-3-thorsten.blum@linux.dev/mbox/",
     "series_id": 1121790,
     "series_name": "crypto: qat - use strscpy_pad to simplify adf_service_string_to_mask",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1121790/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Intel QAT 驱动解析服务配置字符串时，原先先清零缓冲区再拷贝并单独检查长度，流程冗余。现改用带填充的字符串拷贝一步完成，并用其返回值判断是否截断，同时去掉不再需要的长度参数和多余的长度计算。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14664742,
@@ -111,13 +123,16 @@
     "submitter": "Eric Biggers",
     "email": "ebiggers@kernel.org",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为磁盘加密工具放行 Camellia、Serpent 和 Twofish 的 XTS 模式，使普通用户仍能通过内核加密套接字接口处理这些算法的密钥槽，避免启用算法限制后无法访问已有加密卷。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260705184419.40762-1-ebiggers@kernel.org/mbox/",
     "series_id": 1121872,
     "series_name": "crypto: af_alg - Allow additional ciphers for cryptsetup",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1121872/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "为磁盘加密工具放行 Camellia、Serpent 和 Twofish 的 XTS 模式，使普通用户仍能通过内核加密套接字接口处理这些算法的密钥槽，避免启用算法限制后无法访问已有加密卷。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14666537,
@@ -131,13 +146,16 @@
     "submitter": "Harsh Jain",
     "email": "h.jain@amd.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "AMD Versal 平台 AES-GCM 解密失败时，驱动把固件返回的具体错误码统一替换成通用消息错误，掩盖了真实原因。现在直接向上层传递固件解码后的错误码，使调用者能区分不同失败情形。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260706110254.2427551-4-h.jain@amd.com/mbox/",
     "series_id": 1122296,
     "series_name": "crypto: xilinx: Map PLM error codes to Linux error",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1122296/mbox/",
-    "series_total": 3
+    "series_total": 3,
+    "table_summary": "AMD Versal 平台 AES-GCM 解密失败时，驱动把固件返回的具体错误码统一替换成通用消息错误，掩盖了真实原因。现在直接向上层传递固件解码后的错误码，使调用者能区分不同失败情形。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14673032,
@@ -151,13 +169,16 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Atmel SHA204A 随机数驱动在读取随机数后，栈上命令缓冲区仍残留最近一次随机字节，缓存的工作数据在事务失败或设备移除时也未擦除。现在在函数返回前显式清零该缓冲区，并在失败和移除路径用敏感释放清除缓存数据。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260708150359.545852-2-thorsten.blum@linux.dev/mbox/",
     "series_id": 1123959,
     "series_name": "crypto: atmel-sha204a - clear RNG data from memory",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1123959/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Atmel SHA204A 随机数驱动在读取随机数后，栈上命令缓冲区仍残留最近一次随机字节，缓存的工作数据在事务失败或设备移除时也未擦除。现在在函数返回前显式清零该缓冲区，并在失败和移除路径用敏感释放清除缓存数据。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14752401,
@@ -171,13 +192,16 @@
     "submitter": "Dawid Olesinski",
     "email": "dawidro@gmail.com",
     "version": 3,
-    "summary": "新增rk356x/rk3588 cryptographic offloader driver，扩展功能特性",
+    "summary": "为 RK3568 和 RK3588 芯片新增第二代 Rockchip 加密加速驱动，提供 AES 的 ECB、CBC、XTS 模式以及 SHA、MD5、SM3 哈希的硬件卸载。硬件填充引擎无法跨描述符保持状态，因此多段散列表和不对齐请求会退回软件实现；XTS 硬件仅支持单段请求。驱动基于加密引擎框架，并在空闲两秒后关闭时钟和复位以省电。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260816194112.552100-3-dawidro@gmail.com/mbox/",
     "series_id": 1146830,
     "series_name": "[v3,1/4] dt-bindings: crypto: rockchip: Add RK356x/RK3588 crypto engine binding",
     "series_version": 3,
     "series_mbox": "https://patchwork.kernel.org/series/1146830/mbox/",
-    "series_total": 4
+    "series_total": 4,
+    "table_summary": "为 RK3568 和 RK3588 芯片新增第二代 Rockchip 加密加速驱动，提供 AES 的 ECB、CBC、XTS 模式以及 SHA、MD5、SM3 哈希的硬件卸载。硬件填充引擎无法跨描述符保持状态，因此多段散列表和不对齐请求会退回软件实现；XTS 硬件仅支持单段请求。驱动基于加密引擎框架，并在空闲两秒后关闭时钟和复位以省电。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14673977,
@@ -191,13 +215,16 @@
     "submitter": "Eric Biggers",
     "email": "ebiggers@kernel.org",
     "version": 1,
-    "summary": "改进introducti，提升健壮性和性能，提升代码的可读性和可维护性，为后续功能迭代奠定更清晰的基础",
+    "summary": "内核加密库文档的开头没有说明这是仅供内核内部使用的库，在线浏览者容易误解其用途。现在改写介绍语句，明确该库面向内核内部调用者，提供比传统加密接口更快捷的算法访问方式。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260709022747.44635-1-ebiggers@kernel.org/mbox/",
     "series_id": 1124229,
     "series_name": "lib/crypto: docs: Improve introduction sentence",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1124229/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "内核加密库文档的开头没有说明这是仅供内核内部使用的库，在线浏览者容易误解其用途。现在改写介绍语句，明确该库面向内核内部调用者，提供比传统加密接口更快捷的算法访问方式。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14679119,
@@ -211,13 +238,16 @@
     "submitter": "David C.C.M. Gall",
     "email": "david.ccm.gall@googlemail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "RSA PKCS#1 签名校验用普通内存比较来核对摘要，比较过程可能通过时间差异泄露有效前缀长度，用户提供的摘要可到达该比较。现在改用恒定时间比较，使比较耗时不再随匹配前缀长度变化。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/alEr_e-G0L2nxxv-@fudgebox/mbox/",
     "series_id": 1125525,
     "series_name": "crypto: rsassa-pkcs1: use constant-time comparison for digest and signature verification",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1125525/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "RSA PKCS#1 签名校验用普通内存比较来核对摘要，比较过程可能通过时间差异泄露有效前缀长度，用户提供的摘要可到达该比较。现在改用恒定时间比较，使比较耗时不再随匹配前缀长度变化。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14679120,
@@ -231,13 +261,16 @@
     "submitter": "David C.C.M. Gall",
     "email": "david.ccm.gall@googlemail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "PKCS#7 消息签名校验在核对摘要时使用普通内存比较，可能通过时间差异泄露附加签名的有效前缀长度。现在改用恒定时间比较，使校验耗时不再随匹配前缀长度变化。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/alEsSl8i1_FpoU0f@fudgebox/mbox/",
     "series_id": 1125526,
     "series_name": "crypto: pkcs7_verify: use constant-time comparison for digest and signature verification",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1125526/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "PKCS#7 消息签名校验在核对摘要时使用普通内存比较，可能通过时间差异泄露附加签名的有效前缀长度。现在改用恒定时间比较，使校验耗时不再随匹配前缀长度变化。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14679178,
@@ -251,13 +284,16 @@
     "submitter": "Miquel Raynal",
     "email": "miquel.raynal@bootlin.com",
     "version": 2,
-    "summary": "启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性",
+    "summary": "把硬件随机数驱动的架构依赖列表加入瑞萨 RZ/N1D，使该芯片上集成的同类随机数模块能够被编译启用，该模块实际并非 OMAP 专有。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260710-schneider-v7-2-rc1-eip76-upstream-v2-2-4eab557b0e70@bootlin.com/mbox/",
     "series_id": 1125551,
     "series_name": "hwrng: Enable EIP-76 on RZ/N1",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1125551/mbox/",
-    "series_total": 2
+    "series_total": 2,
+    "table_summary": "把硬件随机数驱动的架构依赖列表加入瑞萨 RZ/N1D，使该芯片上集成的同类随机数模块能够被编译启用，该模块实际并非 OMAP 专有。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14680711,
@@ -271,13 +307,16 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "把 PowerPC 上 AES 的 CBC 加解密标志从整数改为布尔类型，加密和解密调用分别传入真和假，仅统一参数语义，不改变加解密行为。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260711145216.747128-3-thorsten.blum@linux.dev/mbox/",
     "series_id": 1125865,
     "series_name": "crypto: powerpc/aes - use bool for encryption/decryption flag",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1125865/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "把 PowerPC 上 AES 的 CBC 加解密标志从整数改为布尔类型，加密和解密调用分别传入真和假，仅统一参数语义，不改变加解密行为。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14681896,
@@ -291,13 +330,16 @@
     "submitter": "Lothar Rubusch",
     "email": "l.rubusch@gmail.com",
     "version": 6,
-    "summary": "修复use-after-free 漏洞，防止在错误恢复路径中访问已释放的内存对象，提升子系统的稳定性和可靠性，防止潜在的内核异常或崩溃风险",
+    "summary": "多片 Atmel ECC 设备并行初始化或快速移除再探测时，变换请求可能拿到尚未注册完成或正在解绑的 I2C 客户端指针，存在释放后使用风险；补丁引入引用计数与等待机制协调注册解绑，但超时路径仍可能遗留活跃变换，方案尚在讨论。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260712200203.47764-1-l.rubusch@gmail.com/mbox/",
     "series_id": 1126179,
     "series_name": "[RFC,RESEND,v6,1/1] crypto: atmel-ecc - fix multi-device use-after-free and registration races",
     "series_version": 6,
     "series_mbox": "https://patchwork.kernel.org/series/1126179/mbox/",
-    "series_total": 1
+    "series_total": 1,
+    "table_summary": "多片 Atmel ECC 设备并行初始化或快速移除再探测时，变换请求可能拿到尚未注册完成或正在解绑的 I2C 客户端指针，存在释放后使用风险；补丁引入引用计数与等待机制协调注册解绑，但超时路径仍可能遗留活跃变换，方案尚在讨论。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14682157,
@@ -331,13 +373,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Marvell CESA 加密驱动在释放 SRAM 时，若此前 DMA 资源映射失败，仍会调用解除映射，可能触发错误；现在仅在映射成功时才解除映射，避免对无效地址操作。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260713050740.3687230-1-rosenp@gmail.com/mbox/",
     "series_id": 1126289,
     "series_name": "crypto: cesa: check for sram_dma NULL",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1126289/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Marvell CESA 加密驱动在释放 SRAM 时，若此前 DMA 资源映射失败，仍会调用解除映射，可能触发错误；现在仅在映射成功时才解除映射，避免对无效地址操作。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14684648,
@@ -351,53 +396,62 @@
     "submitter": "Eric Biggers",
     "email": "ebiggers@kernel.org",
     "version": 1,
-    "summary": "移除serialized job support，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险",
+    "summary": "pcrypt 移除后，padata 中仅为其服务的串行任务支持已无使用者，现删除相关代码和文档，保留并行多线程任务调度能力，接口范围相应缩小。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260713223234.24812-3-ebiggers@kernel.org/mbox/",
     "series_id": 1126933,
     "series_name": "Remove pcrypt",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1126933/mbox/",
-    "series_total": 2
+    "series_total": 2,
+    "table_summary": "pcrypt 移除后，padata 中仅为其服务的串行任务支持已无使用者，现删除相关代码和文档，保留并行多线程任务调度能力，接口范围相应缩小。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14685007,
     "title": "crypto: keembay - Initialize completion before requesting IRQ",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260714033015.367735-1-lilinmao@kylinos.cn/",
     "date": "2026-07-14",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "General Crypto",
     "status": "已合入",
     "state": "accepted",
     "submitter": "Linmao Li",
     "email": "lilinmao@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Keem Bay OCS AES/SM4 驱动在注册中断处理后才初始化完成量，中断若在此时到达会使用未初始化的完成量；现在提前初始化，消除这一窗口。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260714033015.367735-1-lilinmao@kylinos.cn/mbox/",
     "series_id": 1127055,
     "series_name": "crypto: keembay - Initialize completion before requesting IRQ",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1127055/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Keem Bay OCS AES/SM4 驱动在注册中断处理后才初始化完成量，中断若在此时到达会使用未初始化的完成量；现在提前初始化，消除这一窗口。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14686470,
     "title": "crypto: keembay - publish OF module alias for OCS AES/SM4",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260714131442.153699-1-pengcan@kylinos.cn/",
     "date": "2026-07-14",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "General Crypto",
     "status": "已合入",
     "state": "accepted",
     "submitter": "Can Peng",
     "email": "pengcan@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Keem Bay OCS AES/SM4 驱动已有设备树匹配表但未导出，导致基于设备树的模块自动加载无法识别该设备；现在补上导出，使模块能按设备树自动加载。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260714131442.153699-1-pengcan@kylinos.cn/mbox/",
     "series_id": 1127452,
     "series_name": "crypto: keembay - publish OF module alias for OCS AES/SM4",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1127452/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Keem Bay OCS AES/SM4 驱动已有设备树匹配表但未导出，导致基于设备树的模块自动加载无法识别该设备；现在补上导出，使模块能按设备树自动加载。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14687865,
@@ -411,13 +465,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "海思 SEC 加密驱动映射寄存器时手工获取资源再映射，现改用托管接口一次完成获取、申请和映射，并简化错误判断，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260715011533.1278258-1-rosenp@gmail.com/mbox/",
     "series_id": 1127802,
     "series_name": "crypto: hisilicon/sec: use devm_platform_ioremap_resource in sec_map_io",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1127802/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "海思 SEC 加密驱动映射寄存器时手工获取资源再映射，现改用托管接口一次完成获取、申请和映射，并简化错误判断，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14689946,
@@ -431,13 +488,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "OMAP AES 驱动探测时用条件编译分别处理设备树和非设备树资源获取，现改用托管接口统一获取并映射寄存器，保留旧平台回退数据，简化探测流程。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260715215848.410011-1-rosenp@gmail.com/mbox/",
     "series_id": 1128413,
     "series_name": "crypto: omap-aes: use devm_platform_get_and_ioremap_resource",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1128413/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "OMAP AES 驱动探测时用条件编译分别处理设备树和非设备树资源获取，现改用托管接口统一获取并映射寄存器，保留旧平台回退数据，简化探测流程。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14689947,
@@ -451,13 +511,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "OMAP SHA 驱动探测时同样用条件编译分别处理设备树和非设备树资源与中断获取，现改用托管接口统一处理，保留旧平台回退数据，简化探测流程。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260715220013.416122-1-rosenp@gmail.com/mbox/",
     "series_id": 1128414,
     "series_name": "crypto: omap-sham: use devm_platform_get_and_ioremap_resource",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1128414/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "OMAP SHA 驱动探测时同样用条件编译分别处理设备树和非设备树资源与中断获取，现改用托管接口统一处理，保留旧平台回退数据，简化探测流程。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14694694,
@@ -471,13 +534,16 @@
     "submitter": "Daniel Jordan",
     "email": "daniel.m.jordan@oracle.com",
     "version": 1,
-    "summary": "更新相关配置项或代码引用，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向",
+    "summary": "padata 已不再在软中断上下文运行，因此把其工作锁的关中断自旋锁版本替换为普通自旋锁，仅简化加锁方式，不改变并发语义。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260717205028.63847-1-daniel.m.jordan@oracle.com/mbox/",
     "series_id": 1129838,
     "series_name": "padata: Replace bottom-half spinlock variants",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1129838/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "padata 已不再在软中断上下文运行，因此把其工作锁的关中断自旋锁版本替换为普通自旋锁，仅简化加锁方式，不改变并发语义。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14694850,
@@ -491,133 +557,154 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Marvell CESA 加密引擎在探测失败或设备移除时，原先手动遍历所有引擎释放 SRAM 映射，可能对从未初始化的引擎执行解映射。现改为在映射成功建立后注册自动清理回调，由设备资源框架在探测回滚和移除时统一触发，并删除了显式释放调用，同时消除了对未初始化引擎操作的问题。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260717231742.1174221-1-rosenp@gmail.com/mbox/",
     "series_id": 1129879,
     "series_name": "crypto: cesa: manage SRAM teardown with devm",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1129879/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Marvell CESA 加密引擎在探测失败或设备移除时，原先手动遍历所有引擎释放 SRAM 映射，可能对从未初始化的引擎执行解映射。现改为在映射成功建立后注册自动清理回调，由设备资源框架在探测回滚和移除时统一触发，并删除了显式释放调用，同时消除了对未初始化引擎操作的问题。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14696518,
     "title": "crypto: ccm - Set rfc4309 maxauthsize from child",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/al17HaL8wNd_fuDc@gondor.apana.org.au/",
     "date": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（gondor.apana.org.au）",
     "subsystem": "General Crypto",
     "status": "已合入",
     "state": "accepted",
     "submitter": "Herbert Xu",
     "email": "herbert@gondor.apana.org.au",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "RFC4309 模式的 CCM 封装在初始化时把最大认证长度硬编码为 16，没有跟随底层算法。现改为从子算法读取该值，使封装后的认证长度上限与底层实现保持一致，避免底层支持更短认证长度时上层仍按 16 处理。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/al17HaL8wNd_fuDc@gondor.apana.org.au/mbox/",
     "series_id": 1130458,
     "series_name": "crypto: ccm - Set rfc4309 maxauthsize from child",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130458/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "RFC4309 模式的 CCM 封装在初始化时把最大认证长度硬编码为 16，没有跟随底层算法。现改为从子算法读取该值，使封装后的认证长度上限与底层实现保持一致，避免底层支持更短认证长度时上层仍按 16 处理。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14696588,
     "title": "crypto: rsassa-pkcs1 - Use constant-time digest comparison",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720021322.122784-1-yijiangshan@kylinos.cn/",
     "date": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "Public Key",
     "status": "社区讨论中",
     "state": "rejected",
     "submitter": "Jiangshan Yi",
     "email": "yijiangshan@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "RSA PKCS#1 v1.5 签名校验中比较摘要时使用普通内存比较，比较耗时取决于首个不同字节的位置，可能被用来逐字节伪造签名。现改为恒定时间比较，与同一函数中已有的哈希前缀比较方式保持一致，堵住这一时序侧信道途径。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720021322.122784-1-yijiangshan@kylinos.cn/mbox/",
     "series_id": 1130476,
     "series_name": "crypto: rsassa-pkcs1 - Use constant-time digest comparison",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130476/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "RSA PKCS#1 v1.5 签名校验中比较摘要时使用普通内存比较，比较耗时取决于首个不同字节的位置，可能被用来逐字节伪造签名。现改为恒定时间比较，与同一函数中已有的哈希前缀比较方式保持一致，堵住这一时序侧信道途径。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14696647,
     "title": "crypto: krb5 - Use constant-time checksum comparison",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720031304.198172-1-yijiangshan@kylinos.cn/",
     "date": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "Kerberos",
     "status": "社区讨论中",
     "state": "changes-requested",
     "submitter": "Jiangshan Yi",
     "email": "yijiangshan@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Kerberos 的 MIC 校验和比较使用普通内存比较，耗时随首个不同字节位置变化，可能被用来逐字节伪造校验和。现改为恒定时间比较，与同一子系统其他校验和比较方式一致，并补充了所需头文件引用。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720031304.198172-1-yijiangshan@kylinos.cn/mbox/",
     "series_id": 1130501,
     "series_name": "crypto: krb5 - Use constant-time checksum comparison",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130501/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Kerberos 的 MIC 校验和比较使用普通内存比较，耗时随首个不同字节位置变化，可能被用来逐字节伪造校验和。现改为恒定时间比较，与同一子系统其他校验和比较方式一致，并补充了所需头文件引用。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14696660,
     "title": "crypto: verify_pefile - Use constant-time digest comparison",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720031815.204237-1-yijiangshan@kylinos.cn/",
     "date": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "needs-ack",
     "submitter": "Jiangshan Yi",
     "email": "yijiangshan@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "PE 文件签名校验中比较摘要时使用普通内存比较，耗时随首个不同字节位置变化，可能被用来逐字节伪造 PE 文件签名。现改为恒定时间比较，与加密子系统其他部分保持一致，并补充了所需头文件引用。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720031815.204237-1-yijiangshan@kylinos.cn/mbox/",
     "series_id": 1130505,
     "series_name": "crypto: verify_pefile - Use constant-time digest comparison",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130505/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "PE 文件签名校验中比较摘要时使用普通内存比较，耗时随首个不同字节位置变化，可能被用来逐字节伪造 PE 文件签名。现改为恒定时间比较，与加密子系统其他部分保持一致，并补充了所需头文件引用。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14696667,
     "title": "crypto: pkcs7 - Use constant-time message digest comparison",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720032316.210113-1-yijiangshan@kylinos.cn/",
     "date": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "Public Key",
     "status": "社区讨论中",
     "state": "rejected",
     "submitter": "Jiangshan Yi",
     "email": "yijiangshan@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "PKCS#7 签名校验中比较消息摘要时使用普通内存比较，耗时随首个不同字节位置变化，可能被用来逐字节伪造签名。现改为恒定时间比较，与加密子系统其他部分保持一致，并补充了所需头文件引用。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720032316.210113-1-yijiangshan@kylinos.cn/mbox/",
     "series_id": 1130509,
     "series_name": "crypto: pkcs7 - Use constant-time message digest comparison",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130509/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "PKCS#7 签名校验中比较消息摘要时使用普通内存比较，耗时随首个不同字节位置变化，可能被用来逐字节伪造签名。现改为恒定时间比较，与加密子系统其他部分保持一致，并补充了所需头文件引用。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14698968,
     "title": "[6.1/6.6/6.12.y] crypto: rsa-pkcs1pad: Don't WARN on an empty digest",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720191525.15450-1-doruk@0sec.ai/",
     "date": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "0SEC",
     "subsystem": "Public Key",
     "status": "社区讨论中",
     "state": "handled-elsewhere",
     "submitter": "Doruk Tan Ozturk",
     "email": "doruk@0sec.ai",
     "version": 1,
-    "summary": "限制warn，增加条件判断和安全保护逻辑，持续改进代码质量和功能完备性",
+    "summary": "在 6.1、6.6、6.12 稳定分支上，非特权用户可通过密钥验证接口传入零长度摘要，触发内核警告；若内核配置为警告即崩溃，本地用户可借此使机器宕机。现保留对无效请求返回参数错误，但不再对用户可控的长度发出警告。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720191525.15450-1-doruk@0sec.ai/mbox/",
     "series_id": 1131112,
     "series_name": "[6.1/6.6/6.12.y] crypto: rsa-pkcs1pad: Don't WARN on an empty digest",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1131112/mbox/",
-    "series_total": 6
+    "series_total": 6,
+    "table_summary": "在 6.1、6.6、6.12 稳定分支上，非特权用户可通过密钥验证接口传入零长度摘要，触发内核警告；若内核配置为警告即崩溃，本地用户可借此使机器宕机。现保留对无效请求返回参数错误，但不再对用户可控的长度发出警告。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14699380,
@@ -631,53 +718,62 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "博通加密驱动的 HMAC 密钥设置中，原先先复制密钥再手动填充零，现改用一次带填充的复制完成，简化了该段流程，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260720232249.117992-3-thorsten.blum@linux.dev/mbox/",
     "series_id": 1131200,
     "series_name": "crypto: bcm - use memcpy_and_pad in ahash_hmac_setkey",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1131200/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "博通加密驱动的 HMAC 密钥设置中，原先先复制密钥再手动填充零，现改用一次带填充的复制完成，简化了该段流程，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14703746,
     "title": "lib/crypto: x86/chacha: Add a 16-block AVX-512 variant",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260722153247.630519-1-martin@strongswan.org/",
     "date": "2026-07-22",
-    "organization": "Individual Contributor",
+    "organization": "strongSwan",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "handled-elsewhere",
     "submitter": "Martin Willi",
     "email": "martin@strongswan.org",
     "version": 1,
-    "summary": "新增a 16-block avx-512 variant，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为 x86 的 ChaCha20 增加一次处理十六个块的 AVX-512 实现，使用完整 512 位寄存器，在输入超过八个块时优先于原有的八块 AVX-512VL 路径，剩余部分仍由后者处理。该实现只在支持 AVX-512F 且具备完整 zmm 保存状态的 CPU 上启用，并在标记偏好 256 位寄存器的 CPU 上保持禁用，以避免降频。在 Zen 5 上 1024 字节块的测速约为每秒 7.5 GB，对比原路径的 4.2 GB。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260722153247.630519-1-martin@strongswan.org/mbox/",
     "series_id": 1132560,
     "series_name": "lib/crypto: x86/chacha: Add a 16-block AVX-512 variant",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1132560/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "为 x86 的 ChaCha20 增加一次处理十六个块的 AVX-512 实现，使用完整 512 位寄存器，在输入超过八个块时优先于原有的八块 AVX-512VL 路径，剩余部分仍由后者处理。该实现只在支持 AVX-512F 且具备完整 zmm 保存状态的 CPU 上启用，并在标记偏好 256 位寄存器的 CPU 上保持禁用，以避免降频。在 Zen 5 上 1024 字节块的测速约为每秒 7.5 GB，对比原路径的 4.2 GB。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
-    "id": 14794827,
-    "title": "[v8,2/2] hwrng: starfive: rework clk/reset teardown order for JHB100",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907031603.188483-3-lianfeng.ouyang@starfivetech.com/",
-    "date": "2026-09-07",
+    "id": 14744610,
+    "title": "[v7,2/2] hwrng: starfive: rework clk/reset teardown order for JHB100",
+    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260812023401.44149-3-lianfeng.ouyang@starfivetech.com/",
+    "date": "2026-08-12",
     "organization": "StarFive",
     "subsystem": "HWRNG",
     "status": "社区讨论中",
-    "state": "new",
+    "state": "changes-requested",
     "submitter": "lianfeng.ouyang",
     "email": "lianfeng.ouyang@starfivetech.com",
-    "version": 8,
-    "summary": "重写重新设计部分实现，优化数据流和处理逻辑，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907031603.188483-3-lianfeng.ouyang@starfivetech.com/mbox/",
-    "series_id": 1159290,
+    "version": 7,
+    "summary": "为 StarFive 真随机数驱动适配 JHB100 芯片：该芯片要求先关时钟再复位，否则复位域交叉可能产生毛刺影响下游模块，而 JH7110 保持先复位顺序。同时修正运行时电源管理在初始化、读取、重播种和清理路径上的配对，改用受管资源自动回滚，把重播种从硬中断移到工作队列，并用互斥锁串行化命令序列。",
+    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260812023401.44149-3-lianfeng.ouyang@starfivetech.com/mbox/",
+    "series_id": 1144418,
     "series_name": "hwrng: starfive: add JHB100 support and fix clk/reset teardown",
-    "series_version": 8,
-    "series_mbox": "https://patchwork.kernel.org/series/1159290/mbox/",
-    "series_total": 2
+    "series_version": 7,
+    "series_mbox": "https://patchwork.kernel.org/series/1144418/mbox/",
+    "series_total": 2,
+    "table_summary": "为 StarFive 真随机数驱动适配 JHB100 芯片：该芯片要求先关时钟再复位，否则复位域交叉可能产生毛刺影响下游模块，而 JH7110 保持先复位顺序。同时修正运行时电源管理在初始化、读取、重播种和清理路径上的配对，改用受管资源自动回滚，把重播种从硬中断移到工作队列，并用互斥锁串行化命令序列。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14706724,
@@ -691,13 +787,16 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
+    "summary": "简化 Marvell OcteonTX 加密驱动中把引擎类型和微码类型转成字符串的两个辅助函数，去掉局部变量、补上默认分支并直接返回结果，行为不变，只是让代码更短更直观。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260723163326.163043-2-thorsten.blum@linux.dev/mbox/",
     "series_id": 1133379,
     "series_name": "crypto: octeontx - simplify get_{eng,ucode}_type_str helpers",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1133379/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "简化 Marvell OcteonTX 加密驱动中把引擎类型和微码类型转成字符串的两个辅助函数，去掉局部变量、补上默认分支并直接返回结果，行为不变，只是让代码更短更直观。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14707652,
@@ -731,33 +830,39 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "修复 StarFive AES 驱动在 DMA 映射前就读取散射表 DMA 长度的问题：在需要单独 DMA 长度字段的内核配置下，该长度此时尚未填充，改用原始散射表长度，避免后续清零缓冲区时长度计算错误。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260725090609.315812-2-thorsten.blum@linux.dev/mbox/",
     "series_id": 1134339,
     "series_name": "crypto: starfive - use scatterlist length before DMA mapping",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1134339/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "修复 StarFive AES 驱动在 DMA 映射前就读取散射表 DMA 长度的问题：在需要单独 DMA 长度字段的内核配置下，该长度此时尚未填充，改用原始散射表长度，避免后续清零缓冲区时长度计算错误。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14711451,
     "title": "crypto: af_alg: Allow cbc(paes)",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260726192716.2351505-1-richard@nod.at/",
     "date": "2026-07-26",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（nod.at）",
     "subsystem": "AF_ALG API",
     "status": "已合入",
     "state": "accepted",
     "submitter": "Richard Weinberger",
     "email": "richard@nod.at",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为内核加密套接字接口恢复对受保护密钥 CBC 加密的支持：此前禁止卸载到 CPU 之外的加密操作，导致依赖 CAAM 密钥封装、用户态无法自行实现的该算法被拒；现在对该算法单独放行，使普通用户仍可借助内核完成已有加密卷的访问。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260726192716.2351505-1-richard@nod.at/mbox/",
     "series_id": 1134738,
     "series_name": "crypto: af_alg: Allow cbc(paes)",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1134738/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "为内核加密套接字接口恢复对受保护密钥 CBC 加密的支持：此前禁止卸载到 CPU 之外的加密操作，导致依赖 CAAM 密钥封装、用户态无法自行实现的该算法被拒；现在对该算法单独放行，使普通用户仍可借助内核完成已有加密卷的访问。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14711718,
@@ -784,20 +889,23 @@
     "title": "crypto: ccp - don't abuse kernel-doc comment format",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260730051710.1412969-1-rdunlap@infradead.org/",
     "date": "2026-07-30",
-    "organization": "Individual Contributor",
+    "organization": "Infradead Community",
     "subsystem": "General Crypto",
     "status": "已合入",
     "state": "accepted",
     "submitter": "Randy Dunlap",
     "email": "rdunlap@infradead.org",
     "version": 1,
-    "summary": "编写使用文档和 API 说明，帮助开发者正确使用相关接口，持续改进代码质量和功能完备性",
+    "summary": "AMD 安全处理器驱动中，部分普通注释误用了内核文档注释格式，导致文档检查工具产生告警；现改用普通注释写法，消除这些告警，不涉及功能变化。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260730051710.1412969-1-rdunlap@infradead.org/mbox/",
     "series_id": 1137100,
     "series_name": "crypto: ccp - don't abuse kernel-doc comment format",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1137100/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "AMD 安全处理器驱动中，部分普通注释误用了内核文档注释格式，导致文档检查工具产生告警；现改用普通注释写法，消除这些告警，不涉及功能变化。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14722192,
@@ -831,13 +939,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
+    "summary": "简化 CAAM 作业环的探测流程：改用平台接口获取中断和映射寄存器区域，中断获取失败时按负错误码判断，并删除不再需要的中断映射释放回调，由受管资源自动清理，各作业环节点区域互不重叠，因此独占映射不会引入冲突。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260730204722.1101805-1-rosenp@gmail.com/mbox/",
     "series_id": 1137692,
     "series_name": "crypto: caam: simplify probe resource and IRQ handling",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1137692/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "简化 CAAM 作业环的探测流程：改用平台接口获取中断和映射寄存器区域，中断获取失败时按负错误码判断，并删除不再需要的中断映射释放回调，由受管资源自动清理，各作业环节点区域互不重叠，因此独占映射不会引入冲突。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14721708,
@@ -851,13 +962,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "调整 AMCC 加密驱动的探测顺序，把获取中断和映射寄存器资源提前到其他初始化之前，这两步可能返回延迟探测，提前执行可避免在不需要时做多余工作。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260730204915.1102403-1-rosenp@gmail.com/mbox/",
     "series_id": 1137693,
     "series_name": "crypto: amcc: get irq and ioremap resource first",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1137693/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "调整 AMCC 加密驱动的探测顺序，把获取中断和映射寄存器资源提前到其他初始化之前，这两步可能返回延迟探测，提前执行可避免在不需要时做多余工作。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14722346,
@@ -871,33 +985,39 @@
     "submitter": "Eric Biggers",
     "email": "ebiggers@kernel.org",
     "version": 1,
-    "summary": "更新相关配置项或代码引用，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向",
+    "summary": "把高通 QCE 加密驱动改为仅绑定设备树节点的桩驱动：其注册的算法性能远不如 CPU 实现且开销更大，也不支持磁盘加密和 IPsec 等常见场景，因此移除全部加密功能，只保留降低互连带宽投票以省电的作用。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260731050838.158825-1-ebiggers@kernel.org/mbox/",
     "series_id": 1137876,
     "series_name": "crypto: qce - Replace with stub driver",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1137876/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "把高通 QCE 加密驱动改为仅绑定设备树节点的桩驱动：其注册的算法性能远不如 CPU 实现且开销更大，也不支持磁盘加密和 IPsec 等常见场景，因此移除全部加密功能，只保留降低互连带宽投票以省电的作用。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14728337,
     "title": "crypto/krb5: use kfree_sensitive() for derived key buffers",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260803192621.329577-1-linux@jaseg.de/",
     "date": "2026-08-03",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（jaseg.de）",
     "subsystem": "Kerberos",
     "status": "已合入",
     "state": "accepted",
     "submitter": "Jan Sebastian Götte",
     "email": "linux@jaseg.de",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 Kerberos 加密与校验和密钥派生流程中，派生出的密钥缓冲区原先用普通释放方式回收，密钥内容会残留在已释放的内存对象里；现改为释放前先清除密钥内容，降低密钥材料被后续分配读取的风险。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260803192621.329577-1-linux@jaseg.de/mbox/",
     "series_id": 1139626,
     "series_name": "crypto/krb5: use kfree_sensitive() for derived key buffers",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1139626/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "在 Kerberos 加密与校验和密钥派生流程中，派生出的密钥缓冲区原先用普通释放方式回收，密钥内容会残留在已释放的内存对象里；现改为释放前先清除密钥内容，降低密钥材料被后续分配读取的风险。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14728702,
@@ -911,13 +1031,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "EIP93 加密引擎驱动原先在探测时单独分配环形缓冲区，现将其直接嵌入设备结构体并一次性分配，探测流程因此少一次分配和相应失败分支，功能行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260803224028.87631-1-rosenp@gmail.com/mbox/",
     "series_id": 1139701,
     "series_name": "crypto: eip93 - use struct_size() and flexible array for ring allocation",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1139701/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "EIP93 加密引擎驱动原先在探测时单独分配环形缓冲区，现将其直接嵌入设备结构体并一次性分配，探测流程因此少一次分配和相应失败分支，功能行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14737690,
@@ -931,33 +1054,39 @@
     "submitter": "David C.C.M. Gall",
     "email": "david.ccm.gall@googlemail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "SA2UL 加密驱动在解密回调中比较计算出的认证标签与收到的标签，原先的逐字节比较会在首个不同字节处提前结束，能提交解密请求并观察完成延迟的攻击者可能逐字节恢复期望标签，进而伪造有效标签、破坏 AEAD 的完整性保证。现改为恒定时间比较。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/anX9UKJ66Aak4ICV@fudgebox/mbox/",
     "series_id": 1142302,
     "series_name": "crypto: sa2ul - use crypto_memneq() to compare AEAD tag",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1142302/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "SA2UL 加密驱动在解密回调中比较计算出的认证标签与收到的标签，原先的逐字节比较会在首个不同字节处提前结束，能提交解密请求并观察完成延迟的攻击者可能逐字节恢复期望标签，进而伪造有效标签、破坏 AEAD 的完整性保证。现改为恒定时间比较。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14741532,
     "title": "crypto: caam - reject overlong RSA CRT parameters",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260810154024.3178145-1-Jeremy.Jean@oss.cyber.gouv.fr/",
     "date": "2026-08-10",
-    "organization": "Individual Contributor",
+    "organization": "ANSSI",
     "subsystem": "CAAM (NXP)",
     "status": "社区讨论中",
     "state": "changes-requested",
     "submitter": "Jérémy Jean",
     "email": "Jeremy.Jean@oss.cyber.gouv.fr",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "修复 CAAM 驱动处理 RSA 私钥 CRT 参数时的越界写：畸形密钥可提供比素数更长的参数，导致长度相减下溢并在拷贝时写出分配范围。现在在去除前导零后拒绝空或过长的参数，并按素数长度处理 qInv，同时避免全零整数越界读取。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260810154024.3178145-1-Jeremy.Jean@oss.cyber.gouv.fr/mbox/",
     "series_id": 1143537,
     "series_name": "crypto: caam - reject overlong RSA CRT parameters",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1143537/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "修复 CAAM 驱动处理 RSA 私钥 CRT 参数时的越界写：畸形密钥可提供比素数更长的参数，导致长度相减下溢并在拷贝时写出分配范围。现在在去除前导零后拒绝空或过长的参数，并按素数长度处理 qInv，同时避免全零整数越界读取。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14742391,
@@ -971,13 +1100,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "传递各层之间正确传递参数和状态信息，持续改进代码质量和功能完备性",
+    "summary": "三星 S5P 加密驱动的线程化中断处理原先从平台设备取回驱动数据结构，现改为在注册中断时直接传入该数据结构，中断处理不再需要额外查找，流程更直接，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811043358.136042-1-rosenp@gmail.com/mbox/",
     "series_id": 1143811,
     "series_name": "crypto: s5p-sss: pass s5p_aes_dev to irq handler",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1143811/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "三星 S5P 加密驱动的线程化中断处理原先从平台设备取回驱动数据结构，现改为在注册中断时直接传入该数据结构，中断处理不再需要额外查找，流程更直接，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14742393,
@@ -991,13 +1123,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "传递各层之间正确传递参数和状态信息，持续改进代码质量和功能完备性",
+    "summary": "talitos 加密驱动的中断处理程序原先从传入的设备结构里再取回私有数据，现在改为直接把私有数据传给中断处理程序，并在需要设备指针时从私有数据中取得。这只简化了中断入口的数据获取流程，不改变中断处理行为。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811043953.150589-1-rosenp@gmail.com/mbox/",
     "series_id": 1143813,
     "series_name": "crypto: talitos: pass talitos_private to irq handlers",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1143813/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "talitos 加密驱动的中断处理程序原先从传入的设备结构里再取回私有数据，现在改为直接把私有数据传给中断处理程序，并在需要设备指针时从私有数据中取得。这只简化了中断入口的数据获取流程，不改变中断处理行为。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14742398,
@@ -1011,33 +1146,39 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "传递各层之间正确传递参数和状态信息，持续改进代码质量和功能完备性",
+    "summary": "瑞芯微加密驱动在注册中断时原先传入平台设备，中断处理再从中取回驱动数据结构，现改为直接传入该数据结构，中断处理不再需要额外查找，流程更直接，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811044916.160856-1-rosenp@gmail.com/mbox/",
     "series_id": 1143818,
     "series_name": "crypto: rockchip: pass crypto_info to irq handler",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1143818/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "瑞芯微加密驱动在注册中断时原先传入平台设备，中断处理再从中取回驱动数据结构，现改为直接传入该数据结构，中断处理不再需要额外查找，流程更直接，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14743949,
     "title": "[v2,12/13] crypto: api - wipe tfm contexts before kdump",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811-crash-zeroize-rework-v2-12-9561d13c2340@jaseg.de/",
     "date": "2026-08-11",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（jaseg.de）",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "handled-elsewhere",
     "submitter": "Jan Sebastian Götte",
     "email": "linux@jaseg.de",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在启用崩溃转储前清除密钥配置下，内核加密变换对象中保存的扩展密钥等密钥材料会在 kdump 前被统一擦除，避免转储内存时泄露；但栈上或硬件密钥寄存器中的副本不在覆盖范围内，且该配置未启用时不做处理。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811-crash-zeroize-rework-v2-12-9561d13c2340@jaseg.de/mbox/",
     "series_id": 1144242,
     "series_name": "CRASH_WIPE_SECRETS: Wipe secrets before kdump (was: CRASH_ZEROIZE)",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1144242/mbox/",
-    "series_total": 13
+    "series_total": 13,
+    "table_summary": "在启用崩溃转储前清除密钥配置下，内核加密变换对象中保存的扩展密钥等密钥材料会在 kdump 前被统一擦除，避免转储内存时泄露；但栈上或硬件密钥寄存器中的副本不在覆盖范围内，且该配置未启用时不做处理。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14746611,
@@ -1051,13 +1192,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "PPC4xx 平台的真随机数发生器驱动改用受管设备资源方式映射寄存器，使映射在驱动卸载时自动解除，去掉了出错和移除路径中手动解除映射的调用，简化了清理流程。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260812185747.79173-1-rosenp@gmail.com/mbox/",
     "series_id": 1144926,
     "series_name": "crypto: amcc: trng: use devm_of_iomap()",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1144926/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "PPC4xx 平台的真随机数发生器驱动改用受管设备资源方式映射寄存器，使映射在驱动卸载时自动解除，去掉了出错和移除路径中手动解除映射的调用，简化了清理流程。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14746636,
@@ -1071,13 +1215,16 @@
     "submitter": "Rosen Penev",
     "email": "rosenp@gmail.com",
     "version": 1,
-    "summary": "传递各层之间正确传递参数和状态信息，持续改进代码质量和功能完备性",
+    "summary": "AMCC 加密驱动的中断处理原先从平台设备取回驱动数据结构，现改为在注册中断时直接传入该数据结构，中断处理与释放中断时不再需要额外查找，流程更直接，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260812191555.93423-1-rosenp@gmail.com/mbox/",
     "series_id": 1144934,
     "series_name": "crypto: amcc: pass core_dev to request_irq",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1144934/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "AMCC 加密驱动的中断处理原先从平台设备取回驱动数据结构，现改为在注册中断时直接传入该数据结构，中断处理与释放中断时不再需要额外查找，流程更直接，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14748148,
@@ -1091,13 +1238,16 @@
     "submitter": "Thomas Huth",
     "email": "thuth@redhat.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "XChaCha20-Poly1305 解密函数此前未像 ChaCha20-Poly1305 那样在结束时清除栈上的 ChaCha 状态，可能把密钥相关数据留在栈上；现在两个解密函数都在返回时自动清零该状态。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260813130147.949545-1-thuth@redhat.com/mbox/",
     "series_id": 1145449,
     "series_name": "lib/crypto: chacha20poly1305: Clear chacha_state in xchacha20poly1305_decrypt()",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1145449/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "XChaCha20-Poly1305 解密函数此前未像 ChaCha20-Poly1305 那样在结束时清除栈上的 ChaCha 状态，可能把密钥相关数据留在栈上；现在两个解密函数都在返回时自动清零该状态。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14748909,
@@ -1131,13 +1281,16 @@
     "submitter": "Thomas Huth",
     "email": "thuth@redhat.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Inside Secure 硬件加密驱动的 AES-XCBC 和 AES-CMAC 设置密钥函数在栈上暂存密钥材料，函数返回后这些数据可能残留；现在在返回前显式清零这些临时数组，减少栈上泄露密钥的可能。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260819151845.835768-1-thuth@redhat.com/mbox/",
     "series_id": 1148553,
     "series_name": "[v3] crypto: inside-secure - Zeroize temporary arrays on stack with sensitive data",
     "series_version": 3,
     "series_mbox": "https://patchwork.kernel.org/series/1148553/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Inside Secure 硬件加密驱动的 AES-XCBC 和 AES-CMAC 设置密钥函数在栈上暂存密钥材料，函数返回后这些数据可能残留；现在在返回前显式清零这些临时数组，减少栈上泄露密钥的可能。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14750950,
@@ -1171,13 +1324,16 @@
     "submitter": "Thorsten Blum",
     "email": "thorsten.blum@linux.dev",
     "version": 1,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
+    "summary": "简化高通加密引擎各算法注册函数的控制流，去掉跳转标签，改为在注册失败时直接注销并返回，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260815150946.12142-3-thorsten.blum@linux.dev/mbox/",
     "series_id": 1146533,
     "series_name": "crypto: qce - simplify control flow in register functions",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146533/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "简化高通加密引擎各算法注册函数的控制流，去掉跳转标签，改为在注册失败时直接注销并返回，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14751533,
@@ -1191,13 +1347,16 @@
     "submitter": "David C.C.M. Gall",
     "email": "david.ccm.gall@googlemail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Marvell OCTEONTX2 加密驱动在校验空加密认证请求的 HMAC 时用逐字节比较，比较会在首个不同字节处提前结束，可能通过响应时间泄露匹配前缀长度；由于该场景下被校验数据未加密，攻击者可能据此伪造通过认证的消息。现改为恒定时间比较，避免时序差异。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/aoCdBZ-kLQ0rciFi@david.gall/mbox/",
     "series_id": 1146562,
     "series_name": "crypto: octeontx2 - use crypto_memneq() to check HMAC for cipher_null authenc",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146562/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Marvell OCTEONTX2 加密驱动在校验空加密认证请求的 HMAC 时用逐字节比较，比较会在首个不同字节处提前结束，可能通过响应时间泄露匹配前缀长度；由于该场景下被校验数据未加密，攻击者可能据此伪造通过认证的消息。现改为恒定时间比较，避免时序差异。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14751534,
@@ -1211,13 +1370,16 @@
     "submitter": "David C.C.M. Gall",
     "email": "david.ccm.gall@googlemail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Marvell OCTEONTX 加密驱动在校验空加密认证请求的 HMAC 时用逐字节比较，比较会在首个不同字节处提前结束，可能通过响应时间泄露匹配前缀长度；由于该场景下被校验数据未加密，攻击者可能据此伪造通过认证的消息。现改为恒定时间比较，避免时序差异。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/aoCdOiyhQZZsFm5S@david.gall/mbox/",
     "series_id": 1146563,
     "series_name": "crypto: octeontx - use crypto_memneq() to check HMAC",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146563/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Marvell OCTEONTX 加密驱动在校验空加密认证请求的 HMAC 时用逐字节比较，比较会在首个不同字节处提前结束，可能通过响应时间泄露匹配前缀长度；由于该场景下被校验数据未加密，攻击者可能据此伪造通过认证的消息。现改为恒定时间比较，避免时序差异。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14751535,
@@ -1231,13 +1393,16 @@
     "submitter": "David C.C.M. Gall",
     "email": "david.ccm.gall@googlemail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "CCREE 加密驱动在解密完成后比较计算出的消息认证码与收到的认证值，原先的逐字节比较会在首个不同字节处提前结束，可能通过响应时间泄露匹配前缀长度。现改为恒定时间比较，使认证失败路径不再暴露比较进度。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/aoCdZiqJjb5XDHHz@david.gall/mbox/",
     "series_id": 1146564,
     "series_name": "crypto: ccree - use crypto_memneq() to compare AEAD tag",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146564/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "CCREE 加密驱动在解密完成后比较计算出的消息认证码与收到的认证值，原先的逐字节比较会在首个不同字节处提前结束，可能通过响应时间泄露匹配前缀长度。现改为恒定时间比较，使认证失败路径不再暴露比较进度。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14752866,
@@ -1251,13 +1416,16 @@
     "submitter": "Karl Mehltretter",
     "email": "kmehltretter@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "修复 Intel QAT 虚拟功能实时迁移接口中迁移状态缓冲区未完全初始化的问题：保存配置和状态时缓冲区只写入部分内容，却按完整大小对外暴露，未写入部分可能残留堆上旧数据或上次迁移的数据。现在保存配置前清零整个缓冲区，保存状态前清零配置区之后的区域，避免向读取方泄露陈旧内容。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260817042613.19855-1-kmehltretter@gmail.com/mbox/",
     "series_id": 1146926,
     "series_name": "[RFC] crypto: qat - zero the VF migration state buffer on save",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146926/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "修复 Intel QAT 虚拟功能实时迁移接口中迁移状态缓冲区未完全初始化的问题：保存配置和状态时缓冲区只写入部分内容，却按完整大小对外暴露，未写入部分可能残留堆上旧数据或上次迁移的数据。现在保存配置前清零整个缓冲区，保存状态前清零配置区之后的区域，避免向读取方泄露陈旧内容。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14756836,
@@ -1271,13 +1439,16 @@
     "submitter": "Chenghai Huang",
     "email": "huangchenghai2@huawei.com",
     "version": 2,
-    "summary": "移除sec crypto block cipher accelerator，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险",
+    "summary": "移除已被 SEC2 驱动取代的华为海思 SEC 分组密码加速器驱动。该驱动长期没有活跃用户，原维护者已离开华为且无人接手，因此连同其配置选项、设备树绑定以及 hip07 板级描述中的相关节点一并删除，相关用户已迁移到算法覆盖更广的 SEC2 路径。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260819075353.94500-1-huangchenghai2@huawei.com/mbox/",
     "series_id": 1148277,
     "series_name": "[v2] crypto: hisilicon/sec - remove SEC crypto block cipher accelerator",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1148277/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "移除已被 SEC2 驱动取代的华为海思 SEC 分组密码加速器驱动。该驱动长期没有活跃用户，原维护者已离开华为且无人接手，因此连同其配置选项、设备树绑定以及 hip07 板级描述中的相关节点一并删除，相关用户已迁移到算法覆盖更广的 SEC2 路径。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14757080,
@@ -1291,33 +1462,39 @@
     "submitter": "Jürgen Groß",
     "email": "jgross@suse.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "VIA 平台硬件随机数驱动原先使用计划移除的 32 位 MSR 读写接口，现改用对应的 64 位接口完成同样的寄存器读取和配置写入，行为不变，只是适配接口变更。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260819102314.1499258-8-jgross@suse.com/mbox/",
     "series_id": 1148390,
     "series_name": "x86/msr: Drop 32-bit MSR interfaces",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1148390/mbox/",
-    "series_total": 13
+    "series_total": 13,
+    "table_summary": "VIA 平台硬件随机数驱动原先使用计划移除的 32 位 MSR 读写接口，现改用对应的 64 位接口完成同样的寄存器读取和配置写入，行为不变，只是适配接口变更。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14762381,
     "title": "crypto: asymmetric_keys: copy X.509 TBS for data signature algorithms",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260821192502.3942767-2-Jeremy.Jean@oss.cyber.gouv.fr/",
     "date": "2026-08-21",
-    "organization": "Individual Contributor",
+    "organization": "ANSSI",
     "subsystem": "Asymmetric Keys",
     "status": "社区讨论中",
     "state": "under-review",
     "submitter": "Jérémy Jean",
     "email": "Jeremy.Jean@oss.cyber.gouv.fr",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "对直接处理消息而非摘要的签名算法，X.509 证书解析曾让签名对象直接指向系统调用返回后即被释放的证书数据，后续把密钥链接进受限密钥环时可能访问已释放内存并导致验签使用被复用的数据；现在签名对象改为持有该数据的独立副本，并在释放时一并回收。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260821192502.3942767-2-Jeremy.Jean@oss.cyber.gouv.fr/mbox/",
     "series_id": 1149983,
     "series_name": "crypto: asymmetric_keys: copy X.509 TBS for data signature algorithms",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1149983/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "对直接处理消息而非摘要的签名算法，X.509 证书解析曾让签名对象直接指向系统调用返回后即被释放的证书数据，后续把密钥链接进受限密钥环时可能访问已释放内存并导致验签使用被复用的数据；现在签名对象改为持有该数据的独立副本，并在释放时一并回收。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14772460,
@@ -1331,33 +1508,39 @@
     "submitter": "李佑鸿",
     "email": "dayou5941@163.com",
     "version": 1,
-    "summary": "启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性",
+    "summary": "i.MX 随机数发生器驱动在探测和系统恢复时忽略时钟使能失败，仍继续访问寄存器或报告成功；现在检查该返回值，失败时探测直接报错返回，恢复时把错误向上传递。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260828025423.2149304-1-dayou5941@163.com/mbox/",
     "series_id": 1152933,
     "series_name": "hwrng: imx-rngc: check clk_prepare_enable() return value",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1152933/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "i.MX 随机数发生器驱动在探测和系统恢复时忽略时钟使能失败，仍继续访问寄存器或报告成功；现在检查该返回值，失败时探测直接报错返回，恢复时把错误向上传递。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14773055,
     "title": "crypto: mxs-dcp: handle zero-length skcipher requests",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260828093209.3179074-1-lilinmao@kylinos.cn/",
     "date": "2026-08-28",
-    "organization": "Individual Contributor",
+    "organization": "Kylin",
     "subsystem": "Skcipher",
     "status": "社区讨论中",
     "state": "under-review",
     "submitter": "Linmao Li",
     "email": "lilinmao@kylinos.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "MXS-DCP 加密驱动对长度为零的对称加密请求本应是无操作，却仍将其排队，导致 CBC 完成路径在更新 IV 时发生无符号下溢，解密时源地址越界到输入缓冲区之前；现在在入队前直接返回成功，避免非法访问并保持 IV 不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260828093209.3179074-1-lilinmao@kylinos.cn/mbox/",
     "series_id": 1153134,
     "series_name": "crypto: mxs-dcp: handle zero-length skcipher requests",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1153134/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "MXS-DCP 加密驱动对长度为零的对称加密请求本应是无操作，却仍将其排队，导致 CBC 完成路径在更新 IV 时发生无符号下溢，解密时源地址越界到输入缓冲区之前；现在在入队前直接返回成功，避免非法访问并保持 IV 不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14774522,
@@ -1371,13 +1554,16 @@
     "submitter": "Karl Mehltretter",
     "email": "kmehltretter@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "Atmel TDES 驱动在改用托管内存分配时误用了不置零的分配方式，导致设备状态残留旧标志，探测时可能跳过硬件复位或让引擎被误判为永久忙，SAM9X75 上表现为启动后首个 TDES 请求永不完成。现改回置零分配，使状态从干净值开始，请求可正常派发。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260829035821.67220-1-kmehltretter@gmail.com/mbox/",
     "series_id": 1153505,
     "series_name": "crypto: atmel-tdes - zero-initialize device state",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1153505/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "Atmel TDES 驱动在改用托管内存分配时误用了不置零的分配方式，导致设备状态残留旧标志，探测时可能跳过硬件复位或让引擎被误判为永久忙，SAM9X75 上表现为启动后首个 TDES 请求永不完成。现改回置零分配，使状态从干净值开始，请求可正常派发。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14774684,
@@ -1391,33 +1577,39 @@
     "submitter": "Chenghai Huang",
     "email": "huangchenghai2@huawei.com",
     "version": 1,
-    "summary": "启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性",
+    "summary": "海思压缩加速器的 DAE 模块此前空闲时仍持续耗电。现在在 DAE 初始化完成后开启自动时钟门控，并在初始化内存前先关闭门控以保证流程正确，使设备空闲时能降低功耗。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260829094924.2191402-1-huangchenghai2@huawei.com/mbox/",
     "series_id": 1153569,
     "series_name": "crypto: hisilicon/zip - enable auto clock gating for DAE",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1153569/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "海思压缩加速器的 DAE 模块此前空闲时仍持续耗电。现在在 DAE 初始化完成后开启自动时钟门控，并在初始化内存前先关闭门控以保证流程正确，使设备空闲时能降低功耗。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14775067,
     "title": "[v2] crypto: ccp: Initialize DBC ioctl mutex before registering device",
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260830015104.2040153-1-runyu.xiao@seu.edu.cn/",
     "date": "2026-08-30",
-    "organization": "Individual Contributor",
+    "organization": "东南大学",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "under-review",
     "submitter": "Runyu Xiao",
     "email": "runyu.xiao@seu.edu.cn",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "AMD 动态加速控制的字符设备在注册后才初始化 ioctl 互斥锁，设备一旦发布，用户空间即可打开并调用 ioctl，此时锁尚未初始化。现将锁的初始化提前到设备注册之前，使已发布的 ioctl 回调总能见到已初始化的锁。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260830015104.2040153-1-runyu.xiao@seu.edu.cn/mbox/",
     "series_id": 1153742,
     "series_name": "[v2] crypto: ccp: Initialize DBC ioctl mutex before registering device",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1153742/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "AMD 动态加速控制的字符设备在注册后才初始化 ioctl 互斥锁，设备一旦发布，用户空间即可打开并调用 ioctl，此时锁尚未初始化。现将锁的初始化提前到设备注册之前，使已发布的 ioctl 回调总能见到已初始化的锁。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14775233,
@@ -1431,13 +1623,16 @@
     "submitter": "Manuel Ebner",
     "email": "manuelebnerli@mailbox.org",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "arm64 的 AES 位切片实现把密钥扩展数据从栈上移到堆分配，本次将两处分配改为类型感知的分配接口，分配大小由对象类型自动推导，避免手写大小出错，行为不变。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260830101714.625728-3-manuelebnerli@mailbox.org/mbox/",
     "series_id": 1153812,
     "series_name": "crypto: arm64/aes-neonbs: transition to kmalloc_obj()",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1153812/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "arm64 的 AES 位切片实现把密钥扩展数据从栈上移到堆分配，本次将两处分配改为类型感知的分配接口，分配大小由对象类型自动推导，避免手写大小出错，行为不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14776534,
@@ -1451,263 +1646,58 @@
     "submitter": null,
     "email": "nitesh.venkatesh@intel.com",
     "version": 1,
-    "summary": "禁用存在稳定性或安全性问题的功能，持续改进代码质量和功能完备性",
+    "summary": "Intel QAT 的密钥保护开关在服务不是非对称模式时拒绝任何写入，包括关闭操作，导致服务切换后残留的启用标志无法清除。现在先解析写入值，仅在启用方向检查服务类型，关闭请求在设备处于停止状态时始终接受，使恢复流程可完成。",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260831063355.668528-2-nitesh.venkatesh@intel.com/mbox/",
     "series_id": 1154171,
     "series_name": "crypto: qat - fix KPT disable and clarify ABI",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1154171/mbox/",
-    "series_total": 2
-  },
-  {
-    "id": 14779447,
-    "title": "crypto: ccp: psp-sev.h: clean up kernel-doc warnings",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901001438.3917854-1-rdunlap@infradead.org/",
-    "date": "2026-09-01",
-    "organization": "Individual Contributor",
-    "subsystem": "General Crypto",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Randy Dunlap",
-    "email": "rdunlap@infradead.org",
-    "version": 1,
-    "summary": "清理代码中的风格问题和废弃的命名方式，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901001438.3917854-1-rdunlap@infradead.org/mbox/",
-    "series_id": 1154907,
-    "series_name": "crypto: ccp: psp-sev.h: clean up kernel-doc warnings",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1154907/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14779678,
-    "title": "[v2] crypto/amlogic: Use devm APIs for clock management",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901024302.5407-1-raizudeen.kerneldev@gmail.com/",
-    "date": "2026-09-01",
-    "organization": "Individual Contributor",
-    "subsystem": "General Crypto",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Mohamad Raizudeen",
-    "email": "raizudeen.kerneldev@gmail.com",
-    "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901024302.5407-1-raizudeen.kerneldev@gmail.com/mbox/",
-    "series_id": 1154973,
-    "series_name": "[v2] crypto/amlogic: Use devm APIs for clock management",
-    "series_version": 2,
-    "series_mbox": "https://patchwork.kernel.org/series/1154973/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14780170,
-    "title": "crypto: atmel-ecc - simplify atmel_ecdh_compute_shared_secret",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901081126.44790-2-blum@kernel.org/",
-    "date": "2026-09-01",
-    "organization": "Kernel.org",
-    "subsystem": "ECC",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Thorsten Blum",
-    "email": "blum@kernel.org",
-    "version": 1,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901081126.44790-2-blum@kernel.org/mbox/",
-    "series_id": 1155129,
-    "series_name": "crypto: atmel-ecc - simplify atmel_ecdh_compute_shared_secret",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1155129/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14782315,
-    "title": "crypto: ccp.h - repair all kernel-doc comments",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901185438.31038-1-rdunlap@infradead.org/",
-    "date": "2026-09-01",
-    "organization": "Individual Contributor",
-    "subsystem": "General Crypto",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Randy Dunlap",
-    "email": "rdunlap@infradead.org",
-    "version": 1,
-    "summary": "编写使用文档和 API 说明，帮助开发者正确使用相关接口，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901185438.31038-1-rdunlap@infradead.org/mbox/",
-    "series_id": 1155599,
-    "series_name": "crypto: ccp.h - repair all kernel-doc comments",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1155599/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14782620,
-    "title": "crypto: caam: map job ring registers without claiming region",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901203736.13248-1-rosenp@gmail.com/",
-    "date": "2026-09-01",
-    "organization": "Individual Contributor",
-    "subsystem": "CAAM (NXP)",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Rosen Penev",
-    "email": "rosenp@gmail.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901203736.13248-1-rosenp@gmail.com/mbox/",
-    "series_id": 1155659,
-    "series_name": "crypto: caam: map job ring registers without claiming region",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1155659/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14783796,
-    "title": "[5.10.y,2/5] crypto: atmel-ecc - Struct headers need to start with keyword 'struct'",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260902105322.2048136-2-sashal@kernel.org/",
-    "date": "2026-09-02",
-    "organization": "Kernel.org",
-    "subsystem": "ECC",
-    "status": "社区讨论中",
-    "state": "handled-elsewhere",
-    "submitter": "Sasha Levin",
-    "email": "sashal@kernel.org",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260902105322.2048136-2-sashal@kernel.org/mbox/",
-    "series_id": 1156062,
-    "series_name": "[5.10.y,2/5] crypto: atmel-ecc - Struct headers need to start with keyword 'struct'",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1156062/mbox/",
-    "series_total": 5
-  },
-  {
-    "id": 14788645,
-    "title": "crypto: atmel-tdes - simplify DMA buffer initialization",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260903210845.162790-2-blum@kernel.org/",
-    "date": "2026-09-03",
-    "organization": "Kernel.org",
-    "subsystem": "General Crypto",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Thorsten Blum",
-    "email": "blum@kernel.org",
-    "version": 1,
-    "summary": "简化代码逻辑，减少不必要的复杂度，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260903210845.162790-2-blum@kernel.org/mbox/",
-    "series_id": 1157409,
-    "series_name": "crypto: atmel-tdes - simplify DMA buffer initialization",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1157409/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14789459,
-    "title": "crypto: caam - Remove public key support",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/appZMZ7WS-KNaHbc@gondor.apana.org.au/",
-    "date": "2026-09-04",
-    "organization": "Individual Contributor",
-    "subsystem": "CAAM (NXP)",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Herbert Xu",
-    "email": "herbert@gondor.apana.org.au",
-    "version": 1,
-    "summary": "移除public key support，清理冗余或过时的代码，精简代码库规模，降低后续维护的复杂度和引入回归问题的风险",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/appZMZ7WS-KNaHbc@gondor.apana.org.au/mbox/",
-    "series_id": 1157598,
-    "series_name": "crypto: caam - Remove public key support",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1157598/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14792361,
-    "title": "crypto: talitos: request irq after tasklet_init()",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260904211230.81963-1-rosenp@gmail.com/",
-    "date": "2026-09-04",
-    "organization": "Individual Contributor",
-    "subsystem": "Talitos",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Rosen Penev",
-    "email": "rosenp@gmail.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260904211230.81963-1-rosenp@gmail.com/mbox/",
-    "series_id": 1158368,
-    "series_name": "crypto: talitos: request irq after tasklet_init()",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1158368/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14792477,
-    "title": "crypto: amcc: trng: use int for ppc4xx_trng_probe()",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260904230144.127071-1-rosenp@gmail.com/",
-    "date": "2026-09-04",
-    "organization": "Individual Contributor",
-    "subsystem": "General Crypto",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Rosen Penev",
-    "email": "rosenp@gmail.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260904230144.127071-1-rosenp@gmail.com/mbox/",
-    "series_id": 1158408,
-    "series_name": "crypto: amcc: trng: use int for ppc4xx_trng_probe()",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1158408/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14794083,
-    "title": "[v2] hwrng: imx-rngc - check return value of clk_prepare_enable()",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/178869518976.1724.8613243679737914482@gmail.com/",
-    "date": "2026-09-06",
-    "organization": "Individual Contributor",
-    "subsystem": "HWRNG",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Ma Yukun",
-    "email": "0x4fe6@gmail.com",
-    "version": 2,
-    "summary": "启用之前被禁用或条件编译的功能特性，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/178869518976.1724.8613243679737914482@gmail.com/mbox/",
-    "series_id": 1159014,
-    "series_name": "[v2] hwrng: imx-rngc - check return value of clk_prepare_enable()",
-    "series_version": 2,
-    "series_mbox": "https://patchwork.kernel.org/series/1159014/mbox/",
-    "series_total": null
+    "series_total": 2,
+    "table_summary": "Intel QAT 的密钥保护开关在服务不是非对称模式时拒绝任何写入，包括关闭操作，导致服务切换后残留的启用标志无法清除。现在先解析写入值，仅在启用方向检查服务类型，关闭请求在设备处于停止状态时始终接受，使恢复流程可完成。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "crypto: spacc - Add SPAcc Crypto Driver",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907155916.999153-3-pavitrakumarm@vayavyalabs.com/",
-    "date": "2026-09-07",
-    "date_end": "2026-09-07",
+    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260831123113.870832-3-pavitrakumarm@vayavyalabs.com/",
+    "date": "2026-08-31",
+    "date_end": "2026-08-31",
     "organization": "Vayavya Labs",
     "subsystem": "SPAcc",
-    "status": "社区讨论中",
+    "status": "已关闭",
     "state": "series",
     "submitter": "Pavitrakumar Managutte",
-    "version": 25,
+    "email": "pavitrakumarm@vayavyalabs.com",
+    "authors": [
+      {
+        "name": "Pavitrakumar Managutte",
+        "email": "pavitrakumarm@vayavyalabs.com"
+      }
+    ],
+    "version": 24,
     "summary": "新增 SPAcc ahash support、新增 SPAcc Kconfig and Makefile，并新增 spacc autodetect support。",
     "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907155916.999153-3-pavitrakumarm@vayavyalabs.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1159880/mbox/",
+    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260831123113.870832-3-pavitrakumarm@vayavyalabs.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1154476/mbox/",
     "is_cover_letter": true,
-    "series_id": 1159880,
+    "series_id": 1154476,
     "patch_count": 3,
     "series_total": 4,
     "qualified_count": 2,
     "qualified_titles": [
-      "[v25,2/4] crypto: spacc - Add SPAcc ahash support",
-      "[v25,3/4] crypto: spacc - add spacc autodetect support"
+      "[v24,2/4] crypto: spacc - Add SPAcc ahash support",
+      "[v24,3/4] crypto: spacc - add spacc autodetect support"
     ],
     "member_titles": [
-      "[v25,2/4] crypto: spacc - Add SPAcc ahash support",
-      "[v25,4/4] crypto: spacc - Add SPAcc Kconfig and Makefile",
-      "[v25,3/4] crypto: spacc - add spacc autodetect support"
+      "[v24,2/4] crypto: spacc - Add SPAcc ahash support",
+      "[v24,4/4] crypto: spacc - Add SPAcc Kconfig and Makefile",
+      "[v24,3/4] crypto: spacc - add spacc autodetect support"
+    ],
+    "member_ids": [
+      14777693,
+      14777695,
+      14777694
     ],
     "qualified_has_more": false
   },
@@ -1722,9 +1712,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Bartosz Golaszewski",
+    "email": "bartosz.golaszewski@oss.qualcomm.com",
+    "authors": [
+      {
+        "name": "Bartosz Golaszewski",
+        "email": "bartosz.golaszewski@oss.qualcomm.com"
+      }
+    ],
     "version": 6,
-    "summary": "修复 HMAC self-test failures for empty messages、拒绝 empty messages for AES-XTS、修复 CTR-AES for partial block requests、为 AES-CTR（携带 a partial final block 改用 a fallback），并为 CCM（携带 a partial final block 改用 a fallback）。",
-    "summary_source": "fallback",
+    "summary": "高通加密引擎驱动因 DMA 不支持零长度传输、硬件不递增部分块计数器、只接受连续缓冲区等原因，多项自检失败。该系列对空消息的 HMAC 改走软件回退，空消息的 AES-XTS 返回参数错误，修正 CTR 部分块的计数器，并对部分块、分片负载及弱密钥的 XTS 改用软件回退，使相关算法自检通过。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260717-qce-fix-self-tests-v6-1-455775fe5f6c@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1129713/mbox/",
     "is_cover_letter": true,
@@ -1749,7 +1746,19 @@
       "[v6,6/8] crypto: qce - Fix xts-aes-qce for weak keys",
       "[v6,5/8] crypto: qce - Use fallback for fragmented skcipher payloads"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14694215,
+      14694216,
+      14694217,
+      14694218,
+      14694221,
+      14694222,
+      14694220,
+      14694219
+    ],
+    "qualified_has_more": false,
+    "table_summary": "高通加密引擎驱动因 DMA 不支持零长度传输、硬件不递增部分块计数器、只接受连续缓冲区等原因，多项自检失败。该系列对空消息的 HMAC 改走软件回退，空消息的 AES-XTS 返回参数错误，修正 CTR 部分块的计数器，并对部分块、分片负载及弱密钥的 XTS 改用软件回退，使相关算法自检通过。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1762,9 +1771,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Thorsten Blum",
+    "email": "thorsten.blum@linux.dev",
+    "authors": [
+      {
+        "name": "Thorsten Blum",
+        "email": "thorsten.blum@linux.dev"
+      }
+    ],
     "version": 1,
-    "summary": "simplify fast path in crypt_start、改用 __get_free_page in buff_init、删除 redundant return variable in crypt_pdc_stop，并删除 redundant if check in crypt_dma_stop。",
-    "summary_source": "fallback",
+    "summary": "Atmel TDES 驱动做流程简化：把快速路径的多个条件合并为一个判断，用单页分配接口替换零阶多页分配，并去掉停止流程中多余的返回变量和重复标志检查，直接返回错误。行为不变，仅减少冗余代码。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260706150404.382209-5-thorsten.blum@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1122497/mbox/",
     "is_cover_letter": true,
@@ -1782,7 +1798,15 @@
       "[3/4] crypto: atmel-tdes - drop redundant return variable in crypt_pdc_stop",
       "[4/4] crypto: atmel-tdes - drop redundant if check in crypt_dma_stop"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14667479,
+      14667480,
+      14667481,
+      14667482
+    ],
+    "qualified_has_more": false,
+    "table_summary": "Atmel TDES 驱动做流程简化：把快速路径的多个条件合并为一个判断，用单页分配接口替换零阶多页分配，并去掉停止流程中多余的返回变量和重复标志检查，直接返回错误。行为不变，仅减少冗余代码。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1795,9 +1819,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Eric Biggers",
+    "email": "ebiggers@kernel.org",
+    "authors": [
+      {
+        "name": "Eric Biggers",
+        "email": "ebiggers@kernel.org"
+      }
+    ],
     "version": 2,
-    "summary": "crypto 中拆分 out __xts_verify_key() helper、lib/crypto: aes 中新增 ECB support、lib/crypto: aes 中新增 CBC and CBC-CTS support、lib/crypto: aes 中新增 CTR and XCTR support，并lib/crypto: aes 中新增 XTS support。",
-    "summary_source": "fallback",
+    "summary": "为内核加密库补充 AES 各工作模式（ECB、CBC 及密文窃取、CTR 与 XCTR、XTS、GCM、CCM）的库接口，并让传统加密算法改用这些库实现，同时把架构优化代码迁入库中。这样文件系统、网络等直接调用者可用更简洁的接口，XTS 的密文窃取也由库统一处理，不再要求各架构自行实现。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260715221153.246410-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1128418/mbox/",
     "is_cover_letter": true,
@@ -1827,7 +1858,24 @@
       "[v2,11/13] crypto: aes - Add XTS support using library",
       "[v2,13/13] crypto: aes - Add CCM support using library"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14689959,
+      14689960,
+      14689961,
+      14689962,
+      14689963,
+      14689964,
+      14689967,
+      14689966,
+      14689970,
+      14689965,
+      14689969,
+      14689968,
+      14689971
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为内核加密库补充 AES 各工作模式（ECB、CBC 及密文窃取、CTR 与 XCTR、XTS、GCM、CCM）的库接口，并让传统加密算法改用这些库实现，同时把架构优化代码迁入库中。这样文件系统、网络等直接调用者可用更简洁的接口，XTS 的密文窃取也由库统一处理，不再要求各架构自行实现。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1840,9 +1888,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jihong Min",
+    "email": "hurryman2212@gmail.com",
+    "authors": [
+      {
+        "name": "Jihong Min",
+        "email": "hurryman2212@gmail.com"
+      }
+    ],
     "version": 2,
-    "summary": "guard DMA cleanup on uninitialized mappings、拒绝 HMAC requests（在 setkey 前）、为 cipher requests 改用 request-local SA records、order result descriptor reads（在 PE_READY 后），并handle request ID exhaustion。",
-    "summary_source": "fallback",
+    "summary": "修复 EIP93 加密引擎驱动的请求生命周期问题：未初始化映射时不再错误解映射，HMAC 在设置密钥前被拒绝，加密请求改用请求本地记录避免并发请求互相污染，结果描述符读取在引擎就绪后排序，请求编号耗尽时等待并容忍过期编号，减少错误路径下的内存与映射问题。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260707171537.467608-2-hurryman2212@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1123263/mbox/",
     "is_cover_letter": true,
@@ -1863,7 +1918,16 @@
       "[v2,4/5] crypto: eip93: order result descriptor reads after PE_READY",
       "[v2,5/5] crypto: eip93: handle request ID exhaustion"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14670497,
+      14670498,
+      14670499,
+      14670500,
+      14670501
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 EIP93 加密引擎驱动的请求生命周期问题：未初始化映射时不再错误解映射，HMAC 在设置密钥前被拒绝，加密请求改用请求本地记录避免并发请求互相污染，结果描述符读取在引擎就绪后排序，请求编号耗尽时等待并容忍过期编号，减少错误路径下的内存与映射问题。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1876,9 +1940,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Goetz Goerisch",
+    "email": "ggoerisch@gmail.com",
+    "authors": [
+      {
+        "name": "Goetz Goerisch",
+        "email": "ggoerisch@gmail.com"
+      }
+    ],
     "version": 3,
-    "summary": "清理 talitos ahash 请求上下文字段命名，将 first/last 改为 first_desc/last_desc，并同步调整 ahash digest/init/finup 路径及 sha224 软件初始化处理。",
-    "summary_source": "fallback",
+    "summary": "修复 talitos 驱动在 6.6 稳定分支上的编译错误：此前把描述符首尾字段改名时漏改一处，导致 mpc85xx 编译失败。系列先回退这两次错误回退，再按正确顺序应用上游改动，让驱动不再通过 ahash 接口的 init 指针调用自身代码，并让 SEC1 引擎把超过 32k 的哈希请求拆成多个描述符处理，避免出现超出硬件上限的失败，最后完成字段改名。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260709193956.15619-4-ggoerisch@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1124951/mbox/",
     "is_cover_letter": true,
@@ -1896,7 +1967,14 @@
       "[4/5] crypto: talitos - fix SEC1 32k ahash request limitation",
       "[5/5] crypto: talitos - rename first/last to first_desc/last_desc"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14676922,
+      14676923,
+      14676924
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 talitos 驱动在 6.6 稳定分支上的编译错误：此前把描述符首尾字段改名时漏改一处，导致 mpc85xx 编译失败。系列先回退这两次错误回退，再按正确顺序应用上游改动，让驱动不再通过 ahash 接口的 init 指针调用自身代码，并让 SEC1 引擎把超过 32k 的哈希请求拆成多个描述符处理，避免出现超出硬件上限的失败，最后完成字段改名。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1904,14 +1982,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260825221539.255951-6-aousherovitch@rambus.com/",
     "date": "2026-08-25",
     "date_end": "2026-08-25",
-    "organization": "Individual Contributor",
+    "organization": "Rambus",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Ousherovitch, Alex",
+    "email": "aousherovitch@rambus.com",
+    "authors": [
+      {
+        "name": "Ousherovitch, Alex",
+        "email": "aousherovitch@rambus.com"
+      }
+    ],
     "version": 4,
-    "summary": "新增 Rambus CryptoManager Hub 平台驱动，向 crypto API 注册 HMAC-SHA2/SHA3、CSHAKE/KMAC、SHA-2/3/SM3、AES/SM4、ChaCha20-Poly1305、RSA、ECDH/X25519、ML-KEM/ML-DSA 以及 DRBG hwrng 能力。",
-    "summary_source": "fallback",
+    "summary": "为 Rambus CryptoManager Hub 硬件加速器新增内核驱动，通过邮箱命令队列与硬件通信，注册 AES、SM4、SHA、SM3、SHAKE、KMAC、HMAC、RSA、ECDH、ECDSA、ML-KEM、ML-DSA、SLH-DSA 等算法，并提供字符设备管理硬件密钥的创建、导入、导出、派生与销毁。硬件内生成的私钥可始终留在设备中，不暴露给内核调用方。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260825221539.255951-6-aousherovitch@rambus.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1151771/mbox/",
     "is_cover_letter": true,
@@ -1943,7 +2028,26 @@
       "[v4,03/19] crypto: cmh - add key provisioning and management",
       "[v4,02/19] crypto: cmh - add core platform driver"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14768077,
+      14768084,
+      14768071,
+      14768079,
+      14768070,
+      14768080,
+      14768073,
+      14768078,
+      14768085,
+      14768083,
+      14768081,
+      14768076,
+      14768086,
+      14768088,
+      14768087
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 Rambus CryptoManager Hub 硬件加速器新增内核驱动，通过邮箱命令队列与硬件通信，注册 AES、SM4、SHA、SM3、SHAKE、KMAC、HMAC、RSA、ECDH、ECDSA、ML-KEM、ML-DSA、SLH-DSA 等算法，并提供字符设备管理硬件密钥的创建、导入、导出、派生与销毁。硬件内生成的私钥可始终留在设备中，不暴露给内核调用方。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1956,9 +2060,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Bartosz Golaszewski",
+    "email": "bartosz.golaszewski@oss.qualcomm.com",
+    "authors": [
+      {
+        "name": "Bartosz Golaszewski",
+        "email": "bartosz.golaszewski@oss.qualcomm.com"
+      }
+    ],
     "version": 24,
-    "summary": "取消 work on device detach、Include algapi.h in the core.h header、移除 unused ignore_buf、Simplify arguments of devm_qce_dma_request()，并改用 existing devres APIs in devm_qce_dma_request()。",
-    "summary_source": "fallback",
+    "summary": "为高通 QCE 加密引擎引入 BAM 管道锁定并用 DMA 完成寄存器读写：先修复设备卸载时未取消工作队列、BAM 中断释放顺序等问题，再让加密寄存器操作通过 DMA 命令描述符下发，并在事务完成前不写配置寄存器，避免引擎忙时被写入。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260723-qcom-qce-cmd-descr-v24-7-4f87bb4d9938@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1133402/mbox/",
     "is_cover_letter": true,
@@ -1983,7 +2094,19 @@
       "[v24,13/14] crypto: qce - Add BAM DMA support for crypto register I/O",
       "[v24,14/14] crypto: qce - Communicate the base physical address to the dmaengine"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14706781,
+      14706783,
+      14706779,
+      14706788,
+      14706785,
+      14706784,
+      14706786,
+      14706787
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为高通 QCE 加密引擎引入 BAM 管道锁定并用 DMA 完成寄存器读写：先修复设备卸载时未取消工作队列、BAM 中断释放顺序等问题，再让加密寄存器操作通过 DMA 命令描述符下发，并在事务完成前不写配置寄存器，避免引擎忙时被写入。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1996,9 +2119,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Vinicius Costa Gomes",
+    "email": "vinicius.gomes@intel.com",
+    "authors": [
+      {
+        "name": "Vinicius Costa Gomes",
+        "email": "vinicius.gomes@intel.com"
+      }
+    ],
     "version": 2,
-    "summary": "避免 counting fallback decompression bytes、fall back to software for multi-entry scatterlists、为 multi-sg decompress input 改用 bounce buffer，并unmap dst（在 software fallback on decompress 前）。",
-    "summary_source": "fallback",
+    "summary": "修复 IAA 压缩驱动对多条目散列表的处理：zswap 直接传入跨页对象后，解压会失败；现在小尺寸多条目源改用预分配缓冲页交给硬件，多条目目标仍回退软件，并在回退前解除目标映射以免数据被覆盖，同时修正解压字节统计。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260805-iaa-crypto-fixes-zswap-v2-3-55c02694f499@intel.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1141036/mbox/",
     "is_cover_letter": true,
@@ -2018,7 +2148,15 @@
       "[v2,4/5] crypto: iaa - use bounce buffer for multi-sg decompress input",
       "[v2,5/5] crypto: iaa - unmap dst before software fallback on decompress"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14733064,
+      14733063,
+      14733066,
+      14733065
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 IAA 压缩驱动对多条目散列表的处理：zswap 直接传入跨页对象后，解压会失败；现在小尺寸多条目源改用预分配缓冲页交给硬件，多条目目标仍回退软件，并在回退前解除目标映射以免数据被覆盖，同时修正解压字节统计。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2031,9 +2169,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Eric Biggers",
+    "email": "ebiggers@kernel.org",
+    "authors": [
+      {
+        "name": "Eric Biggers",
+        "email": "ebiggers@kernel.org"
+      }
+    ],
     "version": 1,
-    "summary": "Free the padata_works（当 they're no longer needed 时），并Mark remaining code as __init and data as __initdata。",
-    "summary_source": "fallback",
+    "summary": "padata 在串行任务接口移除后仅剩启动期使用，因此把剩余内部函数和数据标记为启动后释放，并在启动完成后释放此前一直未释放的工作项内存，消除这一内存泄漏。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260717171831.27994-3-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1129759/mbox/",
     "is_cover_letter": true,
@@ -2049,58 +2194,94 @@
       "[2/2] padata: Free the padata_works when they're no longer needed",
       "[1/2] padata: Mark remaining code as __init and data as __initdata"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14694384,
+      14694385
+    ],
+    "qualified_has_more": false,
+    "table_summary": "padata 在串行任务接口移除后仅剩启动期使用，因此把剩余内部函数和数据标记为启动后释放，并在启动完成后释放此前一直未释放的工作项内存，消除这一内存泄漏。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "crypto: talitos - Driver cleanup",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907-7-1-rc1_talitos_cleanup-v5-1-860f43cd7317@bootlin.com/",
-    "date": "2026-09-07",
-    "date_end": "2026-09-07",
+    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260722-7-1-rc1_talitos_cleanup-v4-1-81d1ed2ad911@bootlin.com/",
+    "date": "2026-07-22",
+    "date_end": "2026-07-22",
     "organization": "Bootlin",
     "subsystem": "Talitos",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Paul Louvel",
-    "version": 5,
-    "summary": "改用 CRYPTO_AHASH_BLOCK_ONLY API、新增 missing includes to driver header file、Move driver into dedicated directory、Move into separate file，并Prepare crypto implementation file splitting。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260907-7-1-rc1_talitos_cleanup-v5-1-860f43cd7317@bootlin.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1159783/mbox/",
+    "email": "paul.louvel@bootlin.com",
+    "authors": [
+      {
+        "name": "Paul Louvel",
+        "email": "paul.louvel@bootlin.com"
+      }
+    ],
+    "version": 4,
+    "summary": "对 talitos 驱动做结构整理：哈希改用块级 API 去掉软件缓冲，按功能拆分为独立文件，算法定义改用宏，初始化回调换成新接口，并用静态键区分 SEC 版本、为两代硬件分别定义描述符结构，使代码更易读，不改变硬件行为。",
+    "summary_source": "llm-mail-batch",
+    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260722-7-1-rc1_talitos_cleanup-v4-1-81d1ed2ad911@bootlin.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1132273/mbox/",
     "is_cover_letter": true,
-    "series_id": 1159783,
+    "series_id": 1132273,
     "patch_count": 19,
     "series_total": 19,
-    "qualified_count": 16,
+    "qualified_count": 15,
     "qualified_titles": [
-      "[v5,01/19] crypto: talitos/hash - Use CRYPTO_AHASH_BLOCK_ONLY API",
-      "[v5,02/19] crypto: talitos - Move driver into dedicated directory",
-      "[v5,04/19] crypto: talitos/hwrng - Move into separate file",
-      "[v5,05/19] crypto: talitos - Prepare crypto implementation file splitting",
-      "[v5,06/19] crypto: talitos/hash - Move into separate file"
+      "[v4,01/19] crypto: talitos/hash - Use CRYPTO_AHASH_BLOCK_ONLY API",
+      "[v4,02/19] crypto: talitos - Move driver into dedicated directory",
+      "[v4,04/19] crypto: talitos/hwrng - Move into separate file",
+      "[v4,05/19] crypto: talitos - Prepare crypto implementation file splitting",
+      "[v4,06/19] crypto: talitos/hash - Move into separate file"
     ],
     "member_titles": [
-      "[v5,01/19] crypto: talitos/hash - Use CRYPTO_AHASH_BLOCK_ONLY API",
-      "[v5,03/19] crypto: talitos - Add missing includes to driver header file",
-      "[v5,02/19] crypto: talitos - Move driver into dedicated directory",
-      "[v5,04/19] crypto: talitos/hwrng - Move into separate file",
-      "[v5,05/19] crypto: talitos - Prepare crypto implementation file splitting",
-      "[v5,06/19] crypto: talitos/hash - Move into separate file",
-      "[v5,07/19] crypto: talitos/skcipher - Move into separate file",
-      "[v5,09/19] crypto: talitos/hash - Convert to {init,exit}_tfm type-specific API",
-      "[v5,10/19] crypto: talitos/skcipher - Convert to {init,exit}_tfm type-specific API",
-      "[v5,08/19] crypto: talitos/aead - Move into separate file",
-      "[v5,11/19] crypto: talitos/aead - Convert to {init,exit}_tfm type-specific API",
-      "[v5,13/19] crypto: talitos/hash - Use macro for algorithm definitions",
-      "[v5,14/19] crypto: talitos/skcipher - Use macro for algorithm definitions",
-      "[v5,15/19] crypto: talitos/aead - Use macro for algorithm definitions",
-      "[v5,16/19] crypto: talitos - Introduce is_sec1() helper with static key support",
-      "[v5,12/19] crypto: talitos - Remove alg settings in talitos_register_common()",
-      "[v5,17/19] crypto: talitos - Replace has_ftr_sec1() with is_sec1() static key helper",
-      "[v5,18/19] crypto: talitos - Introduce per-SEC-version descriptor and pointer structures",
-      "[v5,19/19] crypto: talitos - Remove TALITOS_DESC_SIZE macro"
+      "[v4,01/19] crypto: talitos/hash - Use CRYPTO_AHASH_BLOCK_ONLY API",
+      "[v4,03/19] crypto: talitos - Add missing includes to driver header file",
+      "[v4,02/19] crypto: talitos - Move driver into dedicated directory",
+      "[v4,04/19] crypto: talitos/hwrng - Move into separate file",
+      "[v4,05/19] crypto: talitos - Prepare crypto implementation file splitting",
+      "[v4,06/19] crypto: talitos/hash - Move into separate file",
+      "[v4,07/19] crypto: talitos/skcipher - Move into separate file",
+      "[v4,09/19] crypto: talitos/hash - Convert to {init,exit}_tfm type-specific API",
+      "[v4,10/19] crypto: talitos/skcipher - Convert to {init,exit}_tfm type-specific API",
+      "[v4,08/19] crypto: talitos/aead - Move into separate file",
+      "[v4,11/19] crypto: talitos/aead - Convert to {init,exit}_tfm type-specific API",
+      "[v4,12/19] crypto: talitos/hash - Use macro for algorithm definitions",
+      "[v4,13/19] crypto: talitos/skcipher - Use macro for algorithm definitions",
+      "[v4,14/19] crypto: talitos/aead - Use macro for algorithm definitions",
+      "[v4,16/19] crypto: talitos - Introduce is_sec1() helper with static key support",
+      "[v4,15/19] crypto: talitos - Remove alg settings in talitos_register_common()",
+      "[v4,17/19] crypto: talitos - Replace has_ftr_sec1() with is_sec1() static key helper",
+      "[v4,18/19] crypto: talitos - Introduce per-SEC-version descriptor and pointer structures",
+      "[v4,19/19] crypto: talitos - Remove TALITOS_DESC_SIZE macro"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14702808,
+      14702809,
+      14702810,
+      14702811,
+      14702812,
+      14702814,
+      14702813,
+      14702815,
+      14702816,
+      14702818,
+      14702817,
+      14702819,
+      14702820,
+      14702821,
+      14702823,
+      14702822,
+      14702824,
+      14702825,
+      14702826
+    ],
+    "qualified_has_more": true,
+    "table_summary": "对 talitos 驱动做结构整理：哈希改用块级 API 去掉软件缓冲，按功能拆分为独立文件，算法定义改用宏，初始化回调换成新接口，并用静态键区分 SEC 版本、为两代硬件分别定义描述符结构，使代码更易读，不改变硬件行为。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2108,14 +2289,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260721140644.780006-3-marco@mandelbit.com/",
     "date": "2026-07-21",
     "date_end": "2026-07-21",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（mandelbit.com）",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Marco Baffo",
+    "email": "marco@mandelbit.com",
+    "authors": [
+      {
+        "name": "Marco Baffo",
+        "email": "marco@mandelbit.com"
+      }
+    ],
     "version": 1,
-    "summary": "在 lib/crypto 中新增 HKDF-SHA256/384/512 extract/expand 库接口和 KUnit 覆盖，并把 fscrypt 与 NVMe 的密钥派生逻辑迁移到统一 HKDF helper。",
-    "summary_source": "fallback",
+    "summary": "把 fscrypt 和 NVMe 认证各自私有的 HKDF 密钥派生代码提取为公共的 HKDF-SHA256、SHA-384、SHA-512 库函数，并补充 KUnit 测试。fscrypt 和 NVMe 认证改用公共实现，派生密钥不变；NVMe 不再为拼接信息分配临时缓冲区，从而去掉该分配失败路径。ovpn 的本地实现也改为调用公共函数，并把伪随机密钥改为内嵌的已准备 HMAC 密钥，去掉分配和设置密钥的失败路径。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260721140644.780006-3-marco@mandelbit.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1131721/mbox/",
     "is_cover_letter": true,
@@ -2131,7 +2319,13 @@
       "[2/5] lib/crypto: tests: add HKDF KUnit tests",
       "[1/5] lib/crypto: add HKDF-SHA{256,384,512}"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14701038,
+      14701039
+    ],
+    "qualified_has_more": false,
+    "table_summary": "把 fscrypt 和 NVMe 认证各自私有的 HKDF 密钥派生代码提取为公共的 HKDF-SHA256、SHA-384、SHA-512 库函数，并补充 KUnit 测试。fscrypt 和 NVMe 认证改用公共实现，派生密钥不变；NVMe 不再为拼接信息分配临时缓冲区，从而去掉该分配失败路径。ovpn 的本地实现也改为调用公共函数，并把伪随机密钥改为内嵌的已准备 HMAC 密钥，去掉分配和设置密钥的失败路径。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2139,14 +2333,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260726081504.2182951-2-richard@nod.at/",
     "date": "2026-07-26",
     "date_end": "2026-07-26",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（nod.at）",
     "subsystem": "CAAM (NXP)",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Richard Weinberger",
+    "email": "richard@nod.at",
+    "authors": [
+      {
+        "name": "Richard Weinberger",
+        "email": "richard@nod.at"
+      }
+    ],
     "version": 1,
-    "summary": "Map the paes protected key once per tfm、Validate the protected key header in setkey，并修复 DMA mapping leak in the cbc(paes) job path。",
-    "summary_source": "fallback",
+    "summary": "修复 CAAM 受保护密钥的 CBC 加密流程中的映射泄漏：请求描述符的映射在请求结束时释放，密钥缓冲区则在加密对象初始化时映射一次、销毁时释放；补充映射失败检查和密钥长度、类型校验，清除换钥时的旧选项，并暂时拒绝尚未正确处理长度的 CCM 密钥，避免耗尽映射资源或读取残留密钥数据。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260726081504.2182951-2-richard@nod.at/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1134594/mbox/",
     "is_cover_letter": true,
@@ -2162,38 +2363,58 @@
       "[3/3] crypto: caam: Validate the protected key header in setkey",
       "[1/3] crypto: caam: Fix DMA mapping leak in the cbc(paes) job path"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14710926,
+      14710927,
+      14710928
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 CAAM 受保护密钥的 CBC 加密流程中的映射泄漏：请求描述符的映射在请求结束时释放，密钥缓冲区则在加密对象初始化时映射一次、销毁时释放；补充映射失败检查和密钥长度、类型校验，清除换钥时的旧选项，并暂时拒绝尚未正确处理长度的 CCM 密钥，避免耗尽映射资源或读取残留密钥数据。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "x86: Remove cpu_has_xfeatures() and add AVX-512 xor_gen()",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901145740.42337-4-ebiggers@kernel.org/",
-    "date": "2026-09-01",
-    "date_end": "2026-09-01",
+    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260815181024.28924-4-ebiggers@kernel.org/",
+    "date": "2026-08-15",
+    "date_end": "2026-08-15",
     "organization": "Kernel.org",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Eric Biggers",
-    "version": 5,
-    "summary": "crypto 中Stop using cpu_has_xfeatures()，并lib/crypto: x86 中Stop using cpu_has_xfeatures()。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260901145740.42337-4-ebiggers@kernel.org/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1155439/mbox/",
+    "email": "ebiggers@kernel.org",
+    "authors": [
+      {
+        "name": "Eric Biggers",
+        "email": "ebiggers@kernel.org"
+      }
+    ],
+    "version": 4,
+    "summary": "移除 x86 上对扩展状态特性检查函数的调用，改由内核在启动时校验并清除缺失的 AVX 与 AVX-512 状态位，同时为异或运算新增 AVX-512 实现，在支持且不偏好窄向量的新处理器上提升吞吐。",
+    "summary_source": "llm-mail-batch",
+    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260815181024.28924-4-ebiggers@kernel.org/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1146572/mbox/",
     "is_cover_letter": true,
-    "series_id": 1155439,
+    "series_id": 1146572,
     "patch_count": 2,
     "series_total": 8,
     "qualified_count": 2,
     "qualified_titles": [
-      "[v5,3/8] crypto: x86 - Stop using cpu_has_xfeatures()",
-      "[v5,4/8] lib/crypto: x86: Stop using cpu_has_xfeatures()"
+      "[v4,3/8] crypto: x86 - Stop using cpu_has_xfeatures()",
+      "[v4,4/8] lib/crypto: x86: Stop using cpu_has_xfeatures()"
     ],
     "member_titles": [
-      "[v5,3/8] crypto: x86 - Stop using cpu_has_xfeatures()",
-      "[v5,4/8] lib/crypto: x86: Stop using cpu_has_xfeatures()"
+      "[v4,3/8] crypto: x86 - Stop using cpu_has_xfeatures()",
+      "[v4,4/8] lib/crypto: x86: Stop using cpu_has_xfeatures()"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14751559,
+      14751560
+    ],
+    "qualified_has_more": false,
+    "table_summary": "移除 x86 上对扩展状态特性检查函数的调用，改由内核在启动时校验并清除缺失的 AVX 与 AVX-512 状态位，同时为异或运算新增 AVX-512 实现，在支持且不偏好窄向量的新处理器上提升吞吐。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2206,9 +2427,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jihong Min",
+    "email": "hurryman2212@gmail.com",
+    "authors": [
+      {
+        "name": "Jihong Min",
+        "email": "hurryman2212@gmail.com"
+      }
+    ],
     "version": 1,
-    "summary": "move cycle benchmark helpers out of tcrypt、引入 dynamic software fallback、新增 dynamic software fallback support，并eliminate fallback proxy overhead while disabled。",
-    "summary_source": "fallback",
+    "summary": "为加密驱动引入可选的动态软件回退：按算法组在 16 到 16384 字节的固定块大小上比较硬件与软件实现，把每设备的回退阈值通过 sysfs 暴露，请求按阈值分派到硬件或软件。EIP93 驱动按请求大小趋势分组并注册回退代理，控制关闭时注销代理以避免额外开销；已分配的转换无法在提供者之间迁移，因此启用前创建的转换仍绑定硬件，禁用后已存在的代理转换在释放前强制走硬件。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/e0ce93088c1d9772e928fcbd113a446b7fb7442f.1785226804.git.hurryman2212@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1135740/mbox/",
     "is_cover_letter": true,
@@ -2228,7 +2456,15 @@
       "[3/4] crypto: eip93 - add dynamic software fallback support",
       "[4/4] crypto: eliminate fallback proxy overhead while disabled"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14714907,
+      14714908,
+      14714909,
+      14714910
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为加密驱动引入可选的动态软件回退：按算法组在 16 到 16384 字节的固定块大小上比较硬件与软件实现，把每设备的回退阈值通过 sysfs 暴露，请求按阈值分派到硬件或软件。EIP93 驱动按请求大小趋势分组并注册回退代理，控制关闭时注销代理以避免额外开销；已分配的转换无法在提供者之间迁移，因此启用前创建的转换仍绑定硬件，禁用后已存在的代理转换在释放前强制走硬件。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2241,9 +2477,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Thorsten Blum",
+    "email": "thorsten.blum@linux.dev",
+    "authors": [
+      {
+        "name": "Thorsten Blum",
+        "email": "thorsten.blum@linux.dev"
+      }
+    ],
     "version": 1,
-    "summary": "simplify control flow in atmel_ecdh_set_secret，并删除 redundant return variable。",
-    "summary_source": "fallback",
+    "summary": "简化 atmel-ecc 的 ECDH 密钥设置流程：I2C 事务失败时直接释放公钥并去掉跳转标签，生成公钥函数去掉多余的返回变量，直接返回错误或成功，行为不变。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260728205825.471233-3-thorsten.blum@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1136185/mbox/",
     "is_cover_letter": true,
@@ -2258,7 +2501,13 @@
       "[1/2] crypto: atmel-ecc - simplify control flow in atmel_ecdh_set_secret",
       "[2/2] crypto: atmel-ecc - drop redundant return variable"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14716497,
+      14716498
+    ],
+    "qualified_has_more": false,
+    "table_summary": "简化 atmel-ecc 的 ECDH 密钥设置流程：I2C 事务失败时直接释放公钥并去掉跳转标签，生成公钥函数去掉多余的返回变量，直接返回错误或成功，行为不变。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2271,9 +2520,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Eric Biggers",
+    "email": "ebiggers@kernel.org",
+    "authors": [
+      {
+        "name": "Eric Biggers",
+        "email": "ebiggers@kernel.org"
+      }
+    ],
     "version": 2,
-    "summary": "为 lib/crypto 的 AES-CCM 与 AES-GCM 库接口新增 KUnit 测试，抽出 aead-test-template.h/test-utils.h 复用测试模板，并让 hash 测试改为每个用例独立分配缓冲区。",
-    "summary_source": "fallback",
+    "summary": "为内核加密库的 AES-CCM 和 AES-GCM 新增 KUnit 测试套件，包含一致性测试、蒙特卡洛测试、基准测试以及来自外部来源的测试向量，并检查 CCM 的消息长度校验。同时抽出共享的 AEAD 测试模板和测试工具头文件，把哈希测试改为每个用例自行分配缓冲区，使测试更独立。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260802233005.161467-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139037/mbox/",
     "is_cover_letter": true,
@@ -2295,7 +2551,16 @@
       "[v2,5/5] lib/crypto: tests: Add KUnit test suite for AES-GCM",
       "[v2,3/5] lib/crypto: tests: Add aead-test-template.h"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14726306,
+      14726307,
+      14726309,
+      14726310,
+      14726308
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为内核加密库的 AES-CCM 和 AES-GCM 新增 KUnit 测试套件，包含一致性测试、蒙特卡洛测试、基准测试以及来自外部来源的测试向量，并检查 CCM 的消息长度校验。同时抽出共享的 AEAD 测试模板和测试工具头文件，把哈希测试改为每个用例自行分配缓冲区，使测试更独立。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2308,9 +2573,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Thorsten Blum",
+    "email": "thorsten.blum@linux.dev",
+    "authors": [
+      {
+        "name": "Thorsten Blum",
+        "email": "thorsten.blum@linux.dev"
+      }
+    ],
     "version": 1,
-    "summary": "simplify qce_handle_request，并simplify devm_qce_register_algs。",
-    "summary_source": "fallback",
+    "summary": "高通 QCE 加密驱动中，算法注册失败时的回滚循环和请求分发循环写法被简化，去掉多余的初始返回值并直接返回处理结果，逻辑更直观，不改变实际行为。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260731102532.742739-4-thorsten.blum@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1138070/mbox/",
     "is_cover_letter": true,
@@ -2326,7 +2598,13 @@
       "[2/2] crypto: qce - simplify qce_handle_request",
       "[1/2] crypto: qce - simplify devm_qce_register_algs"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14722868,
+      14722869
+    ],
+    "qualified_has_more": false,
+    "table_summary": "高通 QCE 加密驱动中，算法注册失败时的回滚循环和请求分发循环写法被简化，去掉多余的初始返回值并直接返回处理结果，逻辑更直观，不改变实际行为。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2339,9 +2617,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Eric Biggers",
+    "email": "ebiggers@kernel.org",
+    "authors": [
+      {
+        "name": "Eric Biggers",
+        "email": "ebiggers@kernel.org"
+      }
+    ],
     "version": 1,
-    "summary": "为 lib/crypto/aes.c 增加 AES 模式 FIPS 启动自检，覆盖 ECB、GCM、CCM 等加解密向量校验，并将 fips.h 拆分为 fips-aes.h 与 fips-sha.h；自检失败时触发 panic。",
-    "summary_source": "fallback",
+    "summary": "为内核加密库中的 AES 补充 FIPS 自检：除已有的 CMAC 自检外，新增裸 AES 以及 ECB、CBC、CBC-CTS、CTR、XTS 等非认证模式的加解密自检，并新增 GCM 和 CCM 的自检，同时把测试向量按 AES 与 SHA 拆分成独立头文件。这样在后续接入架构优化实现时，这些模式各自具备独立自检，自检失败会触发内核 panic。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260802222408.91757-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139018/mbox/",
     "is_cover_letter": true,
@@ -2359,7 +2644,14 @@
       "[2/3] lib/crypto: aes: Add FIPS self-tests for unauthenticated modes",
       "[3/3] lib/crypto: aes: Add FIPS self-tests for GCM and CCM"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14726279,
+      14726280,
+      14726281
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为内核加密库中的 AES 补充 FIPS 自检：除已有的 CMAC 自检外，新增裸 AES 以及 ECB、CBC、CBC-CTS、CTR、XTS 等非认证模式的加解密自检，并新增 GCM 和 CCM 的自检，同时把测试向量按 AES 与 SHA 拆分成独立头文件。这样在后续接入架构优化实现时，这些模式各自具备独立自检，自检失败会触发内核 panic。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2372,9 +2664,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Eric Biggers",
+    "email": "ebiggers@kernel.org",
+    "authors": [
+      {
+        "name": "Eric Biggers",
+        "email": "ebiggers@kernel.org"
+      }
+    ],
     "version": 1,
-    "summary": "清理 AF_ALG 限制列表逻辑：将 cbc(paes) 标记为非特权可用，并调整 af_alg_check_restriction() 的同名条目匹配流程，避免无特权时继续遍历后续 allowlist 项造成权限判断歧义。",
-    "summary_source": "fallback",
+    "summary": "在启用算法限制时，将受保护密钥的 CBC 加密改为仅限特权进程使用，因为已知使用场景均以管理员身份运行；同时调整权限标记，让未显式标注的算法默认仅限特权进程，并在白名单命中后停止查找。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260802230055.100746-2-ebiggers@kernel.org/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1139028/mbox/",
     "is_cover_letter": true,
@@ -2391,7 +2690,14 @@
       "[2/3] crypto: af_alg - Replace 'bool privileged' with flags",
       "[3/3] crypto: af_alg - Stop after finding name in allowlist"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14726295,
+      14726296,
+      14726297
+    ],
+    "qualified_has_more": false,
+    "table_summary": "在启用算法限制时，将受保护密钥的 CBC 加密改为仅限特权进程使用，因为已知使用场景均以管理员身份运行；同时调整权限标记，让未显式标注的算法默认仅限特权进程，并在白名单命中后停止查找。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2404,9 +2710,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Thomas Huth",
+    "email": "thuth@redhat.com",
+    "authors": [
+      {
+        "name": "Thomas Huth",
+        "email": "thuth@redhat.com"
+      }
+    ],
     "version": 5,
-    "summary": "新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。",
-    "summary_source": "fallback",
+    "summary": "为多个加密驱动提供统一的清理辅助，让存放 AES 密钥的本地上下文在离开作用域时自动清零，避免因遗漏返回路径而把密钥残留在栈上；同时把 safexcel 和 eip93 中仅用于校验密钥长度的密钥扩展改为直接检查长度，并修复 safexcel 在第二次密钥扩展失败时未清除首次结果的问题。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260810093009.608090-3-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1143213/mbox/",
     "is_cover_letter": true,
@@ -2433,7 +2746,21 @@
       "[v5,08/10] crypto: safexcel - Simplify the check for a valid AES key",
       "[v5,10/10] crypto: eip93 - Simplify the check for a valid AES key"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14740410,
+      14740411,
+      14740415,
+      14740412,
+      14740413,
+      14740409,
+      14740414,
+      14740417,
+      14740416,
+      14740418
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为多个加密驱动提供统一的清理辅助，让存放 AES 密钥的本地上下文在离开作用域时自动清零，避免因遗漏返回路径而把密钥残留在栈上；同时把 safexcel 和 eip93 中仅用于校验密钥长度的密钥扩展改为直接检查长度，并修复 safexcel 在第二次密钥扩展失败时未清除首次结果的问题。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2446,6 +2773,13 @@
     "status": "已关闭",
     "state": "series",
     "submitter": "Thomas Huth",
+    "email": "thuth@redhat.com",
+    "authors": [
+      {
+        "name": "Thomas Huth",
+        "email": "thuth@redhat.com"
+      }
+    ],
     "version": 2,
     "summary": "新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。",
     "summary_source": "fallback",
@@ -2464,6 +2798,11 @@
       "[v2,8/9] crypto: safexcel - zeroize crypto_aes_ctx with __cleanup(aes_clear_ctx)",
       "[v2,9/9] crypto: qat - zeroize crypto_aes_ctx with __cleanup(aes_clear_ctx)"
     ],
+    "member_ids": [
+      14726947,
+      14726953,
+      14726954
+    ],
     "qualified_has_more": false
   },
   {
@@ -2477,9 +2816,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Thomas Huth",
+    "email": "thuth@redhat.com",
+    "authors": [
+      {
+        "name": "Thomas Huth",
+        "email": "thuth@redhat.com"
+      }
+    ],
     "version": 2,
-    "summary": "提供 wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx，并lib/crypto: aes 中为 aes_cmac_key instead of memzero_explicit() 改用 __cleanup()。",
-    "summary_source": "fallback",
+    "summary": "为使用 AES-CMAC 的代码提供密钥和上下文的自动清零辅助，使 SMB 服务端、TCP 认证选项、蓝牙配对以及无线认证等场景在离开作用域时自动清除本地密钥材料，避免敏感数据残留在栈上；蓝牙部分还额外清除了保存原始密钥的临时数组。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260807125845.1477067-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142201/mbox/",
     "is_cover_letter": true,
@@ -2494,7 +2840,13 @@
       "[v2,1/6] crypto: Provide wrapper functions for zeroizing aes_cmac_key and aes_cmac_ctx",
       "[v2,5/6] lib/crypto: aes: Use __cleanup() for aes_cmac_key instead of memzero_explicit()"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14737312,
+      14737316
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为使用 AES-CMAC 的代码提供密钥和上下文的自动清零辅助，使 SMB 服务端、TCP 认证选项、蓝牙配对以及无线认证等场景在离开作用域时自动清除本地密钥材料，避免敏感数据残留在栈上；蓝牙部分还额外清除了保存原始密钥的临时数组。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2502,14 +2854,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260827133542.619717-2-t-pratham@ti.com/",
     "date": "2026-08-27",
     "date_end": "2026-08-27",
-    "organization": "Individual Contributor",
+    "organization": "Texas Instruments",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "T Pratham",
+    "email": "t-pratham@ti.com",
+    "authors": [
+      {
+        "name": "T Pratham",
+        "email": "t-pratham@ti.com"
+      }
+    ],
     "version": 7,
-    "summary": "crypto 中增加 SHA224/256/384/512 in DTHEv2 driver 支持，并crypto 中增加 HMAC in DTHEv2 driver 支持。",
-    "summary_source": "fallback",
+    "summary": "TI DTHEv2 硬件加密引擎原先只支持 AES 类算法，现为其哈希引擎新增 SHA224/256/384/512 以及对应的 HMAC 算法，使该硬件可用于消息摘要和带密钥的消息认证场景。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260827133542.619717-2-t-pratham@ti.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1152658/mbox/",
     "is_cover_letter": true,
@@ -2525,7 +2884,13 @@
       "[v7,1/2] crypto: ti - Add support for SHA224/256/384/512 in DTHEv2 driver",
       "[v7,2/2] crypto: ti - Add support for HMAC in DTHEv2 driver"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14771263,
+      14771262
+    ],
+    "qualified_has_more": false,
+    "table_summary": "TI DTHEv2 硬件加密引擎原先只支持 AES 类算法，现为其哈希引擎新增 SHA224/256/384/512 以及对应的 HMAC 算法，使该硬件可用于消息摘要和带密钥的消息认证场景。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2538,9 +2903,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "David C.C.M. Gall",
+    "email": "david.ccm.gall@googlemail.com",
+    "authors": [
+      {
+        "name": "David C.C.M. Gall",
+        "email": "david.ccm.gall@googlemail.com"
+      }
+    ],
     "version": 1,
-    "summary": "改用 crypto_memneq() to compare GCM AEAD tags，并改用 crypto_memneq() to compare CCM AEAD tags。",
-    "summary_source": "fallback",
+    "summary": "Keembay 加密驱动的 GCM 与 CCM 解密路径原先用逐字节比较校验收到的认证标签，比较会在首个不同字节处提前结束，可能泄露有效前缀长度并导致标签伪造，破坏 AEAD 的完整性保证。现两处均改为恒定时间比较。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/anYEQOzunX0Lm3N1@david.gall/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142330/mbox/",
     "is_cover_letter": true,
@@ -2556,7 +2928,13 @@
       "[1/2] crypto: keembay - use crypto_memneq() to compare GCM AEAD tags",
       "[2/2] crypto: keembay - use crypto_memneq() to compare CCM AEAD tags"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14737780,
+      14737790
+    ],
+    "qualified_has_more": false,
+    "table_summary": "Keembay 加密驱动的 GCM 与 CCM 解密路径原先用逐字节比较校验收到的认证标签，比较会在首个不同字节处提前结束，可能泄露有效前缀长度并导致标签伪造，破坏 AEAD 的完整性保证。现两处均改为恒定时间比较。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2569,9 +2947,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Rosen Penev",
+    "email": "rosenp@gmail.com",
+    "authors": [
+      {
+        "name": "Rosen Penev",
+        "email": "rosenp@gmail.com"
+      }
+    ],
     "version": 1,
-    "summary": "fetch resources into locals（在 probe body 前），并修复 IRQ teardown ordering and fetch clocks early。",
-    "summary_source": "fallback",
+    "summary": "调整图像哈希加速器驱动的探测流程，把中断、寄存器和时钟的获取提前到分配设备结构之前，使资源获取失败时可直接返回并支持延迟探测；同时把中断申请改为显式申请和释放，确保在移除和探测出错时先释放中断再终止任务队列，避免拆除过程中中断处理程序再次调度任务。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260811212030.20057-2-rosenp@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144334/mbox/",
     "is_cover_letter": true,
@@ -2586,7 +2971,13 @@
       "[1/2] crypto: img-hash: fetch resources into locals before probe body",
       "[2/2] crypto: img-hash: fix IRQ teardown ordering and fetch clocks early"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14744309,
+      14744310
+    ],
+    "qualified_has_more": false,
+    "table_summary": "调整图像哈希加速器驱动的探测流程，把中断、寄存器和时钟的获取提前到分配设备结构之前，使资源获取失败时可直接返回并支持延迟探测；同时把中断申请改为显式申请和释放，确保在移除和探测出错时先释放中断再终止任务队列，避免拆除过程中中断处理程序再次调度任务。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2599,9 +2990,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Thomas Huth",
+    "email": "thuth@redhat.com",
+    "authors": [
+      {
+        "name": "Thomas Huth",
+        "email": "thuth@redhat.com"
+      }
+    ],
     "version": 1,
-    "summary": "提供 a wrapper for zeroizing hmac_sha1_ctx，并lib/crypto: sha1 中改用 hmac_sha1_zeroize_ctx() instead of memzero_explicit()。",
-    "summary_source": "fallback",
+    "summary": "为 HMAC-SHA1 上下文提供自动清零辅助，使可信密钥等使用该算法的代码在提前返回、未调用终结函数时也能清除栈上的上下文，避免敏感数据残留；同时把库内已有的显式清零调用改为使用该辅助。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260812163336.3103835-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144861/mbox/",
     "is_cover_letter": true,
@@ -2617,7 +3015,13 @@
       "[1/3] crypto: Provide a wrapper for zeroizing hmac_sha1_ctx",
       "[3/3] lib/crypto: sha1: Use hmac_sha1_zeroize_ctx() instead of memzero_explicit()"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14746370,
+      14746371
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 HMAC-SHA1 上下文提供自动清零辅助，使可信密钥等使用该算法的代码在提前返回、未调用终结函数时也能清除栈上的上下文，避免敏感数据残留；同时把库内已有的显式清零调用改为使用该辅助。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2630,9 +3034,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Thomas Huth",
+    "email": "thuth@redhat.com",
+    "authors": [
+      {
+        "name": "Thomas Huth",
+        "email": "thuth@redhat.com"
+      }
+    ],
     "version": 1,
-    "summary": "新增 aes_zeroize_ctx() 等 AES 上下文清零封装，并让 aspeed、padlock、sa2ul、arm/arm64 aes-neonbs、qat、safexcel 等实现在操作结束后统一清除 crypto_aes_ctx 中的密钥材料。",
-    "summary_source": "fallback",
+    "summary": "为 AES、HMAC-MD5、HMAC-SHA1 和 SHA2 系列 HMAC 的密钥与上下文提供统一的自动清零辅助，让使用这些结构的代码在离开作用域时自动清除密钥材料，减少遗漏返回路径导致栈上残留密钥的风险；同时把库内已有的显式清零调用改为使用这些辅助，并为 x86 引导环境调整编译选项以兼容新增头文件。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260813134953.979481-2-thuth@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1145473/mbox/",
     "is_cover_letter": true,
@@ -2656,7 +3067,18 @@
       "[11/11] lib/crypto: sha2: Provide wrappers for zeroizing SHA2 hmac_sha*_ctx structures",
       "[06/11] lib/crypto: md5: Provide a function for zeroizing hmac_md5_ctx structures"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14748211,
+      14748214,
+      14748215,
+      14748216,
+      14748217,
+      14748219,
+      14748221
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 AES、HMAC-MD5、HMAC-SHA1 和 SHA2 系列 HMAC 的密钥与上下文提供统一的自动清零辅助，让使用这些结构的代码在离开作用域时自动清除密钥材料，减少遗漏返回路径导致栈上残留密钥的风险；同时把库内已有的显式清零调用改为使用这些辅助，并为 x86 引导环境调整编译选项以兼容新增头文件。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2669,9 +3091,16 @@
     "status": "已合入",
     "state": "series",
     "submitter": "Fabrice Derepas",
+    "email": "fabrice.derepas@canonical.com",
+    "authors": [
+      {
+        "name": "Fabrice Derepas",
+        "email": "fabrice.derepas@canonical.com"
+      }
+    ],
     "version": 2,
-    "summary": "修复 asymmetric_keys 中 pefile_parse_binary() 对 PE 安全目录和 section 范围校验不足导致的越界读，并补充 PE parser KUnit 用例覆盖异常输入。",
-    "summary_source": "fallback",
+    "summary": "修复 PE 文件签名解析中读取证书表目录项时的越界读取：当映像声明的数据目录项数量不足时，解析器仍会读取固定位置的证书表大小字段，可能读到映像之外；现在要求该目录项必须存在，否则直接拒绝。该路径由 kexec 加载受签名校验的 PE 映像时触发，需要相应权限，且仅涉及越界读取。同时补充内核单元测试，用构造的畸形映像验证拒绝行为。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/fcbc6b4d5855ba42a0fccf335b2604ef0b36f092.1786802052.git.fabrice.derepas@canonical.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1146522/mbox/",
     "is_cover_letter": true,
@@ -2686,7 +3115,13 @@
       "[v2,1/2] crypto: asymmetric_keys - fix OOB read in pefile_parse_binary",
       "[v2,2/2] crypto: asymmetric_keys - add KUnit tests for the PE parser"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14751471,
+      14751472
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 PE 文件签名解析中读取证书表目录项时的越界读取：当映像声明的数据目录项数量不足时，解析器仍会读取固定位置的证书表大小字段，可能读到映像之外；现在要求该目录项必须存在，否则直接拒绝。该路径由 kexec 加载受签名校验的 PE 映像时触发，需要相应权限，且仅涉及越界读取。同时补充内核单元测试，用构造的畸形映像验证拒绝行为。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2696,12 +3131,19 @@
     "date_end": "2026-08-21",
     "organization": "Individual Contributor",
     "subsystem": "General Crypto",
-    "status": "已关闭",
+    "status": "社区讨论中",
     "state": "series",
     "submitter": "Mohamad Raizudeen",
+    "email": "raizudeen.kerneldev@gmail.com",
+    "authors": [
+      {
+        "name": "Mohamad Raizudeen",
+        "email": "raizudeen.kerneldev@gmail.com"
+      }
+    ],
     "version": 1,
-    "summary": "修复 IRQ handler return value and fallthrough logic，并为 clock and engine management 改用 devm APIs。",
-    "summary_source": "fallback",
+    "summary": "修正 Amlogic 加密加速器中断处理程序的返回值：当某条数据流有中断但状态寄存器为空时，原来会继续循环并误报未知中断，现在直接返回已处理；对真正未知的中断改为返回未处理，使内核能识别虚假中断。同时改用设备托管接口管理时钟和加密引擎，去掉手动清理，简化探测和移除流程。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260821151243.8125-1-raizudeen.kerneldev@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1149897/mbox/",
     "is_cover_letter": true,
@@ -2716,7 +3158,13 @@
       "[1/2] crypto: amlogic: Fix IRQ handler return value and fallthrough logic",
       "[2/2] crypto: amlogic: Use devm APIs for clock and engine management"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14761983,
+      14761984
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修正 Amlogic 加密加速器中断处理程序的返回值：当某条数据流有中断但状态寄存器为空时，原来会继续循环并误报未知中断，现在直接返回已处理；对真正未知的中断改为返回未处理，使内核能识别虚假中断。同时改用设备托管接口管理时钟和加密引擎，去掉手动清理，简化探测和移除流程。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2724,14 +3172,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260822082642.48936-3-tnovikov@astralinux.ru/",
     "date": "2026-08-22",
     "date_end": "2026-08-22",
-    "organization": "Individual Contributor",
+    "organization": "Astra Linux",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Timofei Novikov",
+    "email": "tnovikov@astralinux.ru",
+    "authors": [
+      {
+        "name": "Timofei Novikov",
+        "email": "tnovikov@astralinux.ru"
+      }
+    ],
     "version": 1,
-    "summary": "x509 中新增 CRL parser（携带 indirect CRL support），并x509 中新增 CRL signature verification support。",
-    "summary_source": "fallback",
+    "summary": "为内核的 X.509 证书处理新增证书吊销列表解析与签名校验能力：解析吊销列表中的签发者和被吊销证书，按序列号与签发者哈希加入黑名单，并支持间接吊销列表的逐条签发者识别；处理前会先校验吊销列表的数字签名，未提供密钥环时跳过校验。同时修正 ASN.1 解析中可选字段的处理，使可选引用类型和可选序列能正确跳过。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260822082642.48936-3-tnovikov@astralinux.ru/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1150139/mbox/",
     "is_cover_letter": true,
@@ -2746,7 +3201,13 @@
       "[2/3] x509: add CRL parser with indirect CRL support",
       "[3/3] x509: add CRL signature verification support"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14762867,
+      14762868
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为内核的 X.509 证书处理新增证书吊销列表解析与签名校验能力：解析吊销列表中的签发者和被吊销证书，按序列号与签发者哈希加入黑名单，并支持间接吊销列表的逐条签发者识别；处理前会先校验吊销列表的数字签名，未提供密钥环时跳过校验。同时修正 ASN.1 解析中可选字段的处理，使可选引用类型和可选序列能正确跳过。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2759,9 +3220,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Usama Arif",
+    "email": "usama.arif@linux.dev",
+    "authors": [
+      {
+        "name": "Usama Arif",
+        "email": "usama.arif@linux.dev"
+      }
+    ],
     "version": 1,
-    "summary": "避免 redundant cstream initialization，并避免 redundant dstream initialization。",
-    "summary_source": "fallback",
+    "summary": "zswap 压缩和解压每个页面时，zstd 驱动会先把共享工作区初始化为流式上下文，随后又按一次性路径重新初始化，前一次初始化完全白做。现将流式初始化推迟到真正需要流式处理的首次循环，一次性路径不再重复初始化。压缩基准单轮平均耗时在物理机下降约百分之二、单核虚拟机下降约百分之十，解压下降约百分之十四和百分之三十六。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260825220616.3842633-2-usama.arif@linux.dev/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1151765/mbox/",
     "is_cover_letter": true,
@@ -2777,7 +3245,13 @@
       "[1/2] crypto: zstd - Avoid redundant cstream initialization",
       "[2/2] crypto: zstd - Avoid redundant dstream initialization"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14768045,
+      14768046
+    ],
+    "qualified_has_more": false,
+    "table_summary": "zswap 压缩和解压每个页面时，zstd 驱动会先把共享工作区初始化为流式上下文，随后又按一次性路径重新初始化，前一次初始化完全白做。现将流式初始化推迟到真正需要流式处理的首次循环，一次性路径不再重复初始化。压缩基准单轮平均耗时在物理机下降约百分之二、单核虚拟机下降约百分之十，解压下降约百分之十四和百分之三十六。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2785,14 +3259,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260826103744.1554131-2-Jeremy.Jean@oss.cyber.gouv.fr/",
     "date": "2026-08-26",
     "date_end": "2026-08-26",
-    "organization": "Individual Contributor",
+    "organization": "ANSSI",
     "subsystem": "Public Key",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jérémy Jean",
+    "email": "Jeremy.Jean@oss.cyber.gouv.fr",
+    "authors": [
+      {
+        "name": "Jérémy Jean",
+        "email": "Jeremy.Jean@oss.cyber.gouv.fr"
+      }
+    ],
     "version": 1,
-    "summary": "拒绝 undersized keys（当 signing 时），并拒绝 undersized keys（当 verifying 时）。",
-    "summary_source": "fallback",
+    "summary": "RSA PKCS#1 v1.5 签名和验签在密钥长度不足时，用无符号密钥长度减去 11 会回绕，导致填充写入或读取越界，KASAN 已报告一字节密钥下的越界访问。现改为在签名和验签入口拒绝小于最小编码消息长度的密钥，返回参数错误，避免越界读写。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260826103744.1554131-2-Jeremy.Jean@oss.cyber.gouv.fr/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1152006/mbox/",
     "is_cover_letter": true,
@@ -2808,7 +3289,13 @@
       "[1/2] crypto: rsassa-pkcs1: reject undersized keys when signing",
       "[2/2] crypto: rsassa-pkcs1: reject undersized keys when verifying"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14769009,
+      14769010
+    ],
+    "qualified_has_more": false,
+    "table_summary": "RSA PKCS#1 v1.5 签名和验签在密钥长度不足时，用无符号密钥长度减去 11 会回绕，导致填充写入或读取越界，KASAN 已报告一字节密钥下的越界访问。现改为在签名和验签入口拒绝小于最小编码消息长度的密钥，返回参数错误，避免越界读写。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -2816,14 +3303,21 @@
     "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260827132318.613876-5-t-pratham@ti.com/",
     "date": "2026-08-27",
     "date_end": "2026-08-27",
-    "organization": "Individual Contributor",
+    "organization": "Texas Instruments",
     "subsystem": "General Crypto",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "T Pratham",
+    "email": "t-pratham@ti.com",
+    "authors": [
+      {
+        "name": "T Pratham",
+        "email": "t-pratham@ti.com"
+      }
+    ],
     "version": 2,
-    "summary": "crypto 中Trim scatterlists to correct length in AES、crypto 中修复 use-after-free of dev_data on DTHEv2 driver removal、crypto 中改用 list_first_entry_or_null() in dthe_get_dev()、crypto 中修复 potential memory corruption on highmem pages，并crypto 中修复 potential deadlock bug in DTHEv2。",
-    "summary_source": "fallback",
+    "summary": "德州仪器 DTHEv2 加密驱动存在多处缺陷：设备列表为空时取到伪指针、软中断与进程间可能死锁、高端内存页经虚拟地址访问可能损坏内存、IPSec 场景下散列表长度超出实际数据导致 DMA 超时崩溃、驱动移除时进行中的变换上下文可能访问已释放数据、散列表长度校验缺失。现分别改用可返回空的取首项、统一加锁方式、按页建立映射、把散列表裁剪到实际密文长度、为设备数据加引用计数并在移除时有限等待、校验长度查询返回值，降低上述崩溃和越界风险。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260827132318.613876-5-t-pratham@ti.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1152650/mbox/",
     "is_cover_letter": true,
@@ -2844,37 +3338,17 @@
       "[v2,7/7] crypto: ti - Validate sg_nents_for_len() return value in DTHEv2 AEAD",
       "[v2,6/7] crypto: ti - Validate sg_nents_for_len() return value in DTHEv2 AES"
     ],
-    "qualified_has_more": false
-  },
-  {
-    "id": null,
-    "title": "crypto: use designated initializers for acpi_device_id",
-    "url": "https://patchwork.kernel.org/project/linux-crypto/patch/20260903-acpi-crypto-v1-1-253cc6fd9836@thegoodpenguin.co.uk/",
-    "date": "2026-09-03",
-    "date_end": "2026-09-03",
-    "organization": "Individual Contributor",
-    "subsystem": "ICE (Qualcomm)",
-    "status": "社区讨论中",
-    "state": "series",
-    "submitter": "Pawel Zalewski",
-    "version": 1,
-    "summary": "crypto: ccp 中为 acpi_device_id 改用 named initializers，并crypto: hisilicon/sec 中为 acpi_device_id 改用 named initializers。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-crypto/patch/20260903-acpi-crypto-v1-1-253cc6fd9836@thegoodpenguin.co.uk/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1157233/mbox/",
-    "is_cover_letter": true,
-    "series_id": 1157233,
-    "patch_count": 2,
-    "series_total": 2,
-    "qualified_count": 2,
-    "qualified_titles": [
-      "[1/2] crypto: ccp: use named initializers for acpi_device_id",
-      "[2/2] crypto: hisilicon/sec: use named initializers for acpi_device_id"
+    "member_ids": [
+      14771216,
+      14771215,
+      14771217,
+      14771219,
+      14771218,
+      14771220,
+      14771227
     ],
-    "member_titles": [
-      "[1/2] crypto: ccp: use named initializers for acpi_device_id",
-      "[2/2] crypto: hisilicon/sec: use named initializers for acpi_device_id"
-    ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "德州仪器 DTHEv2 加密驱动存在多处缺陷：设备列表为空时取到伪指针、软中断与进程间可能死锁、高端内存页经虚拟地址访问可能损坏内存、IPSec 场景下散列表长度超出实际数据导致 DMA 超时崩溃、驱动移除时进行中的变换上下文可能访问已释放数据、散列表长度校验缺失。现分别改用可返回空的取首项、统一加锁方式、按页建立映射、把散列表裁剪到实际密文长度、为设备数据加引用计数并在移除时有限等待、校验长度查询返回值，降低上述崩溃和越界风险。",
+    "table_summary_source": "llm-mail-batch"
   }
 ]

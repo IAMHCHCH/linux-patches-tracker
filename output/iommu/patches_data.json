@@ -4,20 +4,23 @@
     "title": "[RFC,1/3] iommu/riscv: Complete MRIF MSI PTE setup",
     "url": "https://patchwork.kernel.org/project/kvm/patch/20260701040017.42707-2-zhangzhanpeng.jasper@bytedance.com/",
     "date": "2026-07-01",
-    "organization": "Individual Contributor",
+    "organization": "ByteDance",
     "subsystem": "RISC-V IOMMU",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Zhanpeng Zhang",
     "email": "zhangzhanpeng.jasper@bytedance.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "补全 RISC-V IOMMU 的 MRIF 中断投递路径。此前该路径只能改写已有的 MSI 表项，无法正确安装新的 MRIF 表项，且用普通物理页号方式编码 MRIF 地址。现在新增专门的 MRIF 表项编码，新建和改写两条路径都使用它，普通 MSI 编码保持不变；写入时先发布通知信息再置有效位，改写活动表项时先清有效位，避免设备中断读到有效表项却看到过期的通知数据。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260701040017.42707-2-zhangzhanpeng.jasper@bytedance.com/mbox/",
     "series_id": 1119385,
     "series_name": "RISC-V: KVM/IOMMU: Fix MRIF irqfd notice handling",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1119385/mbox/",
-    "series_total": 3
+    "series_total": 3,
+    "table_summary": "补全 RISC-V IOMMU 的 MRIF 中断投递路径。此前该路径只能改写已有的 MSI 表项，无法正确安装新的 MRIF 表项，且用普通物理页号方式编码 MRIF 地址。现在新增专门的 MRIF 表项编码，新建和改写两条路径都使用它，普通 MSI 编码保持不变；写入时先发布通知信息再置有效位，改写活动表项时先清有效位，避免设备中断读到有效表项却看到过期的通知数据。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14694433,
@@ -31,13 +34,16 @@
     "submitter": "Aneesh Kumar K.V",
     "email": "aneesh.kumar@kernel.org",
     "version": 8,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "修正 IOMMU DMA 分配中非阻塞、非一致性路径的失败判断。该路径调用原子池分配，成功时才填充 CPU 地址，原代码却依赖 CPU 地址判断是否失败。现在改为直接检查返回的页指针，为空即返回失败，避免在分配失败时继续用无效页做 IOMMU 映射。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717180442.110954-4-aneesh.kumar@kernel.org/mbox/",
     "series_id": 1129778,
     "series_name": "dma-mapping: Track shared DMA state through direct, pool and swiotlb paths",
     "series_version": 8,
     "series_mbox": "https://patchwork.kernel.org/series/1129778/mbox/",
-    "series_total": 23
+    "series_total": 23,
+    "table_summary": "修正 IOMMU DMA 分配中非阻塞、非一致性路径的失败判断。该路径调用原子池分配，成功时才填充 CPU 地址，原代码却依赖 CPU 地址判断是否失败。现在改为直接检查返回的页指针，为空即返回失败，避免在分配失败时继续用无效页做 IOMMU 映射。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14666004,
@@ -51,33 +57,39 @@
     "submitter": "Kiryl Shutsemau",
     "email": "kas@kernel.org",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 kdump 捕获内核中把 ARM SMMUv3 的命令、事件和 PRI 队列都缩小到单页。这些队列原本按硬件上报的最大值分配，每个实例可达数兆字节，在 SMMU 实例较多的系统上会占用数十兆一致性 DMA 内存，而捕获内核只驱动少数设备保存转储，深队列没有意义。缩小后命令队列仍能容纳至少一个批次加一次同步，命令批处理不受影响，转储吞吐也不受影响。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260706084708.8072-1-kas@kernel.org/mbox/",
     "series_id": 1122139,
     "series_name": "[v3] iommu/arm-smmu-v3: Shrink command/event/PRI queues in kdump kernel",
     "series_version": 3,
     "series_mbox": "https://patchwork.kernel.org/series/1122139/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "在 kdump 捕获内核中把 ARM SMMUv3 的命令、事件和 PRI 队列都缩小到单页。这些队列原本按硬件上报的最大值分配，每个实例可达数兆字节，在 SMMU 实例较多的系统上会占用数十兆一致性 DMA 内存，而捕获内核只驱动少数设备保存转储，深队列没有意义。缩小后命令队列仍能容纳至少一个批次加一次同步，命令批处理不受影响，转储吞吐也不受影响。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14659984,
     "title": "[RFC,09/14] iommu: lazy-populate iommu_group reserved_regions/type attrs",
     "url": "https://patchwork.kernel.org/project/kexec/patch/20260702175114.24659-5-sakacpav@amazon.de/",
     "date": "2026-07-02",
-    "organization": "Individual Contributor",
+    "organization": "Amazon",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Pavol Sakac",
     "email": "sakacpav@amazon.de",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "把 IOMMU 组的保留区域和类型两个属性文件改为按需创建。它们只在 VFIO 或 iommufd 的查询路径上被读取，而每个 SR-IOV 虚拟功能通常各自拥有一个 IOMMU 组，在虚拟功能数以千计的系统中，启动时会为每个组多建两个内核文件节点。现在改为首次访问时再生成，组名属性仍走原有单独路径，用户态接口不变。",
     "mbox": "https://patchwork.kernel.org/project/kexec/patch/20260702175114.24659-5-sakacpav@amazon.de/mbox/",
     "series_id": 1120653,
     "series_name": "driver core: defer per-VF sysfs creation for fast SR-IOV bring-up",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1120653/mbox/",
-    "series_total": 14
+    "series_total": 14,
+    "table_summary": "把 IOMMU 组的保留区域和类型两个属性文件改为按需创建。它们只在 VFIO 或 iommufd 的查询路径上被读取，而每个 SR-IOV 虚拟功能通常各自拥有一个 IOMMU 组，在虚拟功能数以千计的系统中，启动时会为每个组多建两个内核文件节点。现在改为首次访问时再生成，组名属性仍走原有单独路径，用户态接口不变。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14666785,
@@ -91,13 +103,16 @@
     "submitter": "Bartosz Golaszewski",
     "email": "bartosz.golaszewski@oss.qualcomm.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在飞思卡尔 PAMU IOMMU 初始化中，把动态分配平台设备时设置设备树节点的方式改为使用封装好的辅助接口，并借助自动清理机制管理节点引用，使驱动注册失败等错误路径不再需要手工释放节点引用，简化了初始化流程。",
     "mbox": "https://patchwork.kernel.org/project/dri-devel/patch/20260706-pdev-fwnode-ref-v3-9-1ff028e33779@oss.qualcomm.com/mbox/",
     "series_id": 1122363,
     "series_name": "driver core: count references of the platform device's fwnode, not OF node",
     "series_version": 3,
     "series_mbox": "https://patchwork.kernel.org/series/1122363/mbox/",
-    "series_total": 20
+    "series_total": 20,
+    "table_summary": "在飞思卡尔 PAMU IOMMU 初始化中，把动态分配平台设备时设置设备树节点的方式改为使用封装好的辅助接口，并借助自动清理机制管理节点引用，使驱动注册失败等错误路径不再需要手工释放节点引用，简化了初始化流程。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14667809,
@@ -111,52 +126,58 @@
     "submitter": "Jason Gunthorpe",
     "email": "jgg@nvidia.com",
     "version": 1,
-    "summary": "新增the 64 bit armv8 page table format，扩展功能特性，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为通用 IOMMU 页表框架新增 64 位 ARMv8 页表格式支持，覆盖连续页、多级叶页、可变顶层、脏页跟踪等特性，并实现 LPA、LVA、LPA2 等可选能力，在驱动实际需要前默认不编译；同时用与旧实现对比的测试验证各级页表结果一致。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/3-v1-807e2d1a5efb+e1-iommupt_armv8_jgg@nvidia.com/mbox/",
     "series_id": 1122564,
     "series_name": "Use the generic iommu page table for SMMUv3",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1122564/mbox/",
-    "series_total": 7
+    "series_total": 7,
+    "table_summary": "为通用 IOMMU 页表框架新增 64 位 ARMv8 页表格式支持，覆盖连续页、多级叶页、可变顶层、脏页跟踪等特性，并实现 LPA、LVA、LPA2 等可选能力，在驱动实际需要前默认不编译；同时用与旧实现对比的测试验证各级页表结果一致。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14683362,
     "title": "[v3] iommu/riscv: Use 32-bit MMIO accesses for 64-bit registers",
     "url": "https://patchwork.kernel.org/project/linux-riscv/patch/20260713122903.9458-1-zhangzhanpeng.jasper@bytedance.com/",
     "date": "2026-07-13",
-    "organization": "Individual Contributor",
+    "organization": "ByteDance",
     "subsystem": "RISC-V IOMMU",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Zhanpeng Zhang",
     "email": "zhangzhanpeng.jasper@bytedance.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "RISC-V IOMMU 规范允许 64 位寄存器用两次 32 位访问完成，且未规定 8 字节访问的原子性。驱动改用先高后低的 32 位访问方式读写普通 64 位寄存器，对 DDTP 先轮询低半部分的忙标志再读高半部分，避免依赖不保证的原子 64 位访问。",
     "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260713122903.9458-1-zhangzhanpeng.jasper@bytedance.com/mbox/",
     "series_id": 1126629,
     "series_name": "[v3] iommu/riscv: Use 32-bit MMIO accesses for 64-bit registers",
     "series_version": 3,
     "series_mbox": "https://patchwork.kernel.org/series/1126629/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "RISC-V IOMMU 规范允许 64 位寄存器用两次 32 位访问完成，且未规定 8 字节访问的原子性。驱动改用先高后低的 32 位访问方式读写普通 64 位寄存器，对 DDTP 先轮询低半部分的忙标志再读高半部分，避免依赖不保证的原子 64 位访问。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
-    "id": 14797502,
-    "title": "[v9,2/2] iommu/riscv: create a auxiliary device for HPM",
-    "url": "https://patchwork.kernel.org/project/linux-riscv/patch/20260908020347.1836653-3-zong.li@sifive.com/",
-    "date": "2026-09-08",
+    "id": 14772774,
+    "title": "[v7,1/2] iommu/riscv: create a auxiliary device for HPM",
+    "url": "https://patchwork.kernel.org/project/linux-riscv/patch/20260828070747.4009519-2-zong.li@sifive.com/",
+    "date": "2026-08-28",
     "organization": "SiFive",
     "subsystem": "RISC-V IOMMU",
-    "status": "社区讨论中",
-    "state": "new",
+    "status": "已关闭",
+    "state": "superseded",
     "submitter": "Zong Li",
     "email": "zong.li@sifive.com",
-    "version": 9,
+    "version": 7,
     "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260908020347.1836653-3-zong.li@sifive.com/mbox/",
-    "series_id": 1160078,
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260828070747.4009519-2-zong.li@sifive.com/mbox/",
+    "series_id": 1153014,
     "series_name": "RISC-V IOMMU HPM support",
-    "series_version": 9,
-    "series_mbox": "https://patchwork.kernel.org/series/1160078/mbox/",
+    "series_version": 7,
+    "series_mbox": "https://patchwork.kernel.org/series/1153014/mbox/",
     "series_total": 2
   },
   {
@@ -171,13 +192,16 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": 5,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "为支持扩展失效范围的 SMMU 增加识别：这类硬件把范围失效命令的规模字段从 5 位扩展到 6 位，最大值由 31 提高到 39，并允许 16KB 页粒度下的一种层级提示。驱动新增对应特性位并加宽该字段，但范围失效路径仍按原来的 5 位截断发出命令，行为不变；同时把该特性列入向用户态报告的硬件信息字段，便于虚拟机监视器判断能否透传给客户机。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/1b35fa8c417a21ac80a4a3f19db34d81ef6ca490.1785258826.git.nicolinc@nvidia.com/mbox/",
     "series_id": 1136110,
     "series_name": "iommufd: Iterate the cache invalidation array in the core",
     "series_version": 5,
     "series_mbox": "https://patchwork.kernel.org/series/1136110/mbox/",
-    "series_total": 6
+    "series_total": 6,
+    "table_summary": "为支持扩展失效范围的 SMMU 增加识别：这类硬件把范围失效命令的规模字段从 5 位扩展到 6 位，最大值由 31 提高到 39，并允许 16KB 页粒度下的一种层级提示。驱动新增对应特性位并加宽该字段，但范围失效路径仍按原来的 5 位截断发出命令，行为不变；同时把该特性列入向用户态报告的硬件信息字段，便于虚拟机监视器判断能否透传给客户机。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14687676,
@@ -191,73 +215,85 @@
     "submitter": "Aaron Lewis",
     "email": "aaronlewis@google.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 iommufd 解除大范围 DMA 映射时，逐页处理可能长时间不让出 CPU，导致内核调度告警。现在每处理一定数量的页就主动让出调度，使解除映射过程不再长时间独占 CPU，缓解调度延迟问题。",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-3-aaronlewis@google.com/mbox/",
     "series_id": 1127741,
     "series_name": "vfio/iommufd: Prevent scheduler warnings when unmapping large regions",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1127741/mbox/",
-    "series_total": 2
+    "series_total": 2,
+    "table_summary": "在 iommufd 解除大范围 DMA 映射时，逐页处理可能长时间不让出 CPU，导致内核调度告警。现在每处理一定数量的页就主动让出调度，使解除映射过程不再长时间独占 CPU，缓解调度延迟问题。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14708592,
     "title": "[v2] intel_iommu: Check address mask before using it in pasid-based iotlb invalidation",
     "url": "https://patchwork.kernel.org/project/qemu-devel/patch/20260724111424.376680-1-clement.mathieu--drif@bull.com/",
     "date": "2026-07-24",
-    "organization": "Individual Contributor",
+    "organization": "Bull",
     "subsystem": "Intel VT-d",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Clément MATHIEU--DRIF",
     "email": "clement.mathieu--drif@bull.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 Intel IOMMU 模拟中处理基于 PASID 的 IOTLB 失效描述符时，先检查地址掩码是否超出硬件允许的最大值，若非法则报错并拒绝执行，避免有缺陷的驱动触发格式错误的失效操作。",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260724111424.376680-1-clement.mathieu--drif@bull.com/mbox/",
     "series_id": 1133921,
     "series_name": "[v2] intel_iommu: Check address mask before using it in pasid-based iotlb invalidation",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1133921/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "在 Intel IOMMU 模拟中处理基于 PASID 的 IOTLB 失效描述符时，先检查地址掩码是否超出硬件允许的最大值，若非法则报错并拒绝执行，避免有缺陷的驱动触发格式错误的失效操作。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14693234,
     "title": "[RFC,4/9] iommu/rockchip: skip orphaned-fault banks in rk_iommu_is_stall_active",
     "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717085220.3212274-5-gahing@gahingwoo.com/",
     "date": "2026-07-17",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（gahingwoo.com）",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Jiaxing Hu",
     "email": "gahing@gahingwoo.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "处理瑞芯微 IOMMU 中固件遗留的孤立页错误。启动固件可能在驱动配置分页前让某个 bank 处于页错误激活状态，此时该 bank 既不处于停流状态又已空闲，停流检查会据此把整个 IOMMU 判为未停流，使后续等待停流完成的轮询永远无法通过。补丁识别这种页错误激活但未停流且空闲的状态，在停流检查中跳过这些 bank，因为它们没有在途事务，本身已处于静止。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717085220.3212274-5-gahing@gahingwoo.com/mbox/",
     "series_id": 1129439,
     "series_name": "accel/rocket: RK3576 NPU (RKNN) enablement",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1129439/mbox/",
-    "series_total": 9
+    "series_total": 9,
+    "table_summary": "处理瑞芯微 IOMMU 中固件遗留的孤立页错误。启动固件可能在驱动配置分页前让某个 bank 处于页错误激活状态，此时该 bank 既不处于停流状态又已空闲，停流检查会据此把整个 IOMMU 判为未停流，使后续等待停流完成的轮询永远无法通过。补丁识别这种页错误激活但未停流且空闲的状态，在停流检查中跳过这些 bank，因为它们没有在途事务，本身已处于静止。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14693245,
     "title": "[RFC,5/9] iommu/rockchip: skip orphaned-fault banks in CMD_ENABLE_STALL dispatch",
     "url": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260717085220.3212274-6-gahing@gahingwoo.com/",
     "date": "2026-07-17",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（gahingwoo.com）",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Jiaxing Hu",
     "email": "gahing@gahingwoo.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "处理瑞芯微 IOMMU 中向孤立页错误 bank 发送停流命令的问题。带有固件遗留页错误的 bank 会静默丢弃停流命令，而该命令在共享总线上还会拖慢其他 bank 进入停流状态，使其超出轮询超时。补丁在派发停流命令时跳过这类页错误激活但未停流且空闲的 bank，与停流检查中使用的跳过条件保持一致。",
     "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260717085220.3212274-6-gahing@gahingwoo.com/mbox/",
     "series_id": 1129436,
     "series_name": "accel/rocket: RK3576 NPU (RKNN) enablement",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1129436/mbox/",
-    "series_total": 9
+    "series_total": 9,
+    "table_summary": "处理瑞芯微 IOMMU 中向孤立页错误 bank 发送停流命令的问题。带有固件遗留页错误的 bank 会静默丢弃停流命令，而该命令在共享总线上还会拖慢其他 bank 进入停流状态，使其超出轮询超时。补丁在派发停流命令时跳过这类页错误激活但未停流且空闲的 bank，与停流检查中使用的跳过条件保持一致。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14695456,
@@ -271,13 +307,16 @@
     "submitter": "Daniel Paziyski",
     "email": "danielpaziyski@gmail.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "AMD IOMMU 模拟在设备表项有效且模式为 0 的直通场景下，原先无条件放行读写，忽略了设备表项中的读、写权限位。现在按这些权限位决定是否启用直通内存区域，使直通访问也受读写权限约束，符合规范要求。",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260718175208.118721-2-danielpaziyski@gmail.com/mbox/",
     "series_id": 1130126,
     "series_name": "amd_iommu: Honor DTE[IR] and DTE[IW] when DTE[Mode] is 0",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130126/mbox/",
-    "series_total": 2
+    "series_total": 2,
+    "table_summary": "AMD IOMMU 模拟在设备表项有效且模式为 0 的直通场景下，原先无条件放行读写，忽略了设备表项中的读、写权限位。现在按这些权限位决定是否启用直通内存区域，使直通访问也受读写权限约束，符合规范要求。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14697390,
@@ -291,13 +330,16 @@
     "submitter": "Bartosz Golaszewski",
     "email": "bartosz.golaszewski@oss.qualcomm.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在飞思卡尔 PAMU IOMMU 初始化中，把为动态分配平台设备设置设备树节点的方式从仅针对设备树的接口改为更通用的固件节点接口，行为不变，只是改用更高层的封装。",
     "mbox": "https://patchwork.kernel.org/project/alsa-devel/patch/20260720-pdev-set-fwnode-instead-of-of-node-v1-3-2dee93f42c54@oss.qualcomm.com/mbox/",
     "series_id": 1130708,
     "series_name": "driver core: prefer platform_device_set_fwnode()",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1130708/mbox/",
-    "series_total": 8
+    "series_total": 8,
+    "table_summary": "在飞思卡尔 PAMU IOMMU 初始化中，把为动态分配平台设备设置设备树节点的方式从仅针对设备树的接口改为更通用的固件节点接口，行为不变，只是改用更高层的封装。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14729071,
@@ -311,33 +353,39 @@
     "submitter": "Vijayanand Jitta",
     "email": "vijayanand.jitta@oss.qualcomm.com",
     "version": 4,
-    "summary": "新增支持 contiguous hint bit，扩展框架的硬件兼容性和功能覆盖范围，增强框架的功能完整性和适用范围，满足更多使用场景的需求",
+    "summary": "为 ARM LPAE 页表增加连续提示位支持：当一组连续页表项映射自然对齐的连续内存时，硬件可将其合并为单个 TLB 项，减少 TLB 占用。各页粒度对应的连续块大小会通过页大小位图上报，便于调用方按这些大小对齐分配；对连续组的局部解映射会被拒绝，保证整组一起失效。硬件存在相关缺陷时，驱动可通过一个禁用标志在运行时关闭该特性。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260804-iommu_contig_hint-v4-1-d7a47ed5db98@oss.qualcomm.com/mbox/",
     "series_id": 1139832,
     "series_name": "[v4] iommu/io-pgtable-arm: Add support for contiguous hint bit",
     "series_version": 4,
     "series_mbox": "https://patchwork.kernel.org/series/1139832/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "为 ARM LPAE 页表增加连续提示位支持：当一组连续页表项映射自然对齐的连续内存时，硬件可将其合并为单个 TLB 项，减少 TLB 占用。各页粒度对应的连续块大小会通过页大小位图上报，便于调用方按这些大小对齐分配；对连续组的局部解映射会被拒绝，保证整组一起失效。硬件存在相关缺陷时，驱动可通过一个禁用标志在运行时关闭该特性。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14702331,
     "title": "iommu/msm: limit the per-master Machine ID list",
     "url": "https://patchwork.kernel.org/project/linux-arm-msm/patch/20260722041619.17735-1-pengpeng@iscas.ac.cn/",
     "date": "2026-07-22",
-    "organization": "Individual Contributor",
+    "organization": "中国科学院软件研究所",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "handled-elsewhere",
     "submitter": "Pengpeng Hou",
     "email": "pengpeng@iscas.ac.cn",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "高通 MSM IOMMU 在解析设备树中的流 ID 时，会向每个主控对象的固定大小数组追加条目，原先没有容量检查，可能越界写入。现在数组满时返回空间不足错误，不再写出数组边界。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-msm/patch/20260722041619.17735-1-pengpeng@iscas.ac.cn/mbox/",
     "series_id": 1132123,
     "series_name": "iommu/msm: limit the per-master Machine ID list",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1132123/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "高通 MSM IOMMU 在解析设备树中的流 ID 时，会向每个主控对象的固定大小数组追加条目，原先没有容量检查，可能越界写入。现在数组满时返回空间不足错误，不再写出数组边界。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14764421,
@@ -351,13 +399,16 @@
     "submitter": "Vasant Hegde",
     "email": "vasant.hegde@amd.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "AMD 平台此前用 PASID 能力判断哪些设备必须走 IOMMU 直通模式，结果把所有支持 PASID 的设备都强制直通，范围过宽。现在改为只对 APU 中直连的 AMD 显示类 GPU 强制直通，其余支持 PASID 的设备在 DMA 转换模式下使用客户机页表，不支持 PASID 的设备使用主机页表；内存加密开启时这些 GPU 仍走重映射。",
     "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260824085821.5422-1-vasant.hegde@amd.com/mbox/",
     "series_id": 1150714,
     "series_name": "[v2] iommu/amd: Force identity mode for selected GPUs only",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1150714/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "AMD 平台此前用 PASID 能力判断哪些设备必须走 IOMMU 直通模式，结果把所有支持 PASID 的设备都强制直通，范围过宽。现在改为只对 APU 中直连的 AMD 显示类 GPU 强制直通，其余支持 PASID 的设备在 DMA 转换模式下使用客户机页表，不支持 PASID 的设备使用主机页表；内存加密开启时这些 GPU 仍走重映射。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14708713,
@@ -371,13 +422,16 @@
     "submitter": "Peter Griffin",
     "email": "peter.griffin@linaro.org",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 ARM SMMUv3 上新增设备树属性，可把进入 SMMU 的流量统一按数据访问处理，覆盖原本的指令/数据属性。该选项写入所有流表项，若硬件不支持相应覆盖能力则探测失败并报错，适用于需要强制数据属性的平台。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260724-arm-smmu-v3-instcfg-override-v1-2-e7acf4a8a525@linaro.org/mbox/",
     "series_id": 1133963,
     "series_name": "Add arm-smmu-v3 support for instcfg data override feature",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1133963/mbox/",
-    "series_total": 2
+    "series_total": 2,
+    "table_summary": "在 ARM SMMUv3 上新增设备树属性，可把进入 SMMU 的流量统一按数据访问处理，覆盖原本的指令/数据属性。该选项写入所有流表项，若硬件不支持相应覆盖能力则探测失败并报错，适用于需要强制数据属性的平台。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14716541,
@@ -391,13 +445,16 @@
     "submitter": "Pranjal Shrivastava",
     "email": "praan@google.com",
     "version": 1,
-    "summary": "迁移to use atomic poll timeout，适配新的接口规范，保持子系统与内核主线的兼容性，适应 API 和框架的演进方向",
+    "summary": "ARM SMMUv3 在发生全局错误进入服务失败模式时，会在硬中断上下文里关闭设备，而关闭流程中的寄存器同步等待可能睡眠，存在在硬中断中睡眠的问题。现改用不睡眠的原子轮询等待，使该路径在中断上下文中可以安全完成。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260728211123.1059708-1-praan@google.com/mbox/",
     "series_id": 1136195,
     "series_name": "iommu/arm-smmu-v3: Convert to use atomic poll timeout",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1136195/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "ARM SMMUv3 在发生全局错误进入服务失败模式时，会在硬中断上下文里关闭设备，而关闭流程中的寄存器同步等待可能睡眠，存在在硬中断中睡眠的问题。现改用不睡眠的原子轮询等待，使该路径在中断上下文中可以安全完成。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14719300,
@@ -411,33 +468,39 @@
     "submitter": "Nicolin Chen",
     "email": "nicolinc@nvidia.com",
     "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "NVIDIA Tegra241 的命令队列分配中，虚拟命令队列基址寄存器只保存 48 位地址，而分配出的基址可能带更高位，掩码写入会静默截断，导致硬件从错误内存取命令。现在检测到超出 48 位的基址就告警并让队列初始化失败，避免静默截断；真实硬件不会出现该情况，只有虚拟机监控器给出不匹配的地址宽度时才可能触发。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260729220329.805417-1-nicolinc@nvidia.com/mbox/",
     "series_id": 1136941,
     "series_name": "[v3] iommu/tegra241-cmdqv: Reject a VCMDQ base above the 48-bit hardware limit",
     "series_version": 3,
     "series_mbox": "https://patchwork.kernel.org/series/1136941/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "NVIDIA Tegra241 的命令队列分配中，虚拟命令队列基址寄存器只保存 48 位地址，而分配出的基址可能带更高位，掩码写入会静默截断，导致硬件从错误内存取命令。现在检测到超出 48 位的基址就告警并让队列初始化失败，避免静默截断；真实硬件不会出现该情况，只有虚拟机监控器给出不匹配的地址宽度时才可能触发。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14738849,
     "title": "[v2] intel_iommu: Expose SMPWC when SVM is enabled",
     "url": "https://patchwork.kernel.org/project/qemu-devel/patch/20260808153626.873965-1-clement.mathieu--drif@bull.com/",
     "date": "2026-08-08",
-    "organization": "Individual Contributor",
+    "organization": "Bull",
     "subsystem": "Intel VT-d",
     "status": "社区讨论中",
     "state": "handled-elsewhere",
     "submitter": "Clément MATHIEU--DRIF",
     "email": "clement.mathieu--drif@bull.com",
     "version": 2,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "QEMU 的 Intel 虚拟 IOMMU 在启用共享虚拟内存时，没有向客户机暴露可扩展模式一致性页表遍历能力，而 Linux 的共享虚拟内存依赖该能力。现在启用共享虚拟内存时一并暴露该能力，并在宿主 IOMMU 不支持时拒绝加速，避免客户机使用后出错。",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260808153626.873965-1-clement.mathieu--drif@bull.com/mbox/",
     "series_id": 1142717,
     "series_name": "[v2] intel_iommu: Expose SMPWC when SVM is enabled",
     "series_version": 2,
     "series_mbox": "https://patchwork.kernel.org/series/1142717/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "QEMU 的 Intel 虚拟 IOMMU 在启用共享虚拟内存时，没有向客户机暴露可扩展模式一致性页表遍历能力，而 Linux 的共享虚拟内存依赖该能力。现在启用共享虚拟内存时一并暴露该能力，并在宿主 IOMMU 不支持时拒绝加速，避免客户机使用后出错。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14734196,
@@ -451,13 +514,16 @@
     "submitter": "Prakash Gupta",
     "email": "prakash.gupta@oss.qualcomm.com",
     "version": 4,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 SMMU 位于电源域的系统上，故障处理函数会访问寄存器，而 Adreno SMMU 在故障风暴时关闭了停顿，SMMU 可能在掉电状态下产生故障，导致未上电的寄存器读取和 NoC 错误。现在故障处理前先获取运行时电源，未激活则忽略故障；挂起前关闭故障上报并同步中断，避免电平触发中断在掉电过程中反复触发。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260806-smmu-rpm-v4-1-8183d007331c@oss.qualcomm.com/mbox/",
     "series_id": 1141403,
     "series_name": "[v4] iommu/arm-smmu: Use pm_runtime in fault handlers",
     "series_version": 4,
     "series_mbox": "https://patchwork.kernel.org/series/1141403/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "在 SMMU 位于电源域的系统上，故障处理函数会访问寄存器，而 Adreno SMMU 在故障风暴时关闭了停顿，SMMU 可能在掉电状态下产生故障，导致未上电的寄存器读取和 NoC 错误。现在故障处理前先获取运行时电源，未激活则忽略故障；挂起前关闭故障上报并同步中断，避免电平触发中断在掉电过程中反复触发。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14743635,
@@ -484,129 +550,110 @@
     "title": "[RFC] iommu/arm-smmu-v3: Allow nested attach for PCI bridges without vDEVICE",
     "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/PA1P190MB25578C482C8A3B06A4DCC6FDDBDA2@PA1P190MB2557.EURP190.PROD.OUTLOOK.COM/",
     "date": "2026-08-14",
-    "organization": "Individual Contributor",
+    "organization": "Nebius",
     "subsystem": "ARM SMMUv3",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Dmitry Malkin",
     "email": "dma@nebius.com",
     "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
+    "summary": "在 ARM SMMUv3 上，把直通设备及其宿主 PCI 桥一起做嵌套域附加时，由于桥没有对应的虚拟设备关联，整组附加会失败，导致 VFIO 设备无法附加到用户态 IOMMU。现在允许没有虚拟设备关联的 PCI 桥跳过该要求完成附加，端点设备仍必须提供虚拟设备关联，以保留虚拟流标识处理。",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/PA1P190MB25578C482C8A3B06A4DCC6FDDBDA2@PA1P190MB2557.EURP190.PROD.OUTLOOK.COM/mbox/",
     "series_id": 1146000,
     "series_name": "[RFC] iommu/arm-smmu-v3: Allow nested attach for PCI bridges without vDEVICE",
     "series_version": 1,
     "series_mbox": "https://patchwork.kernel.org/series/1146000/mbox/",
-    "series_total": null
+    "series_total": null,
+    "table_summary": "在 ARM SMMUv3 上，把直通设备及其宿主 PCI 桥一起做嵌套域附加时，由于桥没有对应的虚拟设备关联，整组附加会失败，导致 VFIO 设备无法附加到用户态 IOMMU。现在允许没有虚拟设备关联的 PCI 桥跳过该要求完成附加，端点设备仍必须提供虚拟设备关联，以保留虚拟流标识处理。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
-    "id": 14785474,
-    "title": "[v3,2/2] iommu: apple-dart: Support specifying the DMA aperture in the DT",
-    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-iommu-apple-dart-aperture-v3-2-252ce55b7001@jannau.net/",
-    "date": "2026-09-02",
-    "organization": "Individual Contributor",
+    "id": 14777883,
+    "title": "[v2,2/2] iommu: apple-dart: Support specifying the DMA aperture in the DT",
+    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260831-iommu-apple-dart-aperture-v2-2-d16ce3770299@jannau.net/",
+    "date": "2026-08-31",
+    "organization": "归属待核实（jannau.net）",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Janne Grunau",
     "email": "j@jannau.net",
-    "version": 3,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-iommu-apple-dart-aperture-v3-2-252ce55b7001@jannau.net/mbox/",
-    "series_id": 1156420,
+    "version": 2,
+    "summary": "Apple DART 通常只允许设备使用其地址空间的一部分做 DMA，此前无法在设备树中指定这段范围。现在可通过设备树参数给出 DMA 窗口的起始和长度，驱动据此设置域孔径并限制页表映射范围；窗口可以超出 DART 的地址宽度，但不能跨越地址宽度边界或回绕。",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260831-iommu-apple-dart-aperture-v2-2-d16ce3770299@jannau.net/mbox/",
+    "series_id": 1154538,
     "series_name": "iommu: apple-dart: device specific DMA aperture support",
-    "series_version": 3,
-    "series_mbox": "https://patchwork.kernel.org/series/1156420/mbox/",
-    "series_total": 2
+    "series_version": 2,
+    "series_mbox": "https://patchwork.kernel.org/series/1154538/mbox/",
+    "series_total": 2,
+    "table_summary": "Apple DART 通常只允许设备使用其地址空间的一部分做 DMA，此前无法在设备树中指定这段范围。现在可通过设备树参数给出 DMA 窗口的起始和长度，驱动据此设置域孔径并限制页表映射范围；窗口可以超出 DART 的地址宽度，但不能跨越地址宽度边界或回绕。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": 14771390,
     "title": "[v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks",
     "url": "https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/",
     "date": "2026-08-27",
-    "organization": "Individual Contributor",
+    "organization": "EPAM",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "new",
     "submitter": "Mykola Kvach",
     "email": "mykola_kvach@epam.com",
     "version": 12,
-    "summary": "实现suspend/resume callbacks，完善缺失的功能接口，完善子系统的功能完备性，确保与硬件平台和上层框架的正确协同",
+    "summary": "为 R-Car H3 等平台上的 IPMMU 驱动实现系统挂起与恢复。挂起时保存活动的上下文寄存器和微 TLB 配置，恢复时先还原根 IPMMU 的上下文状态，再还原缓存 IPMMU 的微 TLB，避免缓存单元先于根上下文恢复而读到过期或未初始化的上下文状态。",
     "mbox": "https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/mbox/",
     "series_id": 1152678,
     "series_name": "Add initial Xen Suspend-to-RAM support on ARM64",
     "series_version": 12,
     "series_mbox": "https://patchwork.kernel.org/series/1152678/mbox/",
-    "series_total": 13
-  },
-  {
-    "id": 14781126,
-    "title": "iommu/exynos: Initialize lock before requesting IRQ",
-    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260901130527.3289245-1-runyu.xiao@seu.edu.cn/",
-    "date": "2026-09-01",
-    "organization": "Individual Contributor",
-    "subsystem": "IOMMU Core",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Runyu Xiao",
-    "email": "runyu.xiao@seu.edu.cn",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260901130527.3289245-1-runyu.xiao@seu.edu.cn/mbox/",
-    "series_id": 1155355,
-    "series_name": "iommu/exynos: Initialize lock before requesting IRQ",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1155355/mbox/",
-    "series_total": null
-  },
-  {
-    "id": 14796848,
-    "title": "iommu/arm-smmu-v3-sva: Relax ASID requirements",
-    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907154928.4012151-1-smostafa@google.com/",
-    "date": "2026-09-07",
-    "organization": "Google",
-    "subsystem": "ARM SMMUv3",
-    "status": "社区讨论中",
-    "state": "new",
-    "submitter": "Mostafa Saleh",
-    "email": "smostafa@google.com",
-    "version": 1,
-    "summary": "修改对代码进行调整和优化，修正细节问题或适应内核框架的变更，持续改进代码质量和功能完备性",
-    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907154928.4012151-1-smostafa@google.com/mbox/",
-    "series_id": 1159877,
-    "series_name": "iommu/arm-smmu-v3-sva: Relax ASID requirements",
-    "series_version": 1,
-    "series_mbox": "https://patchwork.kernel.org/series/1159877/mbox/",
-    "series_total": null
+    "series_total": 13,
+    "table_summary": "为 R-Car H3 等平台上的 IPMMU 驱动实现系统挂起与恢复。挂起时保存活动的上下文寄存器和微 TLB 配置，恢复时先还原根 IPMMU 的上下文状态，再还原缓存 IPMMU 的微 TLB，避免缓存单元先于根上下文恢复而读到过期或未初始化的上下文状态。",
+    "table_summary_source": "llm-mail-batch",
+    "summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "Hyper-V: Add para-virtualized IOMMU support for Linux guests",
-    "url": "https://patchwork.kernel.org/project/linux-pci/patch/20260904075512.174154-5-zhangyu1@linux.microsoft.com/",
-    "date": "2026-09-04",
-    "date_end": "2026-09-04",
+    "url": "https://patchwork.kernel.org/project/linux-pci/patch/20260821132654.211730-5-zhangyu1@linux.microsoft.com/",
+    "date": "2026-08-21",
+    "date_end": "2026-08-21",
     "organization": "Microsoft",
     "subsystem": "IOMMU Core",
-    "status": "社区讨论中",
+    "status": "已关闭",
     "state": "series",
     "submitter": "Yu Zhang",
-    "version": 5,
+    "email": "zhangyu1@linux.microsoft.com",
+    "authors": [
+      {
+        "name": "Yu Zhang",
+        "email": "zhangyu1@linux.microsoft.com"
+      }
+    ],
+    "version": 4,
     "summary": "iommu/hyperv 中新增 para-virtualized IOMMU support for Hyper-V guest、iommu/hyperv 中新增 page-selective IOTLB flush support，并iommu/x86 中新增 architectural MSI reserved region helper。",
     "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260904075512.174154-5-zhangyu1@linux.microsoft.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1157684/mbox/",
+    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260821132654.211730-5-zhangyu1@linux.microsoft.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1149813/mbox/",
     "is_cover_letter": true,
-    "series_id": 1157684,
+    "series_id": 1149813,
     "patch_count": 3,
     "series_total": 5,
     "qualified_count": 1,
     "qualified_titles": [
-      "[v5,4/5] iommu/hyperv: Add para-virtualized IOMMU support for Hyper-V guest"
+      "[v4,4/5] iommu/hyperv: Add para-virtualized IOMMU support for Hyper-V guest"
     ],
     "member_titles": [
-      "[v5,4/5] iommu/hyperv: Add para-virtualized IOMMU support for Hyper-V guest",
-      "[v5,5/5] iommu/hyperv: Add page-selective IOTLB flush support",
-      "[v5,3/5] iommu/x86: Add architectural MSI reserved region helper"
+      "[v4,4/5] iommu/hyperv: Add para-virtualized IOMMU support for Hyper-V guest",
+      "[v4,5/5] iommu/hyperv: Add page-selective IOTLB flush support",
+      "[v4,3/5] iommu/x86: Add architectural MSI reserved region helper"
+    ],
+    "member_ids": [
+      14761625,
+      14761626,
+      14761624
     ],
     "qualified_has_more": false
   },
@@ -621,9 +668,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Nicolin Chen",
+    "email": "nicolinc@nvidia.com",
+    "authors": [
+      {
+        "name": "Nicolin Chen",
+        "email": "nicolinc@nvidia.com"
+      }
+    ],
     "version": 5,
-    "summary": "将 gdev->blocked from bool 转换为 enum gdev_blocked、避免 rb_erase() a never-inserted stream node、Skip remaining GERROR causes on SFM、Mark ATC invalidate timeouts via lockless bitmap，并传递 in reset result to pci_dev_reset_iommu_done()。",
-    "summary_source": "fallback",
+    "summary": "这组补丁处理 ARM SMMUv3 在地址转换缓存失效超时后的设备隔离：重置探测不再无故挂起 IOMMU，重置失败时设备保持阻断而不恢复地址转换，避免残留缓存项造成内存破坏；同时修复流表节点误删、服务失败模式下继续处理其他错误、命令队列错误与同步超时的记录，并让超时命令能定位到对应设备以便隔离。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/05da17325cf02758fb0eb3bde34c8ef2a22decbe.1783044582.git.nicolinc@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1120844/mbox/",
     "is_cover_letter": true,
@@ -651,7 +705,23 @@
       "[v5,13/18] iommu/arm-smmu-v3: Add streams_lock for atomic-context SID->master lookup",
       "[v5,17/18] iommu/arm-smmu-v3: Thread arm_smmu_master_domain on a per-master list"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14660748,
+      14660749,
+      14660751,
+      14660752,
+      14660753,
+      14660754,
+      14660755,
+      14660756,
+      14660757,
+      14660758,
+      14660759,
+      14660760
+    ],
+    "qualified_has_more": false,
+    "table_summary": "这组补丁处理 ARM SMMUv3 在地址转换缓存失效超时后的设备隔离：重置探测不再无故挂起 IOMMU，重置失败时设备保持阻断而不恢复地址转换，避免残留缓存项造成内存破坏；同时修复流表节点误删、服务失败模式下继续处理其他错误、命令队列错误与同步超时的记录，并让超时命令能定位到对应设备以便隔离。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -664,9 +734,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Nicolin Chen",
+    "email": "nicolinc@nvidia.com",
+    "authors": [
+      {
+        "name": "Nicolin Chen",
+        "email": "nicolinc@nvidia.com"
+      }
+    ],
     "version": 2,
-    "summary": "Publish an LVCMDQ only（在 it is fully initialized 后）、Synchronize the error ISR against VINTF (de)init、Free the error IRQ（在 tearing down VINTFs 前）、拒绝 a vSID wider than the SID_MATCH field，并避免 fall back to a freed smmu（在 devm_krealloc() 后）。",
-    "summary_source": "fallback",
+    "summary": "针对 Tegra241 的 CMDQV 硬件，修复错误中断与虚拟接口生命周期之间的竞态：命令队列在完全初始化前就被发布，错误中断可能读到空指针或已释放对象；虚拟接口销毁与中断处理未同步，可能读到半清除的槽位或已释放对象；错误映射索引越界会读越界；探测阶段中断过早注册会遍历未初始化数组；移除时先拆虚拟接口后释放中断也会读到失效指针。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/3e0d9156cd7ade5a5ee0b9a63a326dc324866ddf.1784059577.git.nicolinc@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1127739/mbox/",
     "is_cover_letter": true,
@@ -694,7 +771,22 @@
       "[v2,10/11] iommu/tegra241-cmdqv: Warn on a VCMDQ base above the 48-bit hardware limit",
       "[v2,09/11] iommu/tegra241-cmdqv: Fix VINTF0 leak on the init-failure path"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14687661,
+      14687663,
+      14687660,
+      14687665,
+      14687664,
+      14687669,
+      14687662,
+      14687659,
+      14687667,
+      14687666,
+      14687668
+    ],
+    "qualified_has_more": false,
+    "table_summary": "针对 Tegra241 的 CMDQV 硬件，修复错误中断与虚拟接口生命周期之间的竞态：命令队列在完全初始化前就被发布，错误中断可能读到空指针或已释放对象；虚拟接口销毁与中断处理未同步，可能读到半清除的槽位或已释放对象；错误映射索引越界会读越界；探测阶段中断过早注册会遍历未初始化数组；移除时先拆虚拟接口后释放中断也会读到失效指针。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -707,9 +799,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Michael S. Tsirkin",
+    "email": "mst@redhat.com",
+    "authors": [
+      {
+        "name": "Michael S. Tsirkin",
+        "email": "mst@redhat.com"
+      }
+    ],
     "version": 1,
-    "summary": "修复 opcode reported in invalid command handling、intel_iommu 中Correctly set pt bit in extended capability register、Decode XT interrupt control register without bitfields、修复 endianness handling for command buffer entries，并Return int from page walk status helpers。",
-    "summary_source": "fallback",
+    "summary": "修正 AMD 与 Intel 虚拟化 IO 设备模拟中的若干缺陷：非法命令记录时取错命令字导致跟踪与事件日志中的操作码不符，Intel 设备把页表支持位放错寄存器，中断控制寄存器与中断重映射表项改用与主机字节序无关的方式解析，命令缓冲区与事件日志按小端读写，页表遍历辅助函数返回类型改为有符号整数以消除类型不匹配告警。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/0611d393031f9941fcfaf3f17c3ac2b7a0ea00d1.1783261895.git.mst@redhat.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1121809/mbox/",
     "is_cover_letter": true,
@@ -731,7 +830,17 @@
       "[PULL,02/44] amd_iommu: Return int from page walk status helpers",
       "[PULL,04/44] amd_iommu: Decode IRTEs without bitfields"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14664569,
+      14664573,
+      14664580,
+      14664583,
+      14664596,
+      14664604
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修正 AMD 与 Intel 虚拟化 IO 设备模拟中的若干缺陷：非法命令记录时取错命令字导致跟踪与事件日志中的操作码不符，Intel 设备把页表支持位放错寄存器，中断控制寄存器与中断重映射表项改用与主机字节序无关的方式解析，命令缓冲区与事件日志按小端读写，页表遍历辅助函数返回类型改为有符号整数以消除类型不匹配告警。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -744,9 +853,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Anna Maniscalco",
+    "email": "anna.maniscalco2000@gmail.com",
+    "authors": [
+      {
+        "name": "Anna Maniscalco",
+        "email": "anna.maniscalco2000@gmail.com"
+      }
+    ],
     "version": 1,
-    "summary": "iommu: arm-smmu-qcom 中Configure lpac device（携带 split address space），并iommu: arm-smmu-qcom 中Fixed mapping between sid and cb for gpu and lpac。",
-    "summary_source": "fallback",
+    "summary": "为高通 a7xx 系列 GPU 启用 LPAC 低优先级队列：此前 GPU 的 SID 0 和 1 共用同一地址空间，LPAC 无法独立更新页表。现在把 SID 1 拆到独立的 LPAC 设备节点，为其分配独立上下文和地址空间，配置固件访问窗口，并新增 LPAC 环的初始化、提交队列接口和崩溃转储信息，使 GPU 能通过独立环提交低优先级任务。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/dri-devel/patch/20260705-descriptive-name-lpac-upstream-v1-1-01d50c3e0c99@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1121879/mbox/",
     "is_cover_letter": true,
@@ -761,7 +877,13 @@
       "[RFC,01/13] iommu: arm-smmu-qcom: Configure lpac device with split address space",
       "[RFC,07/13] iommu: arm-smmu-qcom: Fixed mapping between sid and cb for gpu and lpac"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14664752,
+      14664758
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为高通 a7xx 系列 GPU 启用 LPAC 低优先级队列：此前 GPU 的 SID 0 和 1 共用同一地址空间，LPAC 无法独立更新页表。现在把 SID 1 拆到独立的 LPAC 设备节点，为其分配独立上下文和地址空间，配置固件访问窗口，并新增 LPAC 环的初始化、提交队列接口和崩溃转储信息，使 GPU 能通过独立环提交低优先级任务。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -774,9 +896,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Nicolin Chen",
+    "email": "nicolinc@nvidia.com",
+    "authors": [
+      {
+        "name": "Nicolin Chen",
+        "email": "nicolinc@nvidia.com"
+      }
+    ],
     "version": 2,
-    "summary": "iommufd/viommu 中Release the igroup lock on the vdevice_size error path、iommufd/viommu 中Publish a vDEVICE only（在 vdevice_init() succeeds 后），并iommu/arm-smmu-v3-iommufd 中Require exactly one Stream ID for a vDEVICE。",
-    "summary_source": "fallback",
+    "summary": "修复 iommufd 虚拟设备分配的生命周期问题：驱动校验失败时未释放组锁，会让该组后续虚拟设备操作死锁；虚拟设备在驱动初始化成功前就加入查找表，并发的失效操作可能命中一个本应被拒绝的设备；ARM SMMUv3 把客户机虚拟流 ID 映射到设备首个物理流 ID，多流设备其余流不会被失效覆盖，无流设备则越界读取。现在修正解锁路径、初始化成功后再发布，并要求设备恰好一个流 ID。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/e903f775d491296a525097e2a90b3eb6a47cf2ef.1783311134.git.nicolinc@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1122017/mbox/",
     "is_cover_letter": true,
@@ -793,48 +922,73 @@
       "[v2,2/3] iommufd/viommu: Publish a vDEVICE only after vdevice_init() succeeds",
       "[v2,3/3] iommu/arm-smmu-v3-iommufd: Require exactly one Stream ID for a vDEVICE"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14665332,
+      14665333,
+      14665334
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 iommufd 虚拟设备分配的生命周期问题：驱动校验失败时未释放组锁，会让该组后续虚拟设备操作死锁；虚拟设备在驱动初始化成功前就加入查找表，并发的失效操作可能命中一个本应被拒绝的设备；ARM SMMUv3 把客户机虚拟流 ID 映射到设备首个物理流 ID，多流设备其余流不会被失效覆盖，无流设备则越界读取。现在修正解锁路径、初始化成功后再发布，并要求设备恰好一个流 ID。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "Organize the SMMUv3 invalidation flow so iommupt can use it",
-    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/5-v5-b810cf379bfc+13d738-smmu_tlbi_jgg@nvidia.com/",
-    "date": "2026-09-01",
-    "date_end": "2026-09-01",
+    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/4-v4-1802653d8886+492-smmu_tlbi_jgg@nvidia.com/",
+    "date": "2026-08-05",
+    "date_end": "2026-08-05",
     "organization": "NVIDIA",
     "subsystem": "ARM SMMUv3",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jason Gunthorpe",
-    "version": 5,
-    "summary": "iommu/arm-smmu-v3 中保持 track in the arm_smmu_invs if RIL is used、iommu/arm-smmu-v3 中Precompute the invalidation commands、iommu/arm-smmu-v3 中支持 the DS expansion of RIL's SCALE、iommu/arm-smmu-v3 中Populate the tlbi at the top of the call chain，并iommu/arm-smmu-v3 中传递 the parameters for the invalidation in a struct。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/5-v5-b810cf379bfc+13d738-smmu_tlbi_jgg@nvidia.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1155560/mbox/",
+    "email": "jgg@nvidia.com",
+    "authors": [
+      {
+        "name": "Jason Gunthorpe",
+        "email": "jgg@nvidia.com"
+      }
+    ],
+    "version": 4,
+    "summary": "重整 ARM SMMUv3 的失效流程，为后续接入通用页表失效方案做准备。把失效参数集中到结构体传递，把页粒度从失效描述中移出改为域属性，并预先算好失效命令、在调用链顶端填充描述。范围失效改为按延迟优先，尽量用单条命令覆盖整个区间，仅在检测到半虚拟化环境时才精确失效；同时支持 DS 扩展后 SCALE 上限提高到 39。",
+    "summary_source": "llm-mail-batch",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/4-v4-1802653d8886+492-smmu_tlbi_jgg@nvidia.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1140999/mbox/",
     "is_cover_letter": true,
-    "series_id": 1155560,
-    "patch_count": 9,
-    "series_total": 9,
-    "qualified_count": 9,
+    "series_id": 1140999,
+    "patch_count": 8,
+    "series_total": 8,
+    "qualified_count": 8,
     "qualified_titles": [
-      "[v5,5/9] iommu/arm-smmu-v3: Keep track in the arm_smmu_invs if RIL is used",
-      "[v5,6/9] iommu/arm-smmu-v3: Precompute the invalidation commands",
-      "[v5,9/9] iommu/arm-smmu-v3: Support the DS expansion of RIL's SCALE",
-      "[v5,7/9] iommu/arm-smmu-v3: Populate the tlbi at the top of the call chain",
-      "[v5,2/9] iommu/arm-smmu-v3: Pass the parameters for the invalidation in a struct"
+      "[v4,4/8] iommu/arm-smmu-v3: Keep track in the arm_smmu_invs if RIL is used",
+      "[v4,5/8] iommu/arm-smmu-v3: Precompute the invalidation commands",
+      "[v4,8/8] iommu/arm-smmu-v3: Support the DS expansion of RIL's SCALE",
+      "[v4,6/8] iommu/arm-smmu-v3: Populate the tlbi at the top of the call chain",
+      "[v4,1/8] iommu/arm-smmu-v3: Pass the parameters for the invalidation in a struct"
     ],
     "member_titles": [
-      "[v5,5/9] iommu/arm-smmu-v3: Keep track in the arm_smmu_invs if RIL is used",
-      "[v5,6/9] iommu/arm-smmu-v3: Precompute the invalidation commands",
-      "[v5,9/9] iommu/arm-smmu-v3: Support the DS expansion of RIL's SCALE",
-      "[v5,7/9] iommu/arm-smmu-v3: Populate the tlbi at the top of the call chain",
-      "[v5,2/9] iommu/arm-smmu-v3: Pass the parameters for the invalidation in a struct",
-      "[v5,4/9] iommu/arm-smmu-v3: Optimize range invalidation for latency",
-      "[v5,3/9] iommu/arm-smmu-v3: Move pgsize out of arm_smmu_inv",
-      "[v5,8/9] iommu/arm-smmu-v3: Change how the tlbi describes the invalidation",
-      "[v5,1/9] iommu/arm-smmu-v3: Handle ARM erratum for CONT under invalidation with SVA"
+      "[v4,4/8] iommu/arm-smmu-v3: Keep track in the arm_smmu_invs if RIL is used",
+      "[v4,5/8] iommu/arm-smmu-v3: Precompute the invalidation commands",
+      "[v4,8/8] iommu/arm-smmu-v3: Support the DS expansion of RIL's SCALE",
+      "[v4,6/8] iommu/arm-smmu-v3: Populate the tlbi at the top of the call chain",
+      "[v4,1/8] iommu/arm-smmu-v3: Pass the parameters for the invalidation in a struct",
+      "[v4,3/8] iommu/arm-smmu-v3: Optimize range invalidation for latency",
+      "[v4,2/8] iommu/arm-smmu-v3: Move pgsize out of arm_smmu_inv",
+      "[v4,7/8] iommu/arm-smmu-v3: Change how the tlbi describes the invalidation"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14732926,
+      14732953,
+      14732924,
+      14732925,
+      14732927,
+      14732928,
+      14732930,
+      14732929
+    ],
+    "qualified_has_more": true,
+    "table_summary": "重整 ARM SMMUv3 的失效流程，为后续接入通用页表失效方案做准备。把失效参数集中到结构体传递，把页粒度从失效描述中移出改为域属性，并预先算好失效命令、在调用链顶端填充描述。范围失效改为按延迟优先，尽量用单条命令覆盖整个区间，仅在检测到半虚拟化环境时才精确失效；同时支持 DS 扩展后 SCALE 上限提高到 39。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -847,9 +1001,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jason Gunthorpe",
+    "email": "jgg@nvidia.com",
+    "authors": [
+      {
+        "name": "Jason Gunthorpe",
+        "email": "jgg@nvidia.com"
+      }
+    ],
     "version": 2,
-    "summary": "iommupt 中移除 the sanity check for pt_num_items_lg2() at the top level、iommu/arm-smmu-v3 中移除 io-pgtable-arm from sva.c、iommupt/kunit 中Skip test configs without supported features、iommu/arm-smmu-v3 中将 the DMA API comment 移到 flush_iotlb_all，并移除 pgsize from iommu_iotlb_gather。",
-    "summary_source": "fallback",
+    "summary": "让 ARM SMMUv3 改用通用 IOMMU 页表实现，替换原有的 io-pgtable-arm：新增 ARMv8 64 位页表格式，支持连续页、多级叶页、可变顶层、脏位跟踪和软件位，并补齐脏位回写与 IOMMU 专用接口。切换后失效改为通过收集器直接下发，取消单独的刷新回调，同时移除顶层项数校验和收集结构中的页大小字段。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/1-v2-563ee63886f0+1209-iommupt_armv8_jgg@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1144965/mbox/",
     "is_cover_letter": true,
@@ -875,7 +1036,20 @@
       "[v2,5/9] iommupt/armv8: Implement the iommu specific components",
       "[v2,3/9] iommupt/armv8: Add the 64 bit ARMv8 page table format"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14746733,
+      14746734,
+      14746740,
+      14746738,
+      14746735,
+      14746741,
+      14746736,
+      14746737,
+      14746739
+    ],
+    "qualified_has_more": false,
+    "table_summary": "让 ARM SMMUv3 改用通用 IOMMU 页表实现，替换原有的 io-pgtable-arm：新增 ARMv8 64 位页表格式，支持连续页、多级叶页、可变顶层、脏位跟踪和软件位，并补齐脏位回写与 IOMMU 专用接口。切换后失效改为通过收集器直接下发，取消单独的刷新回调，同时移除顶层项数校验和收集结构中的页大小字段。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -884,13 +1058,20 @@
     "date": "2026-08-30",
     "date_end": "2026-08-30",
     "organization": "NVIDIA",
-    "subsystem": "ARM SMMUv3",
+    "subsystem": "IOMMUFD",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Nicolin Chen",
+    "email": "nicolinc@nvidia.com",
+    "authors": [
+      {
+        "name": "Nicolin Chen",
+        "email": "nicolinc@nvidia.com"
+      }
+    ],
     "version": 6,
-    "summary": "iommufd/selftest 中将 cache invalidation mocks 转换为 the core array loop、Iterate the cache invalidation array in the core、iommu/arm-smmu-v3-iommufd 中拒绝 unsupported bits in invalidation commands、iommu/vt-d 中将 nested cache invalidation 转换为 the core array loop，并iommu/arm-smmu-v3-iommufd 中将 cache invalidation 转换为 the core array loop。",
-    "summary_source": "fallback",
+    "summary": "把缓存失效请求数组的遍历从各驱动上移到 iommufd 核心，并收紧 Arm SMMUv3 对来宾失效命令的校验。此前每个驱动各自遍历整个数组并自行处理分批，SMMUv3 只校验虚拟机和流标识就把命令原样转发，来宾可设置宿主未打算转发的保留位，使命令被判为非法；转换失败时还会上报尚未真正下发的命令，导致用户空间跳过未执行的失效。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/535f3b97e16c437f1df0c988a96229f623142ee9.1788127877.git.nicolinc@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1154010/mbox/",
     "is_cover_letter": true,
@@ -912,7 +1093,16 @@
       "[v6,5/5] iommu/vt-d: Convert nested cache invalidation to the core array loop",
       "[v6,4/5] iommu/arm-smmu-v3-iommufd: Convert cache invalidation to the core array loop"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14775697,
+      14775699,
+      14775700,
+      14775701,
+      14775698
+    ],
+    "qualified_has_more": false,
+    "table_summary": "把缓存失效请求数组的遍历从各驱动上移到 iommufd 核心，并收紧 Arm SMMUv3 对来宾失效命令的校验。此前每个驱动各自遍历整个数组并自行处理分批，SMMUv3 只校验虚拟机和流标识就把命令原样转发，来宾可设置宿主未打算转发的保留位，使命令被判为非法；转换失败时还会上报尚未真正下发的命令，导致用户空间跳过未执行的失效。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -925,9 +1115,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Sairaj Kodilkar",
+    "email": "sarunkod@amd.com",
+    "authors": [
+      {
+        "name": "Sairaj Kodilkar",
+        "email": "sarunkod@amd.com"
+      }
+    ],
     "version": 4,
-    "summary": "iommu/amd 中提供 kernel command line option to enable GAPPI、iommu/amd: KVM: SVM 中将 cpu 重命名为 apicid in IOMMU interface、iommu/amd: KVM: SVM 中将 ga_log_intr 重命名为 wakeup_intr in IOMMU interface、iommu/amd: KVM: SVM 中新增 explicit vCPU running state to IOMMU interface，并iommu/amd 中Program guest-mode IRTEs for GAPPI wakeup（当 IRTE[IsRun] = 0 时）。",
-    "summary_source": "fallback",
+    "summary": "为 AMD IOMMU 增加 GAPPI 唤醒机制：此前非运行状态 vCPU 的设备中断靠 GA 日志通知主机，现在可在支持该特性的硬件上改用物理 APIC 中断直接通知主机，同时仍更新客户机虚拟 APIC。为此把接口中的 CPU 字段改名为 APIC ID、把 GA 日志标志改名为唤醒标志，并显式传入 vCPU 运行状态；该功能默认关闭，需内核参数启用，未启用时回退到原有 GA 日志路径。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260821055611.27138-8-sarunkod@amd.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1149482/mbox/",
     "is_cover_letter": true,
@@ -948,7 +1145,16 @@
       "[v4,3/7] iommu/amd: KVM: SVM: Add explicit vCPU running state to IOMMU interface",
       "[v4,4/7] iommu/amd: Program guest-mode IRTEs for GAPPI wakeup when IRTE[IsRun] = 0"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14760274,
+      14760268,
+      14760269,
+      14760270,
+      14760271
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 AMD IOMMU 增加 GAPPI 唤醒机制：此前非运行状态 vCPU 的设备中断靠 GA 日志通知主机，现在可在支持该特性的硬件上改用物理 APIC 中断直接通知主机，同时仍更新客户机虚拟 APIC。为此把接口中的 CPU 字段改名为 APIC ID、把 GA 日志标志改名为唤醒标志，并显式传入 vCPU 运行状态；该功能默认关闭，需内核参数启用，未启用时回退到原有 GA 日志路径。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -961,9 +1167,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Ashish Mhetre",
+    "email": "amhetre@nvidia.com",
+    "authors": [
+      {
+        "name": "Ashish Mhetre",
+        "email": "amhetre@nvidia.com"
+      }
+    ],
     "version": 9,
-    "summary": "抽出 CMDQ batch force-sync conditions、启用 CFGI/TLBI-repeat workaround on Tegra264、新增 CFGI/TLBI-repeat workaround，并iommu/arm-smmu-v3-iommufd 中Report CFGI/TLBI-repeat erratum。",
-    "summary_source": "fallback",
+    "summary": "针对 Tegra264 的 SMMU 勘误：TLB 表项在并发访问下可能躲过失效操作，硬件建议每条失效命令连同同步命令执行两遍。现在新增重复执行机制，仅对失效类命令生效、不重复地址转换缓存命令，并在设备树匹配到该芯片时启用；同时向用户空间报告该勘误，使客户机自行处理失效时主机不再重复执行，避免同一失效被执行四次。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260726081904.1408859-2-amhetre@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1134596/mbox/",
     "is_cover_letter": true,
@@ -981,7 +1194,15 @@
       "[v9,2/4] iommu/arm-smmu-v3: Add CFGI/TLBI-repeat workaround",
       "[v9,3/4] iommu/arm-smmu-v3-iommufd: Report CFGI/TLBI-repeat erratum"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14710931,
+      14710932,
+      14710930,
+      14710933
+    ],
+    "qualified_has_more": false,
+    "table_summary": "针对 Tegra264 的 SMMU 勘误：TLB 表项在并发访问下可能躲过失效操作，硬件建议每条失效命令连同同步命令执行两遍。现在新增重复执行机制，仅对失效类命令生效、不重复地址转换缓存命令，并在设备树匹配到该芯片时启用；同时向用户空间报告该勘误，使客户机自行处理失效时主机不再重复执行，避免同一失效被执行四次。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -994,9 +1215,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Nicolin Chen",
+    "email": "nicolinc@nvidia.com",
+    "authors": [
+      {
+        "name": "Nicolin Chen",
+        "email": "nicolinc@nvidia.com"
+      }
+    ],
     "version": 10,
-    "summary": "Retain CR0_SMMUEN（在 kdump device reset 期间）、iommu/arm-smmu-v3-kdump 中实现 is_attach_deferred()、Skip RMR bypass for kdump adoption、iommu/arm-smmu-v3-kdump 中Reserve crashed kernel's ASIDs and VMIDs，并新增 ARM_SMMU_OPT_KDUMP_ADOPT for kdump kernel。",
-    "summary_source": "fallback",
+    "summary": "让 kdump 内核接管崩溃内核的流表：崩溃时设备可能仍在 DMA，常规复位会中止在途传输或让其绕过 SMMU 破坏内存。现在保留 SMMU 使能位、不重写流表基址，改为映射并校验崩溃内核的流表和上下文描述符表，预留其中在用的地址空间标识，跳过保留内存区域旁路改写，并关闭事件队列和页请求队列，使在途 DMA 能继续按旧页表完成后再由驱动接管。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/8280230c0906b4c62635c5eb2760bd0e25bbd1d1.1788130528.git.nicolinc@nvidia.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1154016/mbox/",
     "is_cover_letter": true,
@@ -1026,38 +1254,68 @@
       "[v10,04/13] iommu/arm-smmu-v3: Disable the EVTQ and the PRIQ in a kdump kernel",
       "[v10,03/13] iommu/arm-smmu-v3: Add ARM_SMMU_FEAT_EVTQ for the event queue"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14775730,
+      14775733,
+      14775725,
+      14775729,
+      14775723,
+      14775732,
+      14775731,
+      14775726,
+      14775724,
+      14775721,
+      14775722,
+      14775727,
+      14775728
+    ],
+    "qualified_has_more": true,
+    "table_summary": "让 kdump 内核接管崩溃内核的流表：崩溃时设备可能仍在 DMA，常规复位会中止在途传输或让其绕过 SMMU 破坏内存。现在保留 SMMU 使能位、不重写流表基址，改为映射并校验崩溃内核的流表和上下文描述符表，预留其中在用的地址空间标识，跳过保留内存区域旁路改写，并关闭事件队列和页请求队列，使在途 DMA 能继续按旧页表完成后再由驱动接管。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "Add support for Broadcom BCM2712 IOMMU driver (Raspberry Pi 5)",
-    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-bcm2712-iommu-submit-v4-3-9dbb657578c1@reactivated.net/",
-    "date": "2026-09-02",
-    "date_end": "2026-09-02",
-    "organization": "Individual Contributor",
+    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260825-bcm2712-iommu-submit-v3-3-7f143e7289b6@reactivated.net/",
+    "date": "2026-08-25",
+    "date_end": "2026-08-25",
+    "organization": "归属待核实（reactivated.net）",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Daniel Drake",
-    "version": 4,
-    "summary": "iommu/generic_pt 中新增 Broadcom BCM2712 page table format，并新增 Broadcom BCM2712 IOMMU driver。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-bcm2712-iommu-submit-v4-3-9dbb657578c1@reactivated.net/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1156389/mbox/",
+    "email": "dan@reactivated.net",
+    "authors": [
+      {
+        "name": "Daniel Drake",
+        "email": "dan@reactivated.net"
+      }
+    ],
+    "version": 3,
+    "summary": "为树莓派 5 所用的博通 BCM2712 芯片新增 IOMMU 驱动，让显示流水线和多媒体设备的内存访问能经 IOMMU 转换。此前该芯片没有上游驱动，相关设备无法使用 IOMMU。驱动采用两级页表格式，并处理全芯片共享的二级 TLB，在修改或解除映射时刷新它；同时补充设备树节点，使图形显示模块启用 IOMMU。",
+    "summary_source": "llm-mail-batch",
+    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260825-bcm2712-iommu-submit-v3-3-7f143e7289b6@reactivated.net/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1151741/mbox/",
     "is_cover_letter": true,
-    "series_id": 1156389,
+    "series_id": 1151741,
     "patch_count": 2,
     "series_total": 5,
     "qualified_count": 2,
     "qualified_titles": [
-      "[v4,3/5] iommu/generic_pt: Add Broadcom BCM2712 page table format",
-      "[v4,4/5] iommu: Add Broadcom BCM2712 IOMMU driver"
+      "[v3,3/5] iommu/generic_pt: Add Broadcom BCM2712 page table format",
+      "[v3,4/5] iommu: Add Broadcom BCM2712 IOMMU driver"
     ],
     "member_titles": [
-      "[v4,3/5] iommu/generic_pt: Add Broadcom BCM2712 page table format",
-      "[v4,4/5] iommu: Add Broadcom BCM2712 IOMMU driver"
+      "[v3,3/5] iommu/generic_pt: Add Broadcom BCM2712 page table format",
+      "[v3,4/5] iommu: Add Broadcom BCM2712 IOMMU driver"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14767853,
+      14767855
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为树莓派 5 所用的博通 BCM2712 芯片新增 IOMMU 驱动，让显示流水线和多媒体设备的内存访问能经 IOMMU 转换。此前该芯片没有上游驱动，相关设备无法使用 IOMMU。驱动采用两级页表格式，并处理全芯片共享的二级 TLB，在修改或解除映射时刷新它；同时补充设备树节点，使图形显示模块启用 IOMMU。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1065,14 +1323,21 @@
     "url": "https://patchwork.kernel.org/project/linux-kselftest/patch/20260714130657.46963-2-zhangzhanpeng.jasper@bytedance.com/",
     "date": "2026-07-14",
     "date_end": "2026-07-14",
-    "organization": "Individual Contributor",
-    "subsystem": "RISC-V IOMMU",
+    "organization": "ByteDance",
+    "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Zhanpeng Zhang",
+    "email": "zhangzhanpeng.jasper@bytedance.com",
+    "authors": [
+      {
+        "name": "Zhanpeng Zhang",
+        "email": "zhangzhanpeng.jasper@bytedance.com"
+      }
+    ],
     "version": 1,
-    "summary": "新增 group lookup by ID、新增 checked group device update helper、iommu/riscv 中Program QoS IDs for assigned groups，并iommu/riscv 中暴露 global QoS IDs in sysfs。",
-    "summary_source": "fallback",
+    "summary": "为 RISC-V IOMMU 增加服务质量标识支持，让 resctrl 能把设备组分配到资源组并据此设置 RCID 和 MCID。此前 resctrl 只能管理任务，无法把外部设备请求方纳入资源控制。新增设备分配接口和每 IOMMU 全局标识的 sysfs 属性，分配前会校验所有成员，校验失败则不改动硬件。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-kselftest/patch/20260714130657.46963-2-zhangzhanpeng.jasper@bytedance.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1127440/mbox/",
     "is_cover_letter": true,
@@ -1091,7 +1356,15 @@
       "[RFC,4/7] iommu/riscv: Program QoS IDs for assigned groups",
       "[RFC,5/7] iommu/riscv: Expose global QoS IDs in sysfs"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14686430,
+      14686431,
+      14686433,
+      14686434
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 RISC-V IOMMU 增加服务质量标识支持，让 resctrl 能把设备组分配到资源组并据此设置 RCID 和 MCID。此前 resctrl 只能管理任务，无法把外部设备请求方纳入资源控制。新增设备分配接口和每 IOMMU 全局标识的 sysfs 属性，分配前会校验所有成员，校验失败则不改动硬件。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1104,9 +1377,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Mostafa Saleh",
+    "email": "smostafa@google.com",
+    "authors": [
+      {
+        "name": "Mostafa Saleh",
+        "email": "smostafa@google.com"
+      }
+    ],
     "version": 7,
-    "summary": "iommu/arm-smmu-v3 中拆分 code（携带 hyp）、iommu/arm-smmu-v3 中Move TLB range invalidation into common code、iommu/arm-smmu-v3-kvm 中新增 SMMUv3 driver、iommu/arm-smmu-v3-kvm 中Probe SMMU HW，并iommu/arm-smmu-v3-kvm 中新增 MMIO emulation。",
-    "summary_source": "fallback",
+    "summary": "为受保护虚拟机场景实现运行在 EL2 的 SMMUv3 驱动，由虚拟机监控程序接管 SMMU 硬件并以陷入模拟方式向宿主内核呈现模拟设备。此前受保护模式下宿主可直接控制 SMMU，无法阻止宿主设备访问虚拟机内存。补丁让监控程序独占 SMMU 的 MMIO 和命令队列，建立影子流表、影子命令队列和影子页表，过滤并转发宿主的失效命令，从而为虚拟机建立 DMA 隔离；宿主内核侧驱动通过辅助总线探测模拟出的 SMMU，其余流程与普通驱动一致。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260715115906.2664882-4-smostafa@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1128115/mbox/",
     "is_cover_letter": true,
@@ -1140,7 +1420,28 @@
       "[v7,14/24] iommu/arm-smmu-v3-kvm: Shadow the command queue",
       "[v7,05/24] iommu/arm-smmu-v3: Move IDR parsing to common functions"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14688766,
+      14688771,
+      14688772,
+      14688773,
+      14688774,
+      14688775,
+      14688776,
+      14688777,
+      14688778,
+      14688779,
+      14688780,
+      14688781,
+      14688782,
+      14688783,
+      14688799,
+      14688923,
+      14688944
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为受保护虚拟机场景实现运行在 EL2 的 SMMUv3 驱动，由虚拟机监控程序接管 SMMU 硬件并以陷入模拟方式向宿主内核呈现模拟设备。此前受保护模式下宿主可直接控制 SMMU，无法阻止宿主设备访问虚拟机内存。补丁让监控程序独占 SMMU 的 MMIO 和命令队列，建立影子流表、影子命令队列和影子页表，过滤并转发宿主的失效命令，从而为虚拟机建立 DMA 隔离；宿主内核侧驱动通过辅助总线探测模拟出的 SMMU，其余流程与普通驱动一致。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1148,14 +1449,21 @@
     "url": "https://patchwork.kernel.org/project/linux-kselftest/patch/a7ca2d885903679dc63c85620bff72fea21f5c18.1784545391.git.dwmw@amazon.co.uk/",
     "date": "2026-07-20",
     "date_end": "2026-07-20",
-    "organization": "Individual Contributor",
+    "organization": "Infradead Community",
     "subsystem": "IOMMUFD",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "David Woodhouse",
+    "email": "dwmw2@infradead.org",
+    "authors": [
+      {
+        "name": "David Woodhouse",
+        "email": "dwmw2@infradead.org"
+      }
+    ],
     "version": 2,
-    "summary": "iommufd 中Plumb dma-buf memory-type (RAM vs MMIO) through the phys map，并iommufd 中Look up private-interconnect phys via exporter symbols。",
-    "summary_source": "fallback",
+    "summary": "为 KVM 自测程序调整 SEV 相关用例的运行条件：原先只要处理器报告支持 SEV 就无条件执行普通 SEV 子测试，但当全部 SEV 标识符都分配给 SNP 时，内核并不提供该虚拟机类型，测试会在创建虚拟机时直接中止。现在改为依据内核实际提供的虚拟机类型来决定是否运行，并在类型不可用时干净跳过，使测试在仅支持 SNP 的主机上也能正常完成其余可用模式的检查。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-kselftest/patch/a7ca2d885903679dc63c85620bff72fea21f5c18.1784545391.git.dwmw@amazon.co.uk/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1130810/mbox/",
     "is_cover_letter": true,
@@ -1171,7 +1479,13 @@
       "[RFC,v2,06/11] iommufd: Plumb dma-buf memory-type (RAM vs MMIO) through the phys map",
       "[RFC,v2,05/11] iommufd: Look up private-interconnect phys via exporter symbols"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14697872,
+      14697871
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 KVM 自测程序调整 SEV 相关用例的运行条件：原先只要处理器报告支持 SEV 就无条件执行普通 SEV 子测试，但当全部 SEV 标识符都分配给 SNP 时，内核并不提供该虚拟机类型，测试会在创建虚拟机时直接中止。现在改为依据内核实际提供的虚拟机类型来决定是否运行，并在类型不可用时干净跳过，使测试在仅支持 SNP 的主机上也能正常完成其余可用模式的检查。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1179,14 +1493,21 @@
     "url": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260718031146.3368811-5-gahing@gahingwoo.com/",
     "date": "2026-07-18",
     "date_end": "2026-07-18",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（gahingwoo.com）",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Jiaxing Hu",
+    "email": "gahing@gahingwoo.com",
+    "authors": [
+      {
+        "name": "Jiaxing Hu",
+        "email": "gahing@gahingwoo.com"
+      }
+    ],
     "version": 2,
-    "summary": "为 RK3576 RKNN NPU 启用补齐 Rockchip IOMMU 支持，包括获取设备树时钟、在启用 stall 前清除 bootloader 遗留 stale page fault，并跳过孤儿 fault bank。",
-    "summary_source": "fallback",
+    "summary": "为瑞芯微 RK3576 的 NPU 增加上游支持，使其能在 Radxa ROCK 4D 上探测、上电并跑完提交的任务。此前该芯片的 NPU 无法使用：其 IOMMU 位于额外时钟门后，寄存器写入会被丢弃，且固件遗留的页错误会让停流等待超时。补丁让 IOMMU 取用设备树列出的全部时钟、在启用停流前先确认陈旧页错误，并给电源域加上上电稳定延时和复位脉冲；NPU 驱动按芯片区分时钟、复位、电源域和完成中断方式。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260718031146.3368811-5-gahing@gahingwoo.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1129921/mbox/",
     "is_cover_letter": true,
@@ -1202,7 +1523,13 @@
       "[RFC,v2,4/8] iommu/rockchip: take all DT clocks",
       "[RFC,v2,5/8] iommu/rockchip: clear stale page faults before enabling stall"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14694965,
+      14694966
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为瑞芯微 RK3576 的 NPU 增加上游支持，使其能在 Radxa ROCK 4D 上探测、上电并跑完提交的任务。此前该芯片的 NPU 无法使用：其 IOMMU 位于额外时钟门后，寄存器写入会被丢弃，且固件遗留的页错误会让停流等待超时。补丁让 IOMMU 取用设备树列出的全部时钟、在启用停流前先确认陈旧页错误，并给电源域加上上电稳定延时和复位脉冲；NPU 驱动按芯片区分时钟、复位、电源域和完成中断方式。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1215,9 +1542,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Mukesh Ojha",
+    "email": "mukesh.ojha@oss.qualcomm.com",
+    "authors": [
+      {
+        "name": "Mukesh Ojha",
+        "email": "mukesh.ojha@oss.qualcomm.com"
+      }
+    ],
     "version": 2,
-    "summary": "修复 inverted fault report check in qcom_iommu_fault()、改用 devm_pm_runtime_enable() in qcom_iommu_device_probe()、检查 pm_runtime_resume_and_get() return in probe、修复 pgtbl_ops leak in qcom_iommu_init_domain() error path，并Publish pgtbl_ops（在 releasing init_mutex 前）。",
-    "summary_source": "fallback",
+    "summary": "修复高通 IOMMU 驱动的若干缺陷：故障上报判断写反导致已处理的故障被误报为未处理；探测时未检查运行时恢复返回值，可能在时钟未开时访问硬件；域初始化失败路径会永久泄漏页表；页表指针在解锁后才发布，并发映射可能拿到空指针而拒绝合法映射；上下文探测在时钟未开时读写寄存器。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717144608.3216274-2-mukesh.ojha@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1129668/mbox/",
     "is_cover_letter": true,
@@ -1239,7 +1573,17 @@
       "[v2,5/6] iommu/qcom: Publish pgtbl_ops before releasing init_mutex",
       "[v2,6/6] iommu/qcom: Enable clocks before hardware access in qcom_iommu_ctx_probe()"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14694002,
+      14694003,
+      14694004,
+      14694005,
+      14694006,
+      14694007
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复高通 IOMMU 驱动的若干缺陷：故障上报判断写反导致已处理的故障被误报为未处理；探测时未检查运行时恢复返回值，可能在时钟未开时访问硬件；域初始化失败路径会永久泄漏页表；页表指针在解锁后才发布，并发映射可能拿到空指针而拒绝合法映射；上下文探测在时钟未开时读写寄存器。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1252,9 +1596,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Andrew Jones",
+    "email": "andrew.jones@oss.qualcomm.com",
+    "authors": [
+      {
+        "name": "Andrew Jones",
+        "email": "andrew.jones@oss.qualcomm.com"
+      }
+    ],
     "version": 5,
-    "summary": "iommufd 中将 struct iommufd_sw_msi_maps 转换为 a growable bitmap、iommu/dma 中启用 IOMMU_DMA for 64-bit RISC-V、Reserve an MSI IOVA window for iommufd、Report cache coherency capability，并iommu/dma 中Prepare MSI physical address lists。",
-    "summary_source": "fallback",
+    "summary": "让 64 位 RISC-V 上的 IOMMU 支持 MSI 重映射、DMA 地址映射和 VFIO 设备直通。原先软件 MSI 映射数量受固定上限限制，无法为每个 CPU 建立映射，且缺少保留的 MSI 地址窗口。现在把映射表改为可增长、支持按物理地址列表建立连续映射并原子安装，为每个可能 CPU 预留一页 MSI 地址窗口，报告缓存一致性能力，并开启相关内核配置与自测。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260831145943.313726-3-andrew.jones@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1154600/mbox/",
     "is_cover_letter": true,
@@ -1282,7 +1633,22 @@
       "[v5,08/17] iommu/dma: Introduce iommu_dma_prepare_msi_list()",
       "[v5,07/17] iommufd: Prepare software MSI installation for address lists"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14778206,
+      14778217,
+      14778213,
+      14778214,
+      14778207,
+      14778208,
+      14778209,
+      14778210,
+      14778211,
+      14778212,
+      14778218
+    ],
+    "qualified_has_more": true,
+    "table_summary": "让 64 位 RISC-V 上的 IOMMU 支持 MSI 重映射、DMA 地址映射和 VFIO 设备直通。原先软件 MSI 映射数量受固定上限限制，无法为每个 CPU 建立映射，且缺少保留的 MSI 地址窗口。现在把映射表改为可增长、支持按物理地址列表建立连续映射并原子安装，为每个可能 CPU 预留一页 MSI 地址窗口，报告缓存一致性能力，并开启相关内核配置与自测。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1295,9 +1661,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Dongli Zhang",
+    "email": "dongli.zhang@oracle.com",
+    "authors": [
+      {
+        "name": "Dongli Zhang",
+        "email": "dongli.zhang@oracle.com"
+      }
+    ],
     "version": 2,
-    "summary": "Define MMIO register masks、避免 latch unsupported GA log status bits、避免 create duplicate MSI capability、调整 extended feature register read-only，并改用 full BDF（当 reporting page faults 时）。",
-    "summary_source": "fallback",
+    "summary": "修复 QEMU 中 AMD 虚拟 IOMMU 的若干问题：设备曾暴露两个 MSI 能力，现只保留一个；页错误日志此前只带设备功能号，位于根端口后的设备会被记成错误请求者，现改用完整总线号；扩展特性寄存器此前允许客户机改写第 4 位，现改为只读；客户机清除状态位时可能误置 GA 日志溢出位并反复重启 GA 日志，现不再锁存这些位。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260724223216.108667-4-dongli.zhang@oracle.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1134238/mbox/",
     "is_cover_letter": true,
@@ -1319,7 +1692,16 @@
       "[v2,4/5] amd_iommu: Make extended feature register read-only",
       "[v2,2/5] amd_iommu: Use full BDF when reporting page faults"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14709776,
+      14709778,
+      14709779,
+      14709780,
+      14709781
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 QEMU 中 AMD 虚拟 IOMMU 的若干问题：设备曾暴露两个 MSI 能力，现只保留一个；页错误日志此前只带设备功能号，位于根端口后的设备会被记成错误请求者，现改用完整总线号；扩展特性寄存器此前允许客户机改写第 4 位，现改为只读；客户机清除状态位时可能误置 GA 日志溢出位并反复重启 GA 日志，现不再锁存这些位。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1332,9 +1714,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Pranjal Shrivastava",
+    "email": "praan@google.com",
+    "authors": [
+      {
+        "name": "Pranjal Shrivastava",
+        "email": "praan@google.com"
+      }
+    ],
     "version": 9,
-    "summary": "Refactor arm_smmu_setup_irqs、新增用于 drain cmd queues 的 helper、iommu/tegra241-cmdqv 中新增用于 drain VCMDQs 的 helper、新增 CMDQ_PROD_STOP_FLAG to gate CMDQ submissions，并iommu/tegra241-cmdqv 中新增用于 quiesce VCMDQs 的 helper。",
-    "summary_source": "fallback",
+    "summary": "为 ARM SMMUv3 实现运行时和系统休眠支持，使 SMMU 在空闲时可断电。挂起前先停止接受新命令并排空命令队列，处理待上报的全局错误，缓存并恢复 MSI 配置；恢复时重置设备并还原队列状态。对英伟达 Tegra241 的虚拟命令队列也做排空和状态恢复，并补充单元测试验证挂起期间的失效命令被正确省略。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260728210928.1050849-2-praan@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1136194/mbox/",
     "is_cover_letter": true,
@@ -1363,7 +1752,23 @@
       "[v9,12/12] iommu/arm-smmu-v3: Add KUnit unit tests for Runtime PM",
       "[v9,11/12] iommu/arm-smmu-v3: Invoke pm_runtime before hw access"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14716529,
+      14716530,
+      14716531,
+      14716532,
+      14716533,
+      14716534,
+      14716535,
+      14716536,
+      14716537,
+      14716538,
+      14716539,
+      14716540
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 ARM SMMUv3 实现运行时和系统休眠支持，使 SMMU 在空闲时可断电。挂起前先停止接受新命令并排空命令队列，处理待上报的全局错误，缓存并恢复 MSI 配置；恢复时重置设备并还原队列状态。对英伟达 Tegra241 的虚拟命令队列也做排空和状态恢复，并补充单元测试验证挂起期间的失效命令被正确省略。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1376,9 +1781,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Dmitry Baryshkov",
+    "email": "dmitry.baryshkov@oss.qualcomm.com",
+    "authors": [
+      {
+        "name": "Dmitry Baryshkov",
+        "email": "dmitry.baryshkov@oss.qualcomm.com"
+      }
+    ],
     "version": 2,
-    "summary": "iommu/msm 中track a context master per device and IOMMU，并iommu/msm 中为 page table allocation 改用 the IOMMU device。",
-    "summary_source": "fallback",
+    "summary": "修复 ARM32 上使用高通 MSM IOMMU 的 GPU 和显示无法工作的问题。此前一个设备跨多个 IOMMU 时，主设备记录会错乱并可能空指针崩溃；页表还通过被附加设备的 DMA 配置分配，在 ARM32 上会经它描述的 IOMMU 反复映射自身，导致释放时崩溃。现在按设备和 IOMMU 分别跟踪主设备，改用 IOMMU 设备分配页表，并在附加自有域前先解除架构层的 DMA 映射。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260730-fix-qcom-smmu-v2-1-18e0daf2d836@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1137561/mbox/",
     "is_cover_letter": true,
@@ -1394,7 +1806,13 @@
       "[v2,1/3] iommu/msm: track a context master per device and IOMMU",
       "[v2,2/3] iommu/msm: use the IOMMU device for page table allocation"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14721209,
+      14721210
+    ],
+    "qualified_has_more": false,
+    "table_summary": "修复 ARM32 上使用高通 MSM IOMMU 的 GPU 和显示无法工作的问题。此前一个设备跨多个 IOMMU 时，主设备记录会错乱并可能空指针崩溃；页表还通过被附加设备的 DMA 配置分配，在 ARM32 上会经它描述的 IOMMU 反复映射自身，导致释放时崩溃。现在按设备和 IOMMU 分别跟踪主设备，改用 IOMMU 设备分配页表，并在附加自有域前先解除架构层的 DMA 映射。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1407,9 +1825,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Duan, Zhenzhong",
+    "email": "zhenzhong.duan@intel.com",
+    "authors": [
+      {
+        "name": "Duan, Zhenzhong",
+        "email": "zhenzhong.duan@intel.com"
+      }
+    ],
     "version": 5,
-    "summary": "intel_iommu_accel 中teardown FAULTQ resources in bottom half、intel_iommu_accel 中Guard VTDAccelPASIDCacheEntry definition、intel_iommu_accel 中Accept PRQ response for passthrough device，并intel_iommu_accel 中新增 PRQ injection for passthrough device。",
-    "summary_source": "fallback",
+    "summary": "为直通设备启用 Intel VT-d 的页请求队列支持。此前客户机在虚拟 IOMMU 中开启页请求时，主机侧可恢复缺页事件无法回传客户机。现在分配故障队列对象并注册事件处理，把主机产生的可恢复缺页转发给客户机，再把客户机的响应写回主机，同时缓存每个故障组的标识；PASID 条目失效时在底半部释放故障队列资源，避免文件引用未释放导致释放失败。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260831095200.1279366-7-zhenzhong.duan@intel.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1154373/mbox/",
     "is_cover_letter": true,
@@ -1429,7 +1854,15 @@
       "[v5,5/6] intel_iommu_accel: Accept PRQ response for passthrough device",
       "[v5,4/6] intel_iommu_accel: Add PRQ injection for passthrough device"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14777283,
+      14777284,
+      14777285,
+      14777286
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为直通设备启用 Intel VT-d 的页请求队列支持。此前客户机在虚拟 IOMMU 中开启页请求时，主机侧可恢复缺页事件无法回传客户机。现在分配故障队列对象并注册事件处理，把主机产生的可恢复缺页转发给客户机，再把客户机的响应写回主机，同时缓存每个故障组的标识；PASID 条目失效时在底半部释放故障队列资源，避免文件引用未释放导致释放失败。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1442,9 +1875,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Sairaj Kodilkar",
+    "email": "sarunkod@amd.com",
+    "authors": [
+      {
+        "name": "Sairaj Kodilkar",
+        "email": "sarunkod@amd.com"
+      }
+    ],
     "version": 2,
-    "summary": "amd_iommu 中Return empty efr for stub call、amd_iommu: acpi-build 中update PA, GVA and VA size macros，并amd_iommu: acpi-build 中移除 unsupported PPR and HE feature。",
-    "summary_source": "fallback",
+    "summary": "整理 AMD IOMMU 的 ACPI 表构建：此前 IVRS 中的设备标识只用设备号和功能号，IOMMU 挂在非零总线时会写错；特性报告硬编码且缺少地址转换相关位，还向客户机公布了硬件并不支持的预取和硬件错误特性。现在用扩展特性寄存器生成报告，按实际能力更新地址宽度，并去掉不支持的特性。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260807061250.27739-2-sarunkod@amd.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1141941/mbox/",
     "is_cover_letter": true,
@@ -1460,7 +1900,14 @@
       "[v2,3/7] amd_iommu: acpi-build: update PA, GVA and VA size macros",
       "[v2,6/7] amd_iommu: acpi-build: Remove unsupported PPR and HE feature"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14736196,
+      14736197,
+      14736201
+    ],
+    "qualified_has_more": false,
+    "table_summary": "整理 AMD IOMMU 的 ACPI 表构建：此前 IVRS 中的设备标识只用设备号和功能号，IOMMU 挂在非零总线时会写错；特性报告硬编码且缺少地址转换相关位，还向客户机公布了硬件并不支持的预取和硬件错误特性。现在用扩展特性寄存器生成报告，按实际能力更新地址宽度，并去掉不支持的特性。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1469,13 +1916,20 @@
     "date": "2026-08-08",
     "date_end": "2026-08-08",
     "organization": "Google",
-    "subsystem": "Intel VT-d",
+    "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Samiullah Khawaja",
+    "email": "skhawaja@google.com",
+    "authors": [
+      {
+        "name": "Samiullah Khawaja",
+        "email": "skhawaja@google.com"
+      }
+    ],
     "version": 4,
-    "summary": "实现 IOMMU Live update FLB callbacks、iommu/pages 中新增 APIs to preserve/unpreserve/restore iommu pages、iommupt 中实现 preserve/unpreserve/restore callbacks、实现 IOMMU domain preservation，并实现 device and IOMMU HW preservation。",
-    "summary_source": "fallback",
+    "summary": "为内核热更新保留设备的 IOMMU 页表、域标识和进程地址空间标识表，在新内核恢复地址转换并重新挂接设备；保留期间禁止修改映射或更换地址空间。已实现底层恢复，但面向用户的 IOMMU 文件接口恢复流程仍待补齐，并附带状态保留测试。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-3-skhawaja@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142491/mbox/",
     "is_cover_letter": true,
@@ -1508,7 +1962,27 @@
       "[v4,18/18] iommufd/selftest: Add test to verify iommufd preservation",
       "[v4,15/18] iommufd: Persist iommu hardware pagetables for live update"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14738429,
+      14738430,
+      14738431,
+      14738432,
+      14738433,
+      14738434,
+      14738435,
+      14738436,
+      14738437,
+      14738438,
+      14738439,
+      14738440,
+      14738442,
+      14738443,
+      14738444,
+      14738445
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为内核热更新保留设备的 IOMMU 页表、域标识和进程地址空间标识表，在新内核恢复地址转换并重新挂接设备；保留期间禁止修改映射或更换地址空间。已实现底层恢复，但面向用户的 IOMMU 文件接口恢复流程仍待补齐，并附带状态保留测试。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1521,9 +1995,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Dmitry Baryshkov",
+    "email": "dmitry.baryshkov@oss.qualcomm.com",
+    "authors": [
+      {
+        "name": "Dmitry Baryshkov",
+        "email": "dmitry.baryshkov@oss.qualcomm.com"
+      }
+    ],
     "version": 1,
-    "summary": "iommu: arm-smmu 中新增 global register definitions used by the QSMMU、extract context bank programming into a helper、支持 the short-descriptor pagetable format、handle the SMMU global register space，并支持 non-TZ-managed instances。",
-    "summary_source": "fallback",
+    "summary": "为 MSM8974 上的高通 IOMMU 实例增加支持，使该芯片的显示、视频和 GPU 能使用 IOMMU。这些实例不受可信执行环境管理，需要操作系统自行配置全局寄存器空间，且只支持短描述符页表，此前驱动硬编码 LPAE 格式导致访问全部出错。新增按实例配置、非安全模式编程、电源域崩溃后恢复上下文，并在编程上下文时暂停微 MMU 以避免与在途事务竞争。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260809-msm8974-iommu-upstream-v1-2-87f5cd492560@oss.qualcomm.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1142993/mbox/",
     "is_cover_letter": true,
@@ -1550,7 +2031,21 @@
       "[11/12] iommu: qcom_iommu: add the MSM8974 instances",
       "[10/12] iommu: qcom_iommu: program BFP (prefetch) settings"
     ],
-    "qualified_has_more": true
+    "member_ids": [
+      14739754,
+      14739755,
+      14739756,
+      14739757,
+      14739758,
+      14739759,
+      14739760,
+      14739761,
+      14739762,
+      14739763
+    ],
+    "qualified_has_more": true,
+    "table_summary": "为 MSM8974 上的高通 IOMMU 实例增加支持，使该芯片的显示、视频和 GPU 能使用 IOMMU。这些实例不受可信执行环境管理，需要操作系统自行配置全局寄存器空间，且只支持短描述符页表，此前驱动硬编码 LPAE 格式导致访问全部出错。新增按实例配置、非安全模式编程、电源域崩溃后恢复上下文，并在编程上下文时暂停微 MMU 以避免与在途事务竞争。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1563,9 +2058,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Pranjal Shrivastava",
+    "email": "praan@google.com",
+    "authors": [
+      {
+        "name": "Pranjal Shrivastava",
+        "email": "praan@google.com"
+      }
+    ],
     "version": 3,
-    "summary": "Refactor device probe and capability initialization、修复 DTE clearing and rename iommu_ignore_device()、Fail probe on ATS configuration failure，并拆分 probe error paths to preserve IRQ remapping。",
-    "summary_source": "fallback",
+    "summary": "针对 AMD IOMMU 驱动，重构设备探测流程并修复 ATS 配置问题：原先清除设备表项时用整块清零，可能与硬件读取产生撕裂写，且先清查找表导致 DMA 别名无法清除；现在改为先清有效位再清高位并同步到别名，探测失败时区分初始化失败与配置失败以保留中断重映射所需的查找表项，ATS 配置失败时直接让探测失败，并要求调用方先确认设备支持 ATS 再配置。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/20260824122347.1588592-2-praan@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1150877/mbox/",
     "is_cover_letter": true,
@@ -1582,36 +2084,56 @@
       "[v3,4/5] iommu/amd: Fail probe on ATS configuration failure",
       "[v3,3/5] iommu/amd: Split probe error paths to preserve IRQ remapping"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14765055,
+      14765056,
+      14765058,
+      14765057
+    ],
+    "qualified_has_more": false,
+    "table_summary": "针对 AMD IOMMU 驱动，重构设备探测流程并修复 ATS 配置问题：原先清除设备表项时用整块清零，可能与硬件读取产生撕裂写，且先清查找表导致 DMA 别名无法清除；现在改为先清有效位再清高位并同步到别名，探测失败时区分初始化失败与配置失败以保留中断重映射所需的查找表项，ATS 配置失败时直接让探测失败，并要求调用方先确认设备支持 ATS 再配置。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
     "title": "iommu/riscv: Fix command queue publishing races",
-    "url": "https://patchwork.kernel.org/project/linux-riscv/patch/20260901133920.14550-3-fangyu.yu@linux.alibaba.com/",
-    "date": "2026-09-01",
-    "date_end": "2026-09-01",
-    "organization": "Individual Contributor",
+    "url": "https://patchwork.kernel.org/project/linux-riscv/patch/20260817142728.61783-3-fangyu.yu@linux.alibaba.com/",
+    "date": "2026-08-17",
+    "date_end": "2026-08-17",
+    "organization": "Alibaba",
     "subsystem": "RISC-V IOMMU",
-    "status": "社区讨论中",
+    "status": "已关闭",
     "state": "series",
     "submitter": "yu fangyu",
-    "version": 2,
+    "email": "fangyu.yu@linux.alibaba.com",
+    "authors": [
+      {
+        "name": "yu fangyu",
+        "email": "fangyu.yu@linux.alibaba.com"
+      }
+    ],
+    "version": 1,
     "summary": "Serialize command queue publishing、避免 waiting on failed command enqueue，并新增 command queue lock。",
     "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260901133920.14550-3-fangyu.yu@linux.alibaba.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1155392/mbox/",
+    "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260817142728.61783-3-fangyu.yu@linux.alibaba.com/mbox/",
+    "series_mbox": "https://patchwork.kernel.org/series/1147259/mbox/",
     "is_cover_letter": true,
-    "series_id": 1155392,
+    "series_id": 1147259,
     "patch_count": 3,
     "series_total": 3,
     "qualified_count": 1,
     "qualified_titles": [
-      "[v2,2/3] iommu/riscv: Serialize command queue publishing"
+      "[2/3] iommu/riscv: Serialize command queue publishing"
     ],
     "member_titles": [
-      "[v2,2/3] iommu/riscv: Serialize command queue publishing",
-      "[v2,3/3] iommu/riscv: Avoid waiting on failed command enqueue",
-      "[v2,1/3] iommu/riscv: Add command queue lock"
+      "[2/3] iommu/riscv: Serialize command queue publishing",
+      "[3/3] iommu/riscv: Avoid waiting on failed command enqueue",
+      "[1/3] iommu/riscv: Add command queue lock"
+    ],
+    "member_ids": [
+      14753803,
+      14753804,
+      14753805
     ],
     "qualified_has_more": false
   },
@@ -1621,14 +2143,21 @@
     "url": "https://patchwork.kernel.org/project/linux-mm/patch/20260818152505.1057922-3-riel@surriel.com/",
     "date": "2026-08-18",
     "date_end": "2026-08-18",
-    "organization": "Individual Contributor",
+    "organization": "归属待核实（surriel.com）",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Rik van Riel",
+    "email": "riel@surriel.com",
+    "authors": [
+      {
+        "name": "Rik van Riel",
+        "email": "riel@surriel.com"
+      }
+    ],
     "version": 1,
-    "summary": "defer maple tree erase on GFP_ATOMIC failure、将 from rbtree 转换为 maple tree，并新增 KUnit test suite。",
-    "summary_source": "fallback",
+    "summary": "把 IOMMU 的 IOVA 分配器从红黑树改为 maple tree，解决生产环境中多 CPU 同时线性遍历红黑树寻找空闲区间导致软锁死的问题，空闲区间查找变为对数复杂度；由于在原子上下文释放 IOVA 时树重平衡可能分配失败，改为先标记该区间再延后重试擦除，并新增 KUnit 测试覆盖对齐分配、碎片化空间和随机压力等场景。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-mm/patch/20260818152505.1057922-3-riel@surriel.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1147958/mbox/",
     "is_cover_letter": true,
@@ -1646,7 +2175,14 @@
       "[RFC,1/3] iommu/iova: convert from rbtree to maple tree",
       "[RFC,3/3] iommu/iova: add KUnit test suite"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14755825,
+      14755826,
+      14755827
+    ],
+    "qualified_has_more": false,
+    "table_summary": "把 IOMMU 的 IOVA 分配器从红黑树改为 maple tree，解决生产环境中多 CPU 同时线性遍历红黑树寻找空闲区间导致软锁死的问题，空闲区间查找变为对数复杂度；由于在原子上下文释放 IOVA 时树重平衡可能分配失败，改为先标记该区间再延后重试擦除，并新增 KUnit 测试覆盖对齐分配、碎片化空间和随机压力等场景。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1659,9 +2195,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Markuss Broks",
+    "email": "markuss.broks@gmail.com",
+    "authors": [
+      {
+        "name": "Markuss Broks",
+        "email": "markuss.broks@gmail.com"
+      }
+    ],
     "version": 1,
-    "summary": "iommu/exynos 中detect SysMMUs without BLOCK mode、iommu/exynos 中修复 the enable sequence for no-block SysMMUs、iommu/exynos 中修复 TLB invalidation for no-block SysMMUs，并iommu/exynos 中decode the v7 fault transaction info。",
-    "summary_source": "fallback",
+    "summary": "针对 Exynos8835 等不实现 BLOCK 模式的新款系统 MMU，原先使能时先写带使能位的阻塞寄存器，会在页表基址尚未配置好时就开始翻译，导致主设备事务被错误翻译；现在这类硬件保持关闭直到配置完成再一次性使能，TLB 失效不再等待阻塞状态而是直接写入失效寄存器，并在 v7 及以上故障报告中保留事务信息以区分同一主设备内多个 DMA 引擎。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260820-exynos-iommu-fixes-v1-1-6bbcd673bb15@gmail.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1149284/mbox/",
     "is_cover_letter": true,
@@ -1679,7 +2222,15 @@
       "[3/4] iommu/exynos: fix TLB invalidation for no-block SysMMUs",
       "[4/4] iommu/exynos: decode the v7 fault transaction info"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14759800,
+      14759801,
+      14759802,
+      14759803
+    ],
+    "qualified_has_more": false,
+    "table_summary": "针对 Exynos8835 等不实现 BLOCK 模式的新款系统 MMU，原先使能时先写带使能位的阻塞寄存器，会在页表基址尚未配置好时就开始翻译，导致主设备事务被错误翻译；现在这类硬件保持关闭直到配置完成再一次性使能，TLB 失效不再等待阻塞状态而是直接写入失效寄存器，并在 v7 及以上故障报告中保留事务信息以区分同一主设备内多个 DMA 引擎。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1687,14 +2238,21 @@
     "url": "https://patchwork.kernel.org/project/linux-riscv/patch/20260821132749.82070-5-fangyu.yu@linux.alibaba.com/",
     "date": "2026-08-21",
     "date_end": "2026-08-21",
-    "organization": "Individual Contributor",
+    "organization": "Alibaba",
     "subsystem": "RISC-V IOMMU",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "yu fangyu",
+    "email": "fangyu.yu@linux.alibaba.com",
+    "authors": [
+      {
+        "name": "yu fangyu",
+        "email": "fangyu.yu@linux.alibaba.com"
+      }
+    ],
     "version": 3,
-    "summary": "改用 data structure instead of individual values、iommupt 中新增 RISC-V Second-stage (iohgatp) page table support、iommupt 中新增 RISC-V dirty tracking PTE ops、支持 GSCID and GVMA invalidation command，并新增 domain_alloc_paging_flags for second-stage domain。",
-    "summary_source": "fallback",
+    "summary": "为 RISC-V IOMMU 的第二阶段（iohgatp）域增加硬件脏页跟踪，用于 KVM 下 VFIO 设备直通场景：新增 Sv39x4/Sv48x4/Sv57x4 页表格式与脏位读写操作，支持 GSCID 和 GVMA 失效命令，按分配标志选择第一阶段或第二阶段域，并在硬件支持原子操作时预使能脏位更新，使 iommufd 能通过脏页跟踪接口获取写访问信息。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-riscv/patch/20260821132749.82070-5-fangyu.yu@linux.alibaba.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1149819/mbox/",
     "is_cover_letter": true,
@@ -1717,7 +2275,18 @@
       "[RFC,v3,09/10] iommu/riscv: Add dirty tracking support for second-stage domains",
       "[RFC,v3,08/10] iommu/riscv: Pre-enable GADE for second-stage domains"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14761634,
+      14761635,
+      14761638,
+      14761639,
+      14761640,
+      14761641,
+      14761642
+    ],
+    "qualified_has_more": false,
+    "table_summary": "为 RISC-V IOMMU 的第二阶段（iohgatp）域增加硬件脏页跟踪，用于 KVM 下 VFIO 设备直通场景：新增 Sv39x4/Sv48x4/Sv57x4 页表格式与脏位读写操作，支持 GSCID 和 GVMA 失效命令，按分配标志选择第一阶段或第二阶段域，并在硬件支持原子操作时预使能脏位更新，使 iommufd 能通过脏页跟踪接口获取写访问信息。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1725,14 +2294,21 @@
     "url": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260825092132.154150-3-xxm@rock-chips.com/",
     "date": "2026-08-25",
     "date_end": "2026-08-25",
-    "organization": "Individual Contributor",
+    "organization": "Rockchip",
     "subsystem": "IOMMU Core",
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Simon Xue",
+    "email": "xxm@rock-chips.com",
+    "authors": [
+      {
+        "name": "Simon Xue",
+        "email": "xxm@rock-chips.com"
+      }
+    ],
     "version": 1,
-    "summary": "拒绝 unsupported physical addresses，并Reduce rk_iommu_ops to pure data。",
-    "summary_source": "fallback",
+    "summary": "针对 Rockchip IOMMU，原先各版本通过回调函数分别处理页表地址和表项编码，现改为按物理地址掩码在运行时选择布局，使版本操作结构只保留数据；同时新增检查，当地址超出硬件可寻址范围时直接拒绝映射，避免高位被静默截断而把设备指向错误页面。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-rockchip/patch/20260825092132.154150-3-xxm@rock-chips.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1151391/mbox/",
     "is_cover_letter": true,
@@ -1748,7 +2324,13 @@
       "[2/2] iommu/rockchip: Reject unsupported physical addresses",
       "[1/2] iommu/rockchip: Reduce rk_iommu_ops to pure data"
     ],
-    "qualified_has_more": false
+    "member_ids": [
+      14766748,
+      14766749
+    ],
+    "qualified_has_more": false,
+    "table_summary": "针对 Rockchip IOMMU，原先各版本通过回调函数分别处理页表地址和表项编码，现改为按物理地址掩码在运行时选择布局，使版本操作结构只保留数据；同时新增检查，当地址超出硬件可寻址范围时直接拒绝映射，避免高位被静默截断而把设备指向错误页面。",
+    "table_summary_source": "llm-mail-batch"
   },
   {
     "id": null,
@@ -1761,9 +2343,16 @@
     "status": "社区讨论中",
     "state": "series",
     "submitter": "Mostafa Saleh",
+    "email": "smostafa@google.com",
+    "authors": [
+      {
+        "name": "Mostafa Saleh",
+        "email": "smostafa@google.com"
+      }
+    ],
     "version": 1,
-    "summary": "iommu/arm-smmu-v3-iommufd 中修复 error path in arm_vsmmu_cache_invalidate()、确保 L2 tables are visible（在 L1 ptrs 前）、iommu/arm-smmu-v3-test 中修复 arm_smmu_v3_test_debug_print_used_bits()、阻止 rbtree corruption from duplicate streams，并iommu/arm-smmu-v3-test 中修复 UBSAN error。",
-    "summary_source": "fallback",
+    "summary": "修复 Sashiko 报告的 ARM SMMUv3 问题：在写 L1 表指针前增加内存屏障，避免硬件先看到已分配但未写入描述符的表而读到随机数据；重复 StreamID 的节点初始化为空节点并在擦除前检查，防止红黑树被破坏；修正 VIOMMU 批量失效命令失败时返回给用户的已处理条目数；并修复单元测试中回调误用、缺少错误检查、越界读取和未设置数组计数导致的未定义行为报错。",
+    "summary_source": "llm-mail-batch",
     "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260828125409.1921538-4-smostafa@google.com/mbox/",
     "series_mbox": "https://patchwork.kernel.org/series/1153243/mbox/",
     "is_cover_letter": true,
@@ -1784,110 +2373,17 @@
       "[5/7] iommu/arm-smmu-v3-test: Add missing error checks for inv array",
       "[6/7] iommu/arm-smmu-v3-test: Fix OOB in arm_smmu_v3_invs_test_verify()"
     ],
-    "qualified_has_more": false
-  },
-  {
-    "id": null,
-    "title": "iommu/arm-smmu-v3: Add PRI support",
-    "url": "https://patchwork.kernel.org/project/linux-pci/patch/4aede16c4e2b68b280793a927fe32b6bd8ef457a.1788222485.git.nicolinc@nvidia.com/",
-    "date": "2026-09-01",
-    "date_end": "2026-09-01",
-    "organization": "NVIDIA",
-    "subsystem": "ARM SMMUv3",
-    "status": "社区讨论中",
-    "state": "series",
-    "submitter": "Nicolin Chen",
-    "version": 3,
-    "summary": "新增 Q_POS() macro、新增 arm_smmu_attach_release()、Drain in-flight fault events on domain detach、Flush in-flight fault work on domain detach，并禁用 the queue IRQs（在 disabling the SMMU 前）。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-pci/patch/4aede16c4e2b68b280793a927fe32b6bd8ef457a.1788222485.git.nicolinc@nvidia.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1154914/mbox/",
-    "is_cover_letter": true,
-    "series_id": 1154914,
-    "patch_count": 11,
-    "series_total": 13,
-    "qualified_count": 9,
-    "qualified_titles": [
-      "[v3,03/13] iommu/arm-smmu-v3: Drain in-flight fault events on domain detach",
-      "[v3,04/13] iommu/arm-smmu-v3: Flush in-flight fault work on domain detach",
-      "[v3,07/13] iommu/arm-smmu-v3: Disable the queue IRQs before disabling the SMMU",
-      "[v3,06/13] iommu/arm-smmu-v3: Submit CMDQ_OP_PRI_RESP for IOPF event",
-      "[v3,05/13] iommu/arm-smmu-v3: Allocate IOPF queue without FEAT_SVA"
+    "member_ids": [
+      14773392,
+      14773393,
+      14773394,
+      14773395,
+      14773396,
+      14773397,
+      14773398
     ],
-    "member_titles": [
-      "[v3,02/13] iommu/arm-smmu-v3: Add Q_POS() macro",
-      "[v3,01/13] iommu/arm-smmu-v3: Add arm_smmu_attach_release()",
-      "[v3,03/13] iommu/arm-smmu-v3: Drain in-flight fault events on domain detach",
-      "[v3,04/13] iommu/arm-smmu-v3: Flush in-flight fault work on domain detach",
-      "[v3,07/13] iommu/arm-smmu-v3: Disable the queue IRQs before disabling the SMMU",
-      "[v3,06/13] iommu/arm-smmu-v3: Submit CMDQ_OP_PRI_RESP for IOPF event",
-      "[v3,05/13] iommu/arm-smmu-v3: Allocate IOPF queue without FEAT_SVA",
-      "[v3,09/13] iommu/arm-smmu-v3: Support PRI Page Request in arm_smmu_handle_ppr()",
-      "[v3,10/13] iommu/arm-smmu-v3: Allocate IOPF queue for ARM_SMMU_FEAT_PRI",
-      "[v3,08/13] iommu/arm-smmu-v3: Disable PRI when no IRQ handler is registered",
-      "[v3,13/13] iommu/arm-smmu-v3: Enable PRI for PCI device in arm_smmu_probe_device()"
-    ],
-    "qualified_has_more": true
-  },
-  {
-    "id": null,
-    "title": "iommu/arm-smmu-v3: Make the queue depths tunable, and shrink them in a kdump kernel",
-    "url": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907095835.1233352-3-kas@kernel.org/",
-    "date": "2026-09-07",
-    "date_end": "2026-09-07",
-    "organization": "Kernel.org",
-    "subsystem": "ARM SMMUv3",
-    "status": "社区讨论中",
-    "state": "series",
-    "submitter": "Kiryl Shutsemau",
-    "version": 5,
-    "summary": "Default queue depths to one page in a kdump kernel，并新增 a cmdq_max_entries module parameter。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907095835.1233352-3-kas@kernel.org/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1159603/mbox/",
-    "is_cover_letter": true,
-    "series_id": 1159603,
-    "patch_count": 2,
-    "series_total": 2,
-    "qualified_count": 1,
-    "qualified_titles": [
-      "[v5,2/2] iommu/arm-smmu-v3: Default queue depths to one page in a kdump kernel"
-    ],
-    "member_titles": [
-      "[v5,2/2] iommu/arm-smmu-v3: Default queue depths to one page in a kdump kernel",
-      "[v5,1/2] iommu/arm-smmu-v3: Add a cmdq_max_entries module parameter"
-    ],
-    "qualified_has_more": false
-  },
-  {
-    "id": null,
-    "title": "intel_iommu: Fixes for FSTS",
-    "url": "https://patchwork.kernel.org/project/qemu-devel/patch/20260903150649.2281104-3-clement.mathieu--drif@bull.com/",
-    "date": "2026-09-03",
-    "date_end": "2026-09-03",
-    "organization": "Individual Contributor",
-    "subsystem": "Intel VT-d",
-    "status": "社区讨论中",
-    "state": "series",
-    "submitter": "Clément MATHIEU--DRIF",
-    "version": 1,
-    "summary": "Always write all the flags passed to vtd_set_flag_in_pte，并Only set dirty bit（当 PTE exposes write permission 时）。",
-    "summary_source": "fallback",
-    "mbox": "https://patchwork.kernel.org/project/qemu-devel/patch/20260903150649.2281104-3-clement.mathieu--drif@bull.com/mbox/",
-    "series_mbox": "https://patchwork.kernel.org/series/1157206/mbox/",
-    "is_cover_letter": true,
-    "series_id": 1157206,
-    "patch_count": 2,
-    "series_total": 2,
-    "qualified_count": 2,
-    "qualified_titles": [
-      "[RESEND,2/2] intel_iommu: Always write all the flags passed to vtd_set_flag_in_pte",
-      "[RESEND,1/2] intel_iommu: Only set dirty bit when PTE exposes write permission"
-    ],
-    "member_titles": [
-      "[RESEND,2/2] intel_iommu: Always write all the flags passed to vtd_set_flag_in_pte",
-      "[RESEND,1/2] intel_iommu: Only set dirty bit when PTE exposes write permission"
-    ],
-    "qualified_has_more": false
+    "qualified_has_more": false,
+    "table_summary": "修复 Sashiko 报告的 ARM SMMUv3 问题：在写 L1 表指针前增加内存屏障，避免硬件先看到已分配但未写入描述符的表而读到随机数据；重复 StreamID 的节点初始化为空节点并在擦除前检查，防止红黑树被破坏；修正 VIOMMU 批量失效命令失败时返回给用户的已处理条目数；并修复单元测试中回调误用、缺少错误检查、越界读取和未设置数组计数导致的未定义行为报错。",
+    "table_summary_source": "llm-mail-batch"
   }
 ]
