@@ -14,6 +14,7 @@ Usage:
 """
 
 import json
+import math
 import os
 import re
 import sys
@@ -614,6 +615,15 @@ def collect_authors(patches):
             key = address.lower() or author.get('name', '')
             authors.setdefault(key, {'name': author.get('name', ''), 'email': address})
     return list(authors.values())
+
+
+def _author_scope(patches):
+    authors = collect_authors(patches)
+    orgs = {
+        extract_organization(a.get('email', ''))
+        for a in authors if a.get('email')
+    }
+    return max(len(authors), 1), max(len(orgs), 1)
 
 
 def _strip_leading_patch_tags(title):
@@ -1402,34 +1412,64 @@ def _escape_table_cell(value):
     return str(value).replace('|', '\\|').replace('\n', ' ')
 
 
-def patch_importance_score(p):
+def influence_level(score):
+    if score >= 75:
+        return '高'
+    if score >= 45:
+        return '中'
+    return '低'
+
+
+def patch_influence_score(p):
+    """Estimate patch influence from scale, nature, scope and maturity."""
     title = (p.get('title', '') + ' ' + p.get('summary', '')).lower()
-    score = 0
-    if p.get('is_cover_letter'):
-        score += 50
-        score += min(p.get('qualified_count', 0), 20) * 4
-        score += min(p.get('patch_count', 0), 30)
-    if p.get('status') == '已合入':
-        score += 20
+    score = 0.0
+
+    lines = p.get('code_lines') or 0
+    score += min(math.log2(lines + 1) * 4, 20)
+    files = p.get('diff_files') or 0
+    score += min(files * 0.6, 10)
+    series = max(p.get('series_total') or 1, p.get('patch_count') or 1)
+    score += min(math.log2(series + 1) * 4, 12)
+    score += min(max(1, p.get('qualified_count') or 0), 20)
+
     if any(k in title for k in ['security', 'hardening', 'overflow', 'use-after-free',
                                 'race', 'leak', 'crash', 'fault', 'isolation']):
         score += 25
-    if any(k in title for k in ['support', 'add', 'introduce', 'implement',
-                                'uapi', 'pasid', 'pri', 'tph', 'sva', 'migration',
-                                'live update', 'iommufd']):
+    elif any(k in title for k in ['support', 'add', 'introduce', 'implement',
+                                  'uapi', 'pasid', 'pri', 'tph', 'sva', 'migration',
+                                  'live update', 'iommufd']):
         score += 18
-    if any(k in title for k in ['fix', 'bug', 'broken', 'incorrect', 'wrong']):
-        score += 16
-    if any(k in title for k in ['refactor', 'cleanup', 'clean up', 'remove',
-                                'drop', 'rename']):
-        score += 8
-    score += min(p.get('version') or 1, 20)
-    return score
+    elif any(k in title for k in ['fix', 'bug', 'broken', 'incorrect', 'wrong']):
+        score += 12
+    elif any(k in title for k in ['refactor', 'cleanup', 'clean up', 'remove',
+                                  'drop', 'rename']):
+        score += 5
+
+    subsystem = (p.get('subsystem') or '').lower()
+    if any(k in subsystem for k in (
+            'core', 'iommufd', 'dma-api', 'sva', 'page table', 'algorithms',
+            'aead', 'skcipher', 'ahash', 'shash', 'authenc', 'public key')):
+        score += 6
+
+    author_count = p.get('author_count')
+    org_count = p.get('org_count')
+    if not author_count or not org_count:
+        fallback_authors, fallback_orgs = _author_scope([p])
+        author_count = author_count or fallback_authors
+        org_count = org_count or fallback_orgs
+    score += min(author_count - 1, 4) * 2
+    score += min(org_count - 1, 3) * 3
+
+    if p.get('status') == '已合入':
+        score += 15
+    score += min(p.get('version') or 1, 6)
+    return round(score, 1)
 
 
 def select_top_patches(patches, limit=20):
     return sorted(patches, key=lambda p: (
-        patch_importance_score(p),
+        patch_influence_score(p),
         p.get('date', ''),
         p.get('qualified_count', 0),
     ), reverse=True)[:limit]
@@ -1467,6 +1507,10 @@ def _make_table_cover(series_id, group):
         'submitter': group[0].get('submitter', ''),
         'email': group[0].get('email', ''),
         'authors': collect_authors(group),
+        'author_count': _author_scope(group)[0],
+        'org_count': _author_scope(group)[1],
+        'code_lines': sum(p.get('code_lines') or 0 for p in group),
+        'diff_files': sum(p.get('diff_files') or 0 for p in group),
         'version': max(versions) if versions else group[0].get('version'),
         'summary': concrete_series_summary(series_name, member_titles),
         'summary_source': 'fallback',
@@ -1495,7 +1539,7 @@ def select_top_table_items(patches, limit=20):
             by_series[sid].append(p)
 
     ordered = sorted(patches, key=lambda p: (
-        patch_importance_score(p),
+        patch_influence_score(p),
         p.get('date', ''),
     ), reverse=True)
     selected = []
@@ -1512,7 +1556,7 @@ def select_top_table_items(patches, limit=20):
             if sid in used_series:
                 continue
             group = sorted(by_series[sid], key=lambda x: (
-                patch_importance_score(x),
+                patch_influence_score(x),
                 x.get('date', ''),
             ), reverse=True)
             selected.append(_make_table_cover(sid, group))
@@ -1691,30 +1735,33 @@ def _fetch_one_diff(patch_id):
                              if l.startswith('+') and not l.startswith('+++')])
                 removed = len([l for l in diff.split('\n')
                                if l.startswith('-') and not l.startswith('---')])
-                return patch_id, added + removed, diff[:8000]
-        return patch_id, 0, ''
+                files = len(re.findall(r'^diff --git ', diff, re.M))
+                return patch_id, added + removed, diff[:8000], files
+        return patch_id, 0, '', 0
     except Exception:
-        return patch_id, 0, ''
+        return patch_id, 0, '', 0
 
 
 def fetch_line_counts(patch_ids, max_workers=8):
-    """Returns (line_counts_dict, diff_map_dict)."""
+    """Returns (line_counts_dict, diff_map_dict, file_counts_dict)."""
     line_counts = {}
     diff_map = {}
+    file_counts = {}
     total = len(patch_ids)
     done = 0
     print(f"    正在获取 {total} 个 patch 的代码量...")
     with ThreadPoolExecutor(max_workers=max_workers) as ex:
         futures = {ex.submit(_fetch_one_diff, pid): pid for pid in patch_ids}
         for f in as_completed(futures):
-            pid, count, diff_text = f.result()
+            pid, count, diff_text, files = f.result()
             line_counts[pid] = count
+            file_counts[pid] = files
             if diff_text:
                 diff_map[pid] = diff_text
             done += 1
             if done % 50 == 0 or done == total:
                 print(f"      进度: {done}/{total}")
-    return line_counts, diff_map
+    return line_counts, diff_map, file_counts
 
 
 def filter_by_code_lines(patches, line_counts):
@@ -1806,6 +1853,10 @@ def apply_cover_letters(surviving, code_filtered, pre_filter_patches):
             'submitter': all_in[0].get('submitter', ''),
             'email': all_in[0].get('email', ''),
             'authors': collect_authors(all_in),
+            'author_count': _author_scope(all_in)[0],
+            'org_count': _author_scope(all_in)[1],
+            'code_lines': sum(sp.get('code_lines') or 0 for sp in all_in),
+            'diff_files': sum(sp.get('diff_files') or 0 for sp in all_in),
             'version': max(versions) if versions else all_in[0].get('version'),
             'summary': series_summary,
             'summary_source': summary_source,
@@ -1932,18 +1983,20 @@ def generate_report(patches, start_date, end_date, config, top_table_patches=Non
         out = f"\n### {table_title}\n\n"
         if any(p.get('top_table_selected') for p in patches_list):
             top_items = sorted(patches_list, key=lambda p: (
-                patch_importance_score(p),
+                patch_influence_score(p),
                 p.get('date', ''),
             ), reverse=True)[:20]
         else:
             top_items = select_top_table_items(patches_list, 20)
         if not top_items:
             return out + "暂无。\n"
-        out += "| 厂商 | 简介 |\n|------|------|\n"
+        out += "| 厂商 | 影响力 | 简介 |\n|------|------|------|\n"
         for p in top_items:
+            score = patch_influence_score(p)
             brief = f"{format_brief_title(p)} ------{report_summary(p)}"
             out += (
                 f"| {_escape_table_cell(p.get('organization', ''))} "
+                f"| {influence_level(score)}（{score:.0f}） "
                 f"| {_escape_table_cell(brief)} |\n"
             )
         return out
@@ -2535,11 +2588,14 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
     ids = [p['id'] for p in deduped if p.get('id')]
     code_filtered_list = []
     if ids:
-        line_counts, diff_map = fetch_line_counts(ids)
+        line_counts, diff_map, file_counts = fetch_line_counts(ids)
+        for patch in deduped:
+            patch['code_lines'] = line_counts.get(patch.get('id'), 0)
+            patch['diff_files'] = file_counts.get(patch.get('id'), 0)
         deduped, code_filtered_list = filter_by_code_lines(deduped, line_counts)
         print(f"    过滤后 {len(deduped)} 个（过滤 {len(code_filtered_list)} 个小修改）")
     else:
-        line_counts, diff_map = {}, {}
+        line_counts, diff_map, file_counts = {}, {}, {}
         print("    无 patch ID，跳过")
     top_table_patches = []
     for status in ['已合入', '社区讨论中']:

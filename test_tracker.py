@@ -145,6 +145,34 @@ class ReportTests(unittest.TestCase):
             self.assertEqual(tracker.patch_status_from_state(state), '已关闭')
         self.assertEqual(tracker.patch_status_from_state('new'), '社区讨论中')
 
+    def test_influence_score_rewards_scale_and_security(self):
+        security_series = {
+            'title': 'iommu: harden SVA against use-after-free',
+            'status': '已合入', 'code_lines': 500, 'diff_files': 10,
+            'series_total': 14, 'qualified_count': 14, 'version': 5,
+            'subsystem': 'IOMMU Core', 'submitter': 'Author',
+            'email': 'author@nvidia.com',
+        }
+        cleanup = {
+            'title': 'iommu: cleanup unused helper',
+            'status': '社区讨论中', 'code_lines': 40, 'diff_files': 1,
+            'series_total': 1, 'qualified_count': 1, 'version': 1,
+            'subsystem': 'IOMMU Core', 'submitter': 'Author',
+            'email': 'author@nvidia.com',
+        }
+        score = tracker.patch_influence_score(security_series)
+        self.assertGreater(score, tracker.patch_influence_score(cleanup))
+        self.assertEqual(tracker.influence_level(score), '高')
+        self.assertEqual(tracker.influence_level(10), '低')
+
+    def test_table_cover_aggregates_code_and_file_counts(self):
+        first, second = self.make_patch(1), self.make_patch(2)
+        first.update(code_lines=120, diff_files=3)
+        second.update(code_lines=80, diff_files=2)
+        cover = tracker._make_table_cover(10, [first, second])
+        self.assertEqual(cover['code_lines'], 200)
+        self.assertEqual(cover['diff_files'], 5)
+
     def test_pull_commit_subjects_mark_only_untracked_patches(self):
         mbox = ('Subject: [GIT,PULL] VFIO updates\n\n'
                 'Author One (2):\n'
