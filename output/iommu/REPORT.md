@@ -7,8 +7,8 @@
 | 项目 | 内容 |
 |------|------|
 | 数据来源 | patchwork.kernel.org |
-| 生成日期 | 2026-09-11 |
-| 报告区间 | 2026-07-01 至 2026-08-31 |
+| 生成日期 | 2026-11-11 |
+| 报告区间 | 2026-09-01 至 2026-10-31 |
 | 仓库 | [https://github.com/IAMHCHCH/linux-patches-tracker](https://github.com/IAMHCHCH/linux-patches-tracker) |
 
 ---
@@ -19,44 +19,45 @@
 
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| 社区讨论中 | 56 | 93.3% |
+| 社区讨论中 | 74 | 93.7% |
 | 已合入 | 0 | 0.0% |
-| **总计** | **60** | **100%** |
+| **总计** | **79** | **100%** |
 
 ### 按组织分类（TOP 15）
 
 | 组织 | 数量 | 占比 |
 |------|------|------|
-| NVIDIA | 11 | 18.3% |
-| Qualcomm | 8 | 13.3% |
-| Google | 7 | 11.7% |
-| ByteDance | 3 | 5.0% |
-| 归属待核实（gahingwoo.com） | 3 | 5.0% |
-| Individual Contributor | 3 | 5.0% |
-| AMD | 3 | 5.0% |
-| Kernel.org | 2 | 3.3% |
-| Bull | 2 | 3.3% |
-| Microsoft | 2 | 3.3% |
-| Alibaba | 2 | 3.3% |
-| Amazon | 1 | 1.7% |
-| SiFive | 1 | 1.7% |
-| 中国科学院软件研究所 | 1 | 1.7% |
-| Linaro | 1 | 1.7% |
+| Google | 11 | 13.9% |
+| Individual Contributor | 9 | 11.4% |
+| NVIDIA | 8 | 10.1% |
+| Qualcomm | 7 | 8.9% |
+| Alibaba | 7 | 8.9% |
+| Kernel.org | 6 | 7.6% |
+| Intel | 4 | 5.1% |
+| NXP | 3 | 3.8% |
+| AMD | 3 | 3.8% |
+| 东南大学 | 2 | 2.5% |
+| 归属待核实（sanechips.com.cn） | 2 | 2.5% |
+| 归属待核实（jannau.net） | 1 | 1.3% |
+| SiFive | 1 | 1.3% |
+| 归属待核实（foxmail.com） | 1 | 1.3% |
+| 归属待核实（utexas.edu） | 1 | 1.3% |
 
 ### 按子系统分类
 
 | 子系统 | 数量 | 占比 |
 |--------|------|------|
-| IOMMU Core | 18 | 30.0% |
-| ARM SMMUv3 | 14 | 23.3% |
-| AMD IOMMU | 7 | 11.7% |
-| RISC-V IOMMU | 6 | 10.0% |
-| IOMMUFD | 4 | 6.7% |
-| ARM SMMU (v1/v2) | 4 | 6.7% |
-| Intel VT-d | 3 | 5.0% |
-| ARM SMMU Acceleration | 2 | 3.3% |
-| IOMMU DMA-API | 1 | 1.7% |
-| IOMMU Page Table | 1 | 1.7% |
+| ARM SMMUv3 | 18 | 22.8% |
+| IOMMU Core | 14 | 17.7% |
+| IOMMUFD | 13 | 16.5% |
+| RISC-V IOMMU | 12 | 15.2% |
+| Intel VT-d | 6 | 7.6% |
+| AMD IOMMU | 5 | 6.3% |
+| IOMMU DMA-API | 4 | 5.1% |
+| ARM SMMU (v1/v2) | 3 | 3.8% |
+| IOMMU SVA/SVM | 2 | 2.5% |
+| IOMMU Page Table | 1 | 1.3% |
+| IOMMUPT | 1 | 1.3% |
 
 ## 重点 Patch Top20 清单
 
@@ -68,26 +69,26 @@
 
 | 厂商 | 简介 |
 |------|------|
-| Google | [PATCH v4 00/18] iommu: Add live update state preservation ------为内核热更新保留设备的 IOMMU 页表、域标识和进程地址空间标识表，在新内核恢复地址转换并重新挂接设备；保留期间禁止修改映射或更换地址空间。已实现底层恢复，但面向用户的 IOMMU 文件接口恢复流程仍待补齐，并附带状态保留测试。 |
-| Google | [PATCH v7 00/24] KVM: arm64: SMMUv3 driver for pKVM (trap and emulate) ------为受保护虚拟机场景实现运行在 EL2 的 SMMUv3 驱动，由虚拟机监控程序接管 SMMU 硬件并以陷入模拟方式向宿主内核呈现模拟设备。此前受保护模式下宿主可直接控制 SMMU，无法阻止宿主设备访问虚拟机内存。补丁让监控程序独占 SMMU 的 MMIO 和命令队列，建立影子流表、影子命令队列和影子页表，过滤并转发宿主的失效命令，从而为虚拟机建立 DMA 隔离；宿主内核侧驱动通过辅助总线探测模拟出的 SMMU，其余流程与普通驱动一致。 |
-| NVIDIA | [PATCH v10 00/13] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump ------在崩溃转储内核中保留原内核的地址转换和设备流表，让尚未完成的 DMA 继续使用旧映射，避免复位导致传输中断或绕过隔离而破坏内存；预留旧内核占用的地址空间标识，关闭事件与页请求队列以免错误消息刷屏。旧状态校验失败时仍回退到完整复位。 |
-| Qualcomm | [PATCH v1 00/12] iommu: qcom_iommu: implement support for instances on MSM8974 ------为高通 MSM8974 上的 IOMMU 实例增加支持，使该代芯片的显示、Venus 和 GPU 等模块能正常使用 IOMMU。此前驱动只支持 MSM8916 风格实例，MSM8974 的 GPU IOMMU 不受安全世界管理，无人建立流映射，附加域后所有事务都无法匹配，GPU 首次访存即出错；这些实例还位于会掉电的电源域中，掉电后丢失全局和上下文寄存器状态。 |
-| Google | [PATCH v9 00/12] iommu/arm-smmu-v3: Implement Runtime/System Sleep ops ------为 arm-smmu-v3 实现运行时电源管理和系统睡眠。挂起时先让 SMMU 中止新事务、关闭主翻译单元并排空命令队列，用停止标志阻止新的命令提交；恢复时还原 MSI 配置并复位设备。还修复了 Tegra241 虚拟命令队列恢复后生产/消费索引归零导致不再消费命令的问题，并补充了运行时电源管理的单元测试。 |
-| Qualcomm | [PATCH v5 00/17] iommu/riscv: Enable MSI remapping, IOMMU_DMA and VFIO ------让 64 位 RISC-V 上的 IOMMU 支持 MSI 重映射、DMA 地址映射和 VFIO 设备直通。原先软件 MSI 映射数量受固定上限限制，无法为每个 CPU 建立映射，且缺少保留的 MSI 地址窗口。现在把映射表改为可增长、支持按物理地址列表建立连续映射并原子安装，为每个可能 CPU 预留一页 MSI 地址窗口，报告缓存一致性能力，并开启相关内核配置与自测。 |
-| NVIDIA | [PATCH v6 00/5] iommufd: Iterate the cache invalidation array in the core ------把缓存失效请求数组的遍历从各驱动上移到 iommufd 核心，并收紧 Arm SMMUv3 对来宾失效命令的校验。此前每个驱动各自遍历整个数组并自行处理分批，SMMUv3 只校验虚拟机和流标识就把命令原样转发，来宾可设置宿主未打算转发的保留位，使命令被判为非法；转换失败时还会上报尚未真正下发的命令，导致用户空间跳过未执行的失效。 |
-| NVIDIA | [PATCH v9 00/12] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump ------在崩溃转储内核中保留原内核的地址转换和设备流表，让尚未完成的 DMA 继续使用旧映射，避免复位导致传输中断或绕过隔离而破坏内存；预留旧内核占用的地址空间标识，关闭事件与页请求队列以免错误消息刷屏。旧状态校验失败时仍回退到完整复位。 |
-| NVIDIA | [PATCH v4 00/8] Organize the SMMUv3 invalidation flow so iommupt can use it ------重整 ARM SMMUv3 的失效流程，为后续接入通用页表失效方案做准备。把失效参数集中到结构体传递，把页粒度从失效描述中移出改为域属性，并预先算好失效命令、在调用链顶端填充描述。范围失效改为按延迟优先，尽量用单条命令覆盖整个区间，仅在检测到半虚拟化环境时才精确失效；同时支持 DS 扩展后 SCALE 上限提高到 39。 |
-| Intel | [PATCH v5 00/6] intel_iommu: Enable PRQ support for passthrough device ------为直通设备启用 Intel VT-d 的页请求队列支持。此前客户机在虚拟 IOMMU 中开启页请求时，主机侧可恢复缺页事件无法回传客户机。现在分配故障队列对象并注册事件处理，把主机产生的可恢复缺页转发给客户机，再把客户机的响应写回主机，同时缓存每个故障组的标识；PASID 条目失效时在底半部释放故障队列资源，避免文件引用未释放导致释放失败。 |
-| Oracle | [PATCH v2 00/5] amd_iommu: Do not create duplicate MSI capability ------修复 QEMU 中 AMD 虚拟 IOMMU 的若干问题：设备曾暴露两个 MSI 能力，现只保留一个；页错误日志此前只带设备功能号，位于根端口后的设备会被记成错误请求者，现改用完整总线号；扩展特性寄存器此前允许客户机改写第 4 位，现改为只读；客户机清除状态位时可能误置 GA 日志溢出位并反复重启 GA 日志，现不再锁存这些位。 |
-| NVIDIA | [PATCH v9 00/4] iommu/arm-smmu-v3: Tegra264 invalidation workaround ------针对 Tegra264 的 SMMU，TLB 表项在与同一表项的并发访问竞争时可能躲过失效操作而残留。硬件建议的软件规避办法是把每条失效命令连同其同步命令各发两遍，本系列先搭好按需重复发送的基础设施，再按设备树匹配到该芯片时启用；同时向用户态上报这一缺陷，避免客户机自行处理后再被主机重复一遍而变成四次失效。 |
-| 归属待核实（gahingwoo.com） | [PATCH v2 00/8] accel/rocket: RK3576 NPU (RKNN) enablement ------为瑞芯微 RK3576 的 NPU 增加上游支持，使其能在 Radxa ROCK 4D 上探测、上电并跑完提交的任务。此前该芯片的 NPU 无法使用：其 IOMMU 位于额外时钟门后，寄存器写入会被丢弃，且固件遗留的页错误会让停流等待超时。补丁让 IOMMU 取用设备树列出的全部时钟、在启用停流前先确认陈旧页错误，并给电源域加上上电稳定延时和复位脉冲；NPU 驱动按芯片区分时钟、复位、电源域和完成中断方式。 |
-| Individual Contributor | [PATCH v1 00/4] IOMMU driver improvements for modern Exynos SysMMUs ------让 Exynos 的 IOMMU 驱动适配不实现 BLOCK 模式的新款 SysMMU（如 Exynos8835）。这类硬件写阻塞位不会停止转换，状态寄存器也从不报告已阻塞，导致使能时在页表尚未配置好就开始转换，可能用复位值或过期页表翻译主设备流量，且 TLB 失效因等待阻塞失败而被整体跳过。 |
-| EPAM | [v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks ------为 R-Car H3 等平台上的 IPMMU 驱动实现系统挂起与恢复。挂起时保存活动的上下文寄存器和微 TLB 配置，恢复时先还原根 IPMMU 的上下文状态，再还原缓存 IPMMU 的微 TLB，避免缓存单元先于根上下文恢复而读到过期或未初始化的上下文状态。 |
-| Qualcomm | [v4] iommu/arm-smmu: Use pm_runtime in fault handlers ------在 SMMU 位于电源域的系统上，故障处理函数会访问寄存器，而 Adreno SMMU 在故障风暴时关闭了停顿，SMMU 可能在掉电状态下产生故障，导致未上电的寄存器读取和 NoC 错误。现在故障处理前先获取运行时电源，未激活则忽略故障；挂起前关闭故障上报并同步中断，避免电平触发中断在掉电过程中反复触发。 |
-| 归属待核实（gahingwoo.com） | [RFC,4/9] iommu/rockchip: skip orphaned-fault banks in rk_iommu_is_stall_active ------处理瑞芯微 IOMMU 中固件遗留的孤立页错误。启动固件可能在驱动配置分页前让某个 bank 处于页错误激活状态，此时该 bank 既不处于停流状态又已空闲，停流检查会据此把整个 IOMMU 判为未停流，使后续等待停流完成的轮询永远无法通过。补丁识别这种页错误激活但未停流且空闲的状态，在停流检查中跳过这些 bank，因为它们没有在途事务，本身已处于静止。 |
-| 归属待核实（gahingwoo.com） | [RFC,5/9] iommu/rockchip: skip orphaned-fault banks in CMD_ENABLE_STALL dispatch ------处理瑞芯微 IOMMU 中向孤立页错误 bank 发送停流命令的问题。带有固件遗留页错误的 bank 会静默丢弃停流命令，而该命令在共享总线上还会拖慢其他 bank 进入停流状态，使其超出轮询超时。补丁在派发停流命令时跳过这类页错误激活但未停流且空闲的 bank，与停流检查中使用的跳过条件保持一致。 |
-| NVIDIA | [v5,1/6] iommu/arm-smmu-v3: Support IDR5.DS and widen the TLBI SCALE field ------为支持扩展失效范围的 SMMU 增加识别：这类硬件把范围失效命令的规模字段从 5 位扩展到 6 位，最大值由 31 提高到 39，并允许 16KB 页粒度下的一种层级提示。驱动新增对应特性位并加宽该字段，但范围失效路径仍按原来的 5 位截断发出命令，行为不变；同时把该特性列入向用户态报告的硬件信息字段，便于虚拟机监视器判断能否透传给客户机。 |
-| Qualcomm | [v4] iommu/io-pgtable-arm: Add support for contiguous hint bit ------为 ARM LPAE 页表增加连续提示位支持：当一组连续页表项映射自然对齐的连续内存时，硬件可将其合并为单个 TLB 项，减少 TLB 占用。各页粒度对应的连续块大小会通过页大小位图上报，便于调用方按这些大小对齐分配；对连续组的局部解映射会被拒绝，保证整组一起失效。硬件存在相关缺陷时，驱动可通过一个禁用标志在运行时关闭该特性。 |
+| Google | [PATCH v9 00/25] KVM: arm64: SMMUv3 driver for pKVM (trap and emulate) ------在受保护 KVM 下新增 EL2 端 ARM SMMUv3 驱动和主机端配套驱动：把 SMMU MMIO 捐赠给 hypervisor，对主机访问进行陷阱并模拟寄存器读写，使 hypervisor 拥有硬件并建立影子页表，从而提供 DMA 隔离。同时将队列、流表项、IDR 解析、无命中更新和范围失效等逻辑移入主机与 hypervisor 共享代码，并实现命令队列和流表影子、TLB 失效以及主机阶段二页表的同步更新。 |
+| Oracle | [PATCH v3 00/5] amd_iommu: Bugfix and Cleanup for IO Page Fault ------修复 QEMU 中 AMD IOMMU 仿真的 IO 页故障报告和寄存器语义：地址空间改用完整总线/设备/功能号，使根端口之后设备产生的页故障能归到正确请求者，不再误报为 00:00.0；初始化时避免重复创建 MSI 能力；将扩展特性寄存器设为只读，让功能位完全由 QEMU 控制；拒绝客户机对未产生的 GA 日志状态位进行写清除时锁存虚假溢出，从而避免客户机反复重启 GA 日志。 |
+| NVIDIA | [PATCH v11 00/11] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump ------为 kdump 场景改造 ARM SMMUv3 驱动：提前初始化标识分配器，将地址空间标识改为每实例独立，并在 kdump 内核中禁用事件队列和页请求队列；新增采用选项保留崩溃内核的流表，扫描并预留其正在使用的地址空间标识，防止新域复用旧标识导致直接内存访问命中陈旧缓存。 |
+| NVIDIA | [PATCH v5 00/15] iommu/arm-smmu-v3: Add PRI support ------为 ARM SMMUv3 增加 PCI PRI 页请求处理能力：支持 PRI 的 PCI 设备缺页时通过页请求队列进入 IOPF 层，驱动再向 SMMU 提交页响应命令；同时把 IOPF 队列分配与 SVA 解耦，硬件具备暂停特性即可启用。补充设备脱离域时的清理顺序，先排空事件队列、同步中断并冲刷在途故障工作，再释放旧域，避免在途事件引用已释放内存；还修复关闭时未先禁用实现层回调，可能对已启用命令队列发起同步的问题。 |
+| Google | [PATCH v11 00/16] iommu/arm-smmu-v3: Implement Runtime/System Sleep ops ------为 ARM SMMUv3 实现运行时电源管理和系统休眠操作：挂起前用停止标志禁止新命令提交，排空命令队列及 Tegra241 虚拟命令队列，并处理残留的全局错误；恢复时恢复虚拟命令队列的生产/消费索引、缓存 MSI 消息和中断配置，再重新启用硬件中断。这样 SMMU 在系统休眠或运行时挂起后可以安全断电并恢复工作，避免索引清零导致命令不消费或 MSI 配置丢失引起中断失效。 |
+| Google | [PATCH v1 00/22] DMA_PMD: PMD_SIZE-backed IO buffer pools ------为直接内存访问缓冲新增基于 2MB 物理连续大页的分配池，使输入输出内存管理单元能使用大页映射，降低输入输出旁路转换缓冲压力及映射、解映射和刷新开销。池会动态分配回收大页，并用全局上限和收缩器限制空闲内存；域销毁时清理存活映射，确保内存仅在输入输出内存管理单元映射移除并刷新后才归还伙伴分配器。 |
+| NVIDIA | [PATCH v8 00/9] Organize the SMMUv3 invalidation flow so iommupt can use it ------在 ARM SMMUv3 使用共享进程地址空间时，连续页表项可能因硬件缺陷在范围失效被从中间拆分时漏失效，恶意用户可借助内存映射操作触发；原有范围失效也可能发出多达 512 条单条命令或多次范围命令，延迟较高。补丁将 SVA 失效改为一次覆盖整个连续项的范围命令，并预计算失效命令、整理参数，将普通范围失效控制在最多两次且可重叠覆盖，以降低延迟，同时为后续页表接管的失效流程做准备。 |
+| Red Hat | [PATCH v2 00/75] virtio: fix exit(1) on DMA mapping failure during migration restore ------对 Intel IOMMU 的缺页请求处理增加并发锁保护，将页表项标志更新改为一次性写入所有传入标志，并仅在页表项具备写权限时设置脏位；启用共享虚拟内存时暴露可扩展模式一致性能力，若主机 IOMMU 不支持则阻止加速；AMD IOMMU 桩调用返回空能力字段，避免读取无效能力。 |
+| Intel | [PATCH v9 00/6] intel_iommu: Enable PRQ support for passthrough device ------为 Intel 输入输出内存管理单元的直通设备新增页请求队列支持：客户机启用后，主机侧可恢复故障事件被接收并注入客户机，客户机的响应也能写回主机；客户机侧溢出或满错误时，低优先级页请求按丢弃后返回成功响应，其他错误返回无效请求。故障队列资源释放被推迟到底半部执行，避免因轮询尚未退出、文件仍持有引用而导致释放返回忙错误。 |
+| Qualcomm | [PATCH v1 00/3] iommu: qcom: Fix the MSM GPU and display with DMA-address based mappings ------在高通骁龙平台上，显示和 GPU 设备因 IOMMU 缓冲失效和默认域选择错误无法工作：清空全部 TLB 的操作实际只等待同步，导致图形驱动解除映射后 GPU 可能挂起；同时图形驱动需要物理地址，但设备被分配到 IOMMU DMA 域，缓冲区映射到错误的 IOVA，GPU 无法启动。 |
+| NVIDIA | [PATCH v3 00/10] Make the 32-bit ARM DMA API work with normal IOMMU DMA default domains (+ Tegra PoC) ------让 32 位 ARM 的 DMA API 能与内核管理的 DMA 默认域协作，并在 Tegra SMMU 上验证：拆分离散 ARM DMA 映射的初始化和分配，新增不拥有域的 cookie 及安装/拆除操作，使核心可拥有 DMA 域；大部分 32 位 ARM 平台解除强制身份域，少数平台仍显式保持身份域。 |
+| Individual Contributor | [PATCH v1 00/6] iommufd: harden DMA-BUF PAL setup and release ------修复 iommufd 导入 DMA-buf 并建立物理地址列表映射时的生命周期竞态和错误处理：若固定操作失败，保留该失败的真实错误码，避免被当成成功；成功映射的物理列表和附着须在 reservation 锁内一起发布，失败则保持为空；释放时先清空物理列表指针再解锁，并仍在锁内完成解固定，最后拆除附着并销毁互斥锁，防止并发失效回调访问已释放列表或已销毁锁。自检新增覆盖固定和映射失败清理。 |
+| NVIDIA | [PATCH v9 00/2] Organize the SMMUv3 invalidation flow so iommupt can use it ------重新组织 ARM SMMUv3 的 TLB 失效描述，改为用叶级和表级位图累积失效损伤，并据此计算单步长及范围失效提示，替换原先无法充分描述范围的旧流程；这样既能修复当前失效信息不足的问题，也为将来接入 iommupt 的聚合式失效做准备。当硬件支持双步幅时，范围失效的比例上限可提升到 39，不再受 31 限制。 |
+| Amazon | [PATCH v1 00/3] iommu: Reduce iommu_probe_device_lock contention ------并行初始化虚拟功能时，IOMMU 设备探测的全局锁成为主要争用点，其中向 sysfs 发布成员链接和首次设置默认域占用了大量持锁时间。补丁将这两项工作移出全局锁：先在全局锁内完成组成员分配并持有组引用，释放全局锁后在组锁下发布链接、设置默认域；发布或设置失败时按现有失败语义回退。这样缩短全局锁持有时间，缓解大量设备并行探测时的锁竞争。 |
+| 归属待核实（utexas.edu） | [PATCH] iommu/sva: Charge IOPF allocations to the faulting mm's memcg ------修复设备缺页处理在工作队列中未设置活动内存控制组的问题：此前文件后端缺页产生的页缓存被计入根控制组，逃逸任务的内存上限。现在处理缺页前切换到故障进程所属的内存控制组，完成后恢复原值，使设备触发的页缓存分配正确归属并受内存限制约束。 |
+| Intel | [v8,6/6] intel_iommu_accel: teardown FAULTQ resources in bottom half ------在 Intel 输入输出内存管理单元直通设备中，当地址空间标识条目失效时，原先释放故障队列会立即关闭处理函数并释放队列编号，但存在一个窗口：轮询尚未退出时文件仍持有队列引用，可能使释放返回忙错误。现改为把故障队列及关联文件、队列编号的释放推迟到下半部回调执行，确保轮询退出并放下引用后再清理。 |
+| 归属待核实（shutemov.name） | [v7,2/2] iommu/arm-smmu-v3: Default queue depths to one page in a kdump kernel ------在崩溃转储捕获内核中，SMMUv3 实例的命令、事件和页请求三个队列原先都按硬件公布的最大深度分配，即使事件和页请求队列已被关闭，每个实例仍可能占用最多 12 兆字节的保留内存。现在检测到处于捕获模式时，三个队列深度都只分配一页条目；这些队列只承载命令和故障记录而非传输数据，因而不会影响保存转储所需设备的吞吐。 |
+| EPAM | [v13,09/14] iommu/ipmmu-vmsa: Implement suspend/resume callbacks ------为瑞萨 IPMMU-VMSA 在 Xen 下实现系统挂起与恢复：保存活跃上下文和微 TLB 寄存器，恢复时先恢复根 IPMMU 的上下文，再恢复缓存 IPMMU 的微 TLB；否则缓存 IPMMU 会通过微 TLB 配置选中根上下文，提前恢复可能暴露过期或未初始化的上下文。目前仅在 H3ULCB（R-Car Gen3）上测试。 |
+| NVIDIA | [v2,07/11] iommu: Let 32-bit ARM drivers opt into a DMA API default domain ------解除 32 位 ARM 平台上对默认域类型的强制身份域覆盖，让 IOMMU 驱动可以通过默认域类型回调自行选择真正的 DMA API 默认域；当通用 DMA 域实现未启用但 ARM DMA API 实现可用时，允许驱动显式请求的 DMA 域通过。普通路径仍不会自动回退到 DMA 域，因此现有 32 位 ARM 驱动在未设置回调或显式返回身份域时行为保持不变。 |
+| Qualcomm | [PATCH] iommu: arm-smmu-qcom: Skip fault-info reads when suspended ------高通 Adreno GPU 的 IOMMU 故障信息回调在无运行时电源管理引用的情况下直接读取 SMMU 寄存器。故障虽在 SMMU 活跃时触发，但 GPU 可能在处理线程到达前撤销电源投票，使 SMMU 运行时挂起；此时访问寄存器不安全，可能使后续恢复运行时出现 NoC 错误和异步 SError。补丁在读取前尝试保持设备活跃，若挂起已经开始则跳过寄存器读取，避免破坏故障现场和触发后续错误。 |
 
 ---
 
@@ -97,691 +98,898 @@
 
 ## 社区讨论中 Patches
 
-### ◆ 子系统：IOMMU Core（16 patches）
+### ◆ 子系统：ARM SMMUv3（18 patches）
 
-**▸ 组织：Qualcomm**（3 patches）
+**▸ 组织：Google**（6 patches）
 
-**[SERIES] Fix GPU and display on ARM32 platforms using the MSM IOMMU** （cover letter，2/2 个 patch 达到代码量阈值）
+**[SERIES] KVM: arm64: SMMUv3 driver for pKVM (trap and emulate)** （cover letter，19/19 个 patch 达到代码量阈值）
 
-- 日期：2026-07-30
+- 日期：2026-10-15
+- 状态：社区讨论中
+- 作者邮箱：Mostafa Saleh <smostafa@google.com>
+- 概括：在受保护 KVM 下新增 EL2 端 ARM SMMUv3 驱动和主机端配套驱动：把 SMMU MMIO 捐赠给 hypervisor，对主机访问进行陷阱并模拟寄存器读写，使 hypervisor 拥有硬件并建立影子页表，从而提供 DMA 隔离。同时将队列、流表项、IDR 解析、无命中更新和范围失效等逻辑移入主机与 hypervisor 共享代码，并实现命令队列和流表影子、TLB 失效以及主机阶段二页表的同步更新。
+- 达到阈值的 patches（19 个，显示前 5）：
+  - iommu/arm-smmu-v3: Move Queue and STE functions to header
+  - iommu/arm-smmu-v3: Move IDR parsing to common functions
+  - iommu/arm-smmu-v3: Move hitless machinery to common code
+  - iommu/arm-smmu-v3-kvm: Probe SMMU HW
+  - iommu/arm-smmu-v3-kvm: Emulate GBPA
+  - ... 及其他 14 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20261015200903.2735565-3-smostafa@google.com/
+
+**[SERIES] iommu/arm-smmu-v3: Implement Runtime/System Sleep ops** （cover letter，7/14 个 patch 达到代码量阈值）
+
+- 日期：2026-09-29
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：为 ARM SMMUv3 及 Tegra241 命令队列硬件实现运行时和系统休眠支持。挂起前在命令队列生产者索引中设置停止标志以阻止新命令提交，并排空命令队列和虚拟命令队列；恢复时从缓存重写消息中断配置并恢复队列读写指针。新增运行时电源管理及设备链接，确保硬件访问前唤醒设备，并补充单元测试，避免休眠挂起因未完成命令超时或硬件状态丢失而失败。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - iommu/arm-smmu-v3: Refactor arm_smmu_setup_irqs
+  - iommu/tegra241-cmdqv: Restore PROD and CONS after resume
+  - iommu/arm-smmu-v3: Enable pm_runtime and setup devlinks
+  - iommu/arm-smmu-v3: Invoke pm_runtime before hw access
+  - iommu/arm-smmu-v3: Implement pm_runtime & system sleep ops
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260929034510.2023173-3-praan@google.com/
+
+**[SERIES] iommu/arm-smmu-v3: Implement Live Update support** （cover letter，8/9 个 patch 达到代码量阈值）
+
+- 日期：2026-09-29
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：为 Arm SMMUv3 增加跨内核热升级状态保持，利用内核交接框架把流表、上下文描述符表和事件队列内存保留到新内核，启动时直接接管这些硬件状态而不复位系统内存管理单元，并继承地址空间标识与虚拟机标识；关闭阶段只阻止未保留设备并保持翻译使能，使设备 DMA 在热升级切换过程中持续工作。
+- 达到阈值的 patches（8 个，显示前 5）：
+  - iommu/kho: Extend IOMMU KHO ABI for ARM SMMUv3
+  - iommu/arm-smmu-v3: Implement KHO preservation for STEs
+  - iommu/arm-smmu-v3: Implement Live Update Stream Table restoration
+  - iommu/arm-smmu-v3: Implement Live Update CD Table restoration
+  - iommu/arm-smmu-v3: Implement CD Table preservation
+  - ... 及其他 3 个 patch
+- 来源：https://patchwork.kernel.org/project/kexec/patch/20260929071950.2710070-2-praan@google.com/
+
+**[SERIES] iommu/arm-smmu-v3: Fixes reported by Sashiko** （cover letter，1/5 个 patch 达到代码量阈值）
+
+- 日期：2026-09-24
+- 状态：社区讨论中
+- 作者邮箱：Mostafa Saleh <smostafa@google.com>
+- 概括：修复 ARM SMMUv3 流表和上下文描述符发布顺序问题：在写 L1 指针前增加写屏障，确保已分配并零初始化的 L2 表对 SMMU 可见，避免硬件读到随机内容。配套测试修复上下文描述符被当作流表解析、缺失错误检查可能访问空指针、数组边界断言不停止导致越界，以及测试结构体缺少计数导致 UBSAN 越界报错。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommu/arm-smmu-v3: Ensure L2 tables are visible before L1 ptrs
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260924085616.300650-2-smostafa@google.com/
+
+**[v10,08/15] iommu/arm-smmu-v3: Cache and restore MSI config**
+
+- 日期：2026-09-08
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：针对 ARM SMMUv3 在系统掉电后恢复时 MSI 配置寄存器丢失、导致事件队列等中断无法继续使用的问题，首次写入 MSI 报文时缓存目标地址和数据，恢复阶段重写这些寄存器以恢复 MSI 投递；同时，MSI 初始化失败回退到有线中断时清除 MSI 能力标记，避免恢复阶段对不存在的 MSI 做无意义重配。这样挂起再唤醒后，事件、全局错误和页面请求中断仍能按原配置工作。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260908171712.356645-9-praan@google.com/
+
+**iommu/arm-smmu-v3-sva: Relax ASID requirements**
+
+- 日期：2026-09-07
+- 状态：社区讨论中
+- 作者邮箱：Mostafa Saleh <smostafa@google.com>
+- 概括：ARM SMMUv3 的共享进程地址空间支持检查原先要求 SMMU 的 ASID 空间不小于 CPU，因为早期实现依赖分布式虚拟内存并复用 CPU 进程标识；后来该依赖已被移除，SMMU ASID 与 CPU 无需再匹配。补丁删除 CPU ASID 相关检查，并改为打印最大共享上下文数，避免 ASID 位数较小的 SMMU 被错误地判定为不支持共享地址空间。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260907154928.4012151-1-smostafa@google.com/
+
+**▸ 组织：NVIDIA**（5 patches）
+
+**[SERIES] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump** （cover letter，8/11 个 patch 达到代码量阈值）
+
+- 日期：2026-10-05
+- 状态：社区讨论中
+- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
+- 概括：在崩溃转储内核启动时不再复位 Arm SMMUv3，而是采纳崩溃内核的流表并保留其使能位，让飞行中的设备 DMA 继续按原页表翻译，避免全局中止或绕过导致致命错误和内存破坏；同时禁用事件队列与页请求队列，扫描并保留旧地址空间标识和虚拟机标识，防止新域命中旧缓存。
+- 达到阈值的 patches（8 个，显示前 5）：
+  - iommu/arm-smmu-v3: Make the ASID space per SMMU instance
+  - iommu/arm-smmu-v3: Add ARM_SMMU_OPT_KDUMP_ADOPT for kdump kernel
+  - iommu/arm-smmu-v3: Disable the EVTQ and the PRIQ in a kdump kernel
+  - iommu/arm-smmu-v3: Retain CR0_SMMUEN during kdump device reset
+  - iommu/arm-smmu-v3-kexec: Reserve crashed kernel's ASIDs and VMIDs
+  - ... 及其他 3 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/e027296ac9db58fb7d69b1b4b5e4a2ed192dd401.1791226953.git.nicolinc@nvidia.com/
+
+**[SERIES] Organize the SMMUv3 invalidation flow so iommupt can use it** （cover letter，7/7 个 patch 达到代码量阈值）
+
+- 日期：2026-10-03
+- 状态：社区讨论中
+- 作者邮箱：Jason Gunthorpe <jgg@nvidia.com>
+- 概括：在 ARM SMMUv3 使用共享进程地址空间时，连续页表项可能因硬件缺陷在范围失效被从中间拆分时漏失效，恶意用户可借助内存映射操作触发；原有范围失效也可能发出多达 512 条单条命令或多次范围命令，延迟较高。补丁将 SVA 失效改为一次覆盖整个连续项的范围命令，并预计算失效命令、整理参数，将普通范围失效控制在最多两次且可重叠覆盖，以降低延迟，同时为后续页表接管的失效流程做准备。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - iommu/arm-smmu-v3: Pass the parameters for the invalidation in a struct
+  - iommu/arm-smmu-v3: Move pgsize out of arm_smmu_inv
+  - iommu/arm-smmu-v3: Handle ARM erratum for CONT under invalidation with SVA
+  - iommu/arm-smmu-v3: Populate the tlbi at the top of the call chain
+  - iommu/arm-smmu-v3: Precompute the invalidation commands
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/2-v8-1eaaed5e0433+3d3d2d-smmu_tlbi_jgg@nvidia.com/
+
+**[SERIES] iommu/arm-smmu-v3: Quarantine device upon ATC invalidation timeout** （cover letter，2/10 个 patch 达到代码量阈值）
+
+- 日期：2026-09-23
+- 状态：社区讨论中
+- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
+- 概括：在 ARM SMMUv3 上检测到 ATC 失效超时后隔离设备：通过命令队列错误位图将超时关联到发起者并返回失败，随后阻止该设备的 ATS 并保持在阻塞域，直到成功复位才恢复，防止陈旧 ATC 条目引发数据破坏。同时修正 PCI 重置探测阶段错误挂起 IOMMU 造成 DMA 中断的问题，并调整 PCI 和 CXL 探测逻辑。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/arm-smmu-v3: Thread arm_smmu_master_domain on a per-master list
+  - iommu/arm-smmu-v3: Quarantine ATS after an ATC invalidation timeout
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/5ddbd81323f86d045072ebf410a6f87da4f2796f.1790188511.git.nicolinc@nvidia.com/
+
+**[SERIES] iommu/arm-smmu-v3: Add PRI support** （cover letter，10/12 个 patch 达到代码量阈值）
+
+- 日期：2026-09-15
+- 状态：社区讨论中
+- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
+- 概括：为 ARM SMMUv3 增加 PCI 页请求接口支持。在设备从域分离时，先排空硬件事件队列并刷新未完成的 I/O 页故障工作，避免旧域释放后工作引用已释放内存；仅在硬件支持停顿而无共享虚拟地址时也分配 I/O 页故障队列；对页请求事件提交对应响应命令。这些修改让支持页请求的 PCI 设备能安全使用缺页报告，并修复分离路径上的释放后使用风险。
+- 达到阈值的 patches（10 个，显示前 5）：
+  - iommu/arm-smmu-v3: Drain in-flight fault events on domain detach
+  - iommu/arm-smmu-v3: Flush in-flight fault work on domain detach
+  - iommu/arm-smmu-v3: Disable the queue IRQs before disabling the SMMU
+  - iommu/arm-smmu-v3: Submit CMDQ_OP_PRI_RESP for IOPF event
+  - iommu/arm-smmu-v3: Allocate IOPF queue without FEAT_SVA
+  - ... 及其他 5 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/f74817bb45a4bfcda966d9b5ca366c649b6dfe46.1789446520.git.nicolinc@nvidia.com/
+
+**[SERIES] iommu/arm-smmu-v3: Support guest-level Realm VSMMU (Part-1)** （cover letter，4/4 个 patch 达到代码量阈值）
+
+- 日期：2026-09-10
+- 状态：社区讨论中
+- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
+- 概括：在 Arm CCA 机密虚拟机中，通过固件 RSI 命令探测并激活可信的 SMMUv3 实例，校验 ACPI 提供的寄存器范围与固件信息一致，避免替换攻击；同时将 IOMMU 标记为机密并使用私有内存分配队列和页表。针对 TDISP 设备双 DMA 流，把 T=1 可信流置于阻塞域，T=0 流走身份映射，并拒绝用户态域更改、驱动分组附加和 PASID 附加，防止两条流互相干扰。当前不支持机密虚拟机内的 T=0 SMMU。
+- 达到阈值的 patches（4 个，显示前 5）：
+  - iommu: Let a driver mark an IOMMU as confidential
+  - iommu: Park TDISP T=0 devices in the blocking domain
+  - iommu: Introduce TDISP T=0 state for confidential IOMMUs
+  - iommu/arm-smmu-v3: Probe a guest-level Realm VSMMU via RSI commands
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/a2b4ecab20635c1b0defa47407af23ff901c778d.1789010941.git.nicolinc@nvidia.com/
+
+**▸ 组织：NXP**（3 patches）
+
+**[SERIES] iommu/arm-smmu-v3: Support shared Stream IDs** （cover letter，6/7 个 patch 达到代码量阈值）
+
+- 日期：2026-10-30
+- 状态：社区讨论中
+- 作者邮箱：Peng Fan <peng.fan@oss.nxp.com>
+- 概括：在 Stream ID 数量有限的 SoC 上允许多个设备共用同一 SID，通过共享同一个流对象和域级上下文描述符表，确保它们绑定到同一 IOMMU 域；共享设备被归入同一组，并且禁用共享标识下无法唯一归属故障的特性，如共享虚拟地址、进程地址空间标识、地址翻译服务和故障停顿，释放单个设备时不会破坏其他共享者 DMA。这样 NXP i.MX95 等平台的多设备共用流标识可正常探测。
+- 达到阈值的 patches（6 个，显示前 5）：
+  - iommu/arm-smmu-v3: Group aliasing devices into the same IOMMU group
+  - iommu/arm-smmu-v3: Wire up shared-SID STE ordering and feature gating
+  - iommu/arm-smmu-v3: Allocate streams individually
+  - iommu/arm-smmu-v3: Delay stream allocation to inside the mutex
+  - iommu/arm-smmu-v3: Use a per-domain CD table for non-PASID streams
+  - ... 及其他 1 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20261030-smmu-shared-sid-ver7-2026-10-26-v7-6-961726ebd6ab@Example.Com/
+
+**[RFC,v4,1/4] iommu/arm-smmu-v3: Skip duplicate SIDs when erasing streams from RB tree**
+
+- 日期：2026-10-01
+- 状态：社区讨论中
+- 作者邮箱：Peng Fan <peng.fan@oss.nxp.com>
+- 概括：修复 ARM SMMUv3 在流标识数组存在相邻重复项时，移除主设备或插入失败回滚可能破坏红黑树一致性的问题。别名桥后的 PCI 设备可能产生重复流标识，插入阶段会静默丢弃未链接的重复节点，但删除路径仍无条件对所有数组项执行红黑树删除，导致对未初始化节点操作并损坏树。现在利用流标识已排序、重复项相邻的特点，在回滚和移除时跳过这些重复项，使删除操作与插入行为一致。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20261001-smmu-shared-sid-ver3-v4-1-06b34fb2e691@nxp.com/
+
+**[RFC,v2,1/4] iommu/arm-smmu-v3: Convert streams from RB tree to XArray**
+
+- 日期：2026-09-21
+- 状态：社区讨论中
+- 作者邮箱：Peng Fan <peng.fan@oss.nxp.com>
+- 概括：将 ARM SMMUv3 中按流标识查找流对象的结构从红黑树改为 XArray，继续使用现有互斥锁串行化插入、删除和读取，避免依赖读侧 RCU 宽限期；由于部分路径持锁时会睡眠，保留互斥锁是必要的。改造移除了红黑树比较逻辑和节点成员，并简化了桥接 PCI 设备出现重复流标识时的处理。该改动不改变现有行为，目的是为后续共享流标识支持做准备。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260921-smmu-shared-sid-v2-1-4b656ce68178@nxp.com/
+
+**▸ 组织：归属待核实（foxmail.com）**（1 patches）
+
+**iommu/arm-smmu-v3: Skip unlinked duplicate stream nodes on removal**
+
+- 日期：2026-09-21
+- 状态：社区讨论中
+- 作者邮箱：zhoumin <teczm@foxmail.com>
+- 概括：修复 ARM SMMUv3 中重复流标识导致红黑树损坏的问题。别名桥后的 PCI 设备可能产生重复流标识，插入时若重复项属于同一主设备则被接受但不会链接到红黑树；删除和插入失败回滚时却无条件删除每个节点，误删未链接节点可能清除树根，破坏其他设备的流标识映射。现在对跳过的重复节点做清空标记，并在删除和回滚路径中跳过未链接节点，保持树结构一致。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/tencent_4392079B5C29406B923C037A7E66DD338005@qq.com/
+
+**▸ 组织：Kernel.org**（1 patches）
+
+**[v2,2/5] iommu/arm-smmu-v3: Switch to use acpi_bus_get_primary_device()**
+
+- 日期：2026-09-30
+- 状态：社区讨论中
+- 作者邮箱：Rafael J. Wysocki (Intel) <rafael@kernel.org>
+- 概括：调整 ARM SMMUv3 在 ACPI 下查找 Tegra241 命令队列伴随设备的方式，改用会持有设备引用的 ACPI 接口获取主设备，替换即将移除且返回后不持有引用的旧接口。旧接口在释放 ACPI 节点锁后返回的设备可能立即被移除，存在释放后使用风险；新接口通过引用计数保证返回设备在后续使用期间不会被释放，从而消除这一潜在问题。
+- 来源：https://patchwork.kernel.org/project/alsa-devel/patch/3636226.QJadu78ljV@rafael.j.wysocki/
+
+**▸ 组织：归属待核实（shutemov.name）**（1 patches）
+
+**[SERIES] iommu/arm-smmu-v3: Make the queue depths tunable, and shrink them in a kdump kernel** （cover letter，1/2 个 patch 达到代码量阈值）
+
+- 日期：2026-09-25
+- 状态：社区讨论中
+- 作者邮箱：Kiryl Shutsemau <kirill@shutemov.name>
+- 概括：为 ARM SMMUv3 增加按条目数对数指定命令队列深度的模块参数，默认维持原最大深度且不低于一页；在 kdump 捕获内核中，三个队列默认只分配一页大小的条目。此前队列按硬件通告最大值分配，每个实例可达数 MB，而捕获内核运行在很小的预留内存中且部分队列被禁用，造成浪费。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommu/arm-smmu-v3: Default queue depths to one page in a kdump kernel
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260925141532.1274962-3-kirill@shutemov.name/
+
+**▸ 组织：Debian**（1 patches）
+
+**[SERIES] iommu/arm-smmu-v3: SMMU hitting kdump mid-air** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-09-11
+- 状态：社区讨论中
+- 作者邮箱：Breno Leitao <leitao@debian.org>
+- 概括：kdump 启动时，新内核不再完全重置 SMMU 并安装空白流表，而是在关闭 SMMU 前读取前一个内核的流表，复制一级描述符并继续使用其二级表，让仍在 DMA 的设备保持原有翻译，避免未驱动网卡继续访问时产生非法流 ID 故障而被固件复位；同时把设备默认域附加推迟到下次 DMA，以免探测时立即替换继承条目造成翻译故障。仅在 SMMU 已启用、几何一致且一致性满足时继承。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/arm-smmu-v3: inherit the previous kernel's stream table in kdump
+  - iommu/arm-smmu-v3: defer attach in kdump so inherited entries survive probe
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260911-smmu_fix_aws-v1-1-75870bf9655b@debian.org/
+
+---
+
+### ◆ 子系统：IOMMUFD（13 patches）
+
+**▸ 组织：Individual Contributor**（5 patches）
+
+**[SERIES] guest_memfd: Export guest_memfd files to iommufd** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-10-27
+- 状态：社区讨论中
+- 作者邮箱：Fred Griffoul <griffoul@gmail.com>
+- 概括：为虚拟机客户机内存文件增加导出接口，使分配给客户机的设备可通过输入输出内存管理单元用户态接口映射其共享内存，而不是长期锁定页面。原接口只固定锁定映射内容，无法在客户机内存文件撤销、转换或重新提供页面时同步；现在通过回调更新或解除受影响设备映射，只读物理帧不加写权限，未映射或重新映射失败的范围保持未映射并告警。物理帧号模式下还会把 KVM 映射块限制到与页属性对齐的范围，避免跨共享和私有页错误映射。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommufd: Map guest_memfd files
+  - iommufd: Track the domains of revocable pages in struct iopt_pages
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261027154649.91571-10-griffoul@gmail.com/
+
+**[SERIES] iommufd: harden DMA-BUF PAL setup and release** （cover letter，4/6 个 patch 达到代码量阈值）
+
+- 日期：2026-10-20
+- 状态：社区讨论中
+- 作者邮箱：Karl Mehltretter <kmehltretter@gmail.com>
+- 概括：加固iommufd对DMA-BUF物理地址列表的建立和释放路径，修复并发失效与释放之间的竞态：固定失败原被误报成功，现在保留实际错误；成功映射与撤销均在预留锁保护内完成，并在解除映射前清空指针、在解除DMA-BUF附加后再销毁互斥锁，避免失效回调访问无效状态，自测试覆盖失败清理。
+- 达到阈值的 patches（4 个，显示前 5）：
+  - iommufd: Publish successful PAL mappings under resv
+  - iommufd: Keep the pages mutex alive until DMA-buf detach
+  - iommufd: Unpin the DMA-buf while holding resv
+  - iommufd/selftest: Check DMA-buf pin and map failure cleanup
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/9a3912ce01cfd1205daeb13b57de47aa8f27f076.1792477872.git.kmehltretter@gmail.com/
+
+**[SERIES] mm: Memory providers for guest_memfd and iommufd** （cover letter，5/5 个 patch 达到代码量阈值）
+
+- 日期：2026-10-14
+- 状态：社区讨论中
+- 作者邮箱：Fred Griffoul <griffoul@gmail.com>
+- 概括：引入内存提供者抽象，让没有页结构或由驱动独占的内存文件能够同时支持虚拟客户机私有内存和 IOMMU 映射；客户机故障和输入输出页表填充按帧向提供者查询属性与物理地址，提供者撤销某个范围时所有消费者会同步解除映射。这样物理连续设备内存或与对端共享的内存不再需要固定使用页分配器，并支持只读页。
+- 达到阈值的 patches（5 个，显示前 5）：
+  - iommufd: Track the domains of pages that are not pinned
+  - iommufd: Map memory provider files
+  - iommufd/selftest: Add mock-domain IOVA queries
+  - iommufd/selftest: Add a mock memory provider
+  - iommufd: Use large IOMMU pages for provider mappings
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20261014093733.90312-6-griffoul@gmail.com/
+
+**[v2,2/2] iommufd/selftest: Check dmabuf MMIO mappings filled from another domain**
+
+- 日期：2026-10-08
+- 状态：社区讨论中
+- 作者邮箱：Andrea Parri <parri.andrea@gmail.com>
+- 概括：为自测试补充对共享缓冲区在另一域中填充设备内存映射属性的检查。模拟页表原先无法区分该属性和普通缓存映射，现在包装映射与取消映射操作，按域记录以该属性建立的页，并增加检查命令验证指定范围。测试覆盖在同一地址空间新建第二个域和把共享缓冲区复制到另一地址空间已有域两种情况；没有前序修复时新增域检查会失败，修复后三类模拟域均通过。
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20261008125206.11990-3-parri.andrea@gmail.com/
+
+**[SERIES] iommufd: Keep IOMMU_HWPT_GET_DIRTY_BITMAP within the user bitmap** （cover letter，2/4 个 patch 达到代码量阈值）
+
+- 日期：2026-09-25
+- 状态：社区讨论中
+- 作者邮箱：Andrea Parri <parri.andrea@gmail.com>
+- 概括：在 IOMMU 用户态接口的脏页位图查询中，当请求范围只覆盖一个大页的一部分时，硬件上报的整个大页会把位图之后的内存置位，零长度请求也会因长度下溢被接受并扫描整个地址空间。现在将记录范围裁剪到位图边界，并提前拒绝零长度请求，同时加入自测覆盖越界和零长度情况，防止内核写出用户缓冲区。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommufd/iova_bitmap: Clip recorded ranges to the bitmap
+  - iommufd: Reject a zero-length dirty bitmap request
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20260925161142.189813-2-parri.andrea@gmail.com/
+
+**▸ 组织：Alibaba**（3 patches）
+
+**[SERIES] iommufd: Recommended reservations query and opt-in IOAS reservation** （cover letter，1/3 个 patch 达到代码量阈值）
+
+- 日期：2026-10-28
+- 状态：社区讨论中
+- 作者邮箱：Guanghui Feng <guanghuifeng@linux.alibaba.com>
+- 概括：新增查询设备推荐保留IOVA范围的接口及可选的IOAS保留接口：内核报告PCI设备所在主机桥的MMIO窗口，因在这些范围内发起DMA可能被PCIe交换机当点到点流量误路由而不经IOMMU翻译；用户空间可查询后自行决定是否保留，保留后这些范围从可用IOVA范围和映射操作中排除，整个流程可选，不使用则行为不变。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommufd: Add IOMMU_GET_RECOMMENDED_RESERVATIONS ioctl
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261028090453.2392991-2-guanghuifeng@linux.alibaba.com/
+
+**[v4,2/2] iommufd: Add IOMMU_GET_PCI_MMIO_WINDOWS ioctl**
+
+- 日期：2026-10-25
+- 状态：社区讨论中
+- 作者邮箱：Guanghui Feng <guanghuifeng@linux.alibaba.com>
+- 概括：为输入输出内存管理用户接口新增按设备查询命令，让用户态（如虚拟机监视器）获知设备所在 PCI 主机桥的内存映射窗口范围。此前用户态无法知道哪些地址可能被 PCIe 交换机误判为点对点 DMA 目标；现在内核只报告这些窗口而不保留或强制，用户态可自愿把 I/O 虚拟地址分配避开它们。若输出数组过小则返回长度不足错误。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261025133000.205508-3-guanghuifeng@linux.alibaba.com/
+
+**[SERIES] iommu: Reserve PCI host bridge MMIO windows for IOVA** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-09-21
+- 状态：社区讨论中
+- 作者邮箱：Guanghui Feng <guanghuifeng@linux.alibaba.com>
+- 概括：把 PCI 主机桥 MMIO 窗口纳入 IOMMU 组和 iommufd IOAS 的保留区域。此前这些窗口仅由 DMA IOVA 层保留，VFIO type1 和 iommufd 向用户态报告的可用 IOVA 可能落入桥窗口；当设备位于 PCIe 交换机后且 ACS 上游转发未完全启用时，这类 IOVA 的 DMA 可能被交换机当作点对点流量误路由到其他设备。现在组级保留包含这些窗口，用户态不再获得重叠地址。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu: Reserve PCI host bridge MMIO windows in group reserved regions
+  - iommufd: Reserve PCI host bridge MMIO windows in IOAS reserved regions
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260921103922.1113752-2-guanghuifeng@linux.alibaba.com/
+
+**▸ 组织：Kernel.org**（3 patches）
+
+**[RFC,v2,03/13] iommufd: Support MMIO provider attachment to vDEVICEs**
+
+- 日期：2026-10-17
+- 状态：社区讨论中
+- 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+- 概括：为虚拟设备增加设备内存映射提供者的附加与分离机制。设备提供者此前没有统一的附加路径；现在可在后端验证其与虚拟机关联后，把该提供者绑定到已存在的虚拟设备，并增加互斥锁串行化附加、分离与内存转换。提供者或后端可查询是否仍有私有内存映射范围，且虚拟设备及其上下文会保持存活直到提供者分离，避免释放后仍被访问。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261017073149.1303738-4-aneesh.kumar@kernel.org/
+
+**[SERIES] iommufd: vIOMMUs and TSM guest requests for confidential guests** （cover letter，6/6 个 patch 达到代码量阈值）
+
+- 日期：2026-10-08
+- 状态：社区讨论中
+- 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+- 概括：为机密客户机的 vIOMMU 增加客户机 TSM 请求分发：iommufd 现在关联 VFIO 设备的 KVM 文件并保留引用，通过新 ioctl 把客户机产生的 TSM 命令转发给管理受分配设备的 TEE 安全管理器，同时让 PCI TSM 后端可以为 vIOMMU 提供操作并校验设备与 vIOMMU 使用同一管理器，移除旧的 PCI 设备级请求通道。
+- 达到阈值的 patches（6 个，显示前 5）：
+  - iommufd/device: Associate KVM file pointer with iommufd_device
+  - iommufd/viommu: Keep a reference to the KVM file
+  - iommufd: Add the vdevice TSM request ioctl
+  - iommufd/viommu: Select vIOMMU operations before allocation
+  - iommufd/viommu: Allow PCI TSM backends to provide vIOMMU operations
+  - ... 及其他 1 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20261008055955.4014342-8-aneesh.kumar@kernel.org/
+
+**[SERIES] iommufd: Infrastructure for vIOMMU creation for confidential guests and guest TSM requests** （cover letter，1/3 个 patch 达到代码量阈值）
+
+- 日期：2026-09-17
+- 状态：社区讨论中
+- 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+- 概括：建立 vIOMMU 创建基础设施并引入外部 provider 注册机制：当物理 IOMMU 驱动不实现某 vIOMMU 类型时，改为查找注册的 provider，由其提供操作和私有数据。同时把 VFIO 对 KVM 的引用改为基于文件的生命周期管理，TSM 设备增加活动用户引用，最终使机密客户机可通过 iommufd vdevice 转发客户机 TSM 请求，并替换旧的 PCI/TSM 绑定接口。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommufd: Add vIOMMU provider support
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260917140159.1163281-6-aneesh.kumar@kernel.org/
+
+**▸ 组织：NVIDIA**（1 patches）
+
+**iommupt: Do not allow PTEs to be split when dirty logging**
+
+- 日期：2026-10-15
+- 状态：社区讨论中
+- 作者邮箱：Jason Gunthorpe <jgg@nvidia.com>
+- 概括：修复通用页表脏页跟踪中允许拆分单个页表项的错误。原先当单个页表项放不进当前位图时会被拆分，可能把脏内存报告为干净；清理范围也只覆盖匹配部分。现在按每个页表项的完整 I/O 虚拟地址范围更新位图和失效收集范围，位图对放不下的范围直接拒绝，失效收集范围始终合并。自测原先依赖该拆分缺陷，现将脏页测试页大小调整为系统页大小以保持覆盖整个页表项。
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/0-v1-5bb926ff73ec+576-iommufd_dirty_jgg@nvidia.com/
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] iommu: Introduce Page Table Observability Framework** （cover letter，2/5 个 patch 达到代码量阈值）
+
+- 日期：2026-10-01
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：为传统虚拟化容器和 IOMMU 用户态接口新增页表内存占用观测，把页表分配归属到具体域并累计页数，再在进程文件描述信息中暴露该计数。使用通用页表库的驱动自动计入；如果相关域不提供计数则省略该字段，避免给出部分统计。解除映射后计数保持不变，以反映仍可回收的页表内存。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommupt: Enable per-domain IOPT attribution
+  - iommufd: Expose IO page table usage via fdinfo
+- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20261001224531.765278-2-praan@google.com/
+
+---
+
+### ◆ 子系统：IOMMU Core（12 patches）
+
+**▸ 组织：东南大学**（2 patches）
+
+**iommu/exynos: quiesce SysMMU before requesting IRQ**
+
+- 日期：2026-09-21
+- 状态：社区讨论中
+- 作者邮箱：Runyu Xiao <runyu.xiao@seu.edu.cn>
+- 概括：针对 Exynos SysMMU 驱动在获取时钟和识别硬件版本之前就注册中断的问题，调整初始化顺序：先获取时钟并初始化软件状态，再在时钟使能期间识别版本、禁用 SysMMU 并清除其配置，最后才注册中断处理程序。这样发布中断处理程序时硬件已处于静默状态；同时在 SysMMU 未激活时直接忽略中断，防止虚假中断访问尚未初始化的故障状态或指针。该竞争目前仅为理论风险，尚未在实际运行中观测到。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260921120848.96215-1-runyu.xiao@seu.edu.cn/
+
+**iommu/exynos: Initialize lock before requesting IRQ**
+
+- 日期：2026-09-01
+- 状态：社区讨论中
+- 作者邮箱：Runyu Xiao <runyu.xiao@seu.edu.cn>
+- 概括：三星 Exynos 平台 SysMMU 驱动中，自旋锁初始化发生在中断请求之后。由于中断处理程序在请求中断后即可运行，早期到达的中断可能使用尚未初始化的锁，造成并发访问异常。补丁将锁初始化移动到请求中断之前，确保中断处理程序首次运行前锁已就绪。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260901130527.3289245-1-runyu.xiao@seu.edu.cn/
+
+**▸ 组织：Qualcomm**（2 patches）
+
+**[SERIES] iommu: qcom: Fix the MSM GPU and display with DMA-address based mappings** （cover letter，2/3 个 patch 达到代码量阈值）
+
+- 日期：2026-10-30
 - 状态：社区讨论中
 - 作者邮箱：Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-- 概括：修复 ARM32 上使用高通 MSM IOMMU 的 GPU 和显示无法工作的问题。此前一个设备跨多个 IOMMU 时，主设备记录会错乱并可能空指针崩溃；页表还通过被附加设备的 DMA 配置分配，在 ARM32 上会经它描述的 IOMMU 反复映射自身，导致释放时崩溃。现在按设备和 IOMMU 分别跟踪主设备，改用 IOMMU 设备分配页表，并在附加自有域前先解除架构层的 DMA 映射。
+- 概括：修复高通旧款 IOMMU 以及 ARM SMMU 高通扩展中 GPU 与显示设备的 DMA 地址映射问题。旧款 IOMMU 的全域 TLB 刷新只等待同步而不失效，导致 db410c 上 GPU 复用地址时因旧条目挂起；GPU/显示设备又未选择直通域，缓冲区被映射到无用的 IOMMU 地址，db410c 无法启动，db820c 上 MDP5 也因直通选择缺失导致复位。
 - 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/msm: track a context master per device and IOMMU
-  - iommu/msm: use the IOMMU device for page table allocation
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260730-fix-qcom-smmu-v2-1-18e0daf2d836@oss.qualcomm.com/
+  - iommu/arm-smmu-qcom: Use identity default domains for MDP5
+  - iommu/qcom: Use identity default domains for the MSM GPU and display
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20261031-msm-smmu-identity-v1-1-a2a70580eebd@oss.qualcomm.com/
 
-**[3/8] iommu/fsl: use platform_device_set_fwnode()**
+**[SERIES] iommu/qcom+msm: Use identity domain for display/GPU** （cover letter，2/2 个 patch 达到代码量阈值）
 
-- 日期：2026-07-20
+- 日期：2026-10-29
 - 状态：社区讨论中
-- 作者邮箱：Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-- 概括：在飞思卡尔 PAMU IOMMU 初始化中，把为动态分配平台设备设置设备树节点的方式从仅针对设备树的接口改为更通用的固件节点接口，行为不变，只是改用更高层的封装。
-- 来源：https://patchwork.kernel.org/project/alsa-devel/patch/20260720-pdev-set-fwnode-instead-of-of-node-v1-3-2dee93f42c54@oss.qualcomm.com/
-
-**[v3,09/20] iommu/fsl: use platform_device_set_of_node()**
-
-- 日期：2026-07-06
-- 状态：社区讨论中
-- 作者邮箱：Bartosz Golaszewski <bartosz.golaszewski@oss.qualcomm.com>
-- 概括：在飞思卡尔 PAMU IOMMU 初始化中，把动态分配平台设备时设置设备树节点的方式改为使用封装好的辅助接口，并借助自动清理机制管理节点引用，使驱动注册失败等错误路径不再需要手工释放节点引用，简化了初始化流程。
-- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260706-pdev-fwnode-ref-v3-9-1ff028e33779@oss.qualcomm.com/
-
-**▸ 组织：归属待核实（gahingwoo.com）**（3 patches）
-
-**[SERIES] accel/rocket: RK3576 NPU (RKNN) enablement** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-07-18
-- 状态：社区讨论中
-- 作者邮箱：Jiaxing Hu <gahing@gahingwoo.com>
-- 概括：为瑞芯微 RK3576 的 NPU 增加上游支持，使其能在 Radxa ROCK 4D 上探测、上电并跑完提交的任务。此前该芯片的 NPU 无法使用：其 IOMMU 位于额外时钟门后，寄存器写入会被丢弃，且固件遗留的页错误会让停流等待超时。补丁让 IOMMU 取用设备树列出的全部时钟、在启用停流前先确认陈旧页错误，并给电源域加上上电稳定延时和复位脉冲；NPU 驱动按芯片区分时钟、复位、电源域和完成中断方式。
+- 作者邮箱：Rob Clark <robin.clark@oss.qualcomm.com>
+- 概括：为高通旧款 IOMMU 和 MSM IOMMU 驱动上的 Adreno GPU 与显示设备改用直通默认域。此前这些设备会由 IOMMU 核心分配默认翻译域，而 drm/msm 驱动需要自行附加并管理域，造成地址映射重复和干扰；现在按设备兼容标识为 GPU 和显示设备选择直通域，使 DMA 地址保持物理地址、不建立额外 IOMMU 映射，由 drm/msm 自行管理页表。
 - 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/rockchip: take all DT clocks
-  - iommu/rockchip: clear stale page faults before enabling stall
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260718031146.3368811-5-gahing@gahingwoo.com/
-
-**[RFC,4/9] iommu/rockchip: skip orphaned-fault banks in rk_iommu_is_stall_active**
-
-- 日期：2026-07-17
-- 状态：社区讨论中
-- 作者邮箱：Jiaxing Hu <gahing@gahingwoo.com>
-- 概括：处理瑞芯微 IOMMU 中固件遗留的孤立页错误。启动固件可能在驱动配置分页前让某个 bank 处于页错误激活状态，此时该 bank 既不处于停流状态又已空闲，停流检查会据此把整个 IOMMU 判为未停流，使后续等待停流完成的轮询永远无法通过。补丁识别这种页错误激活但未停流且空闲的状态，在停流检查中跳过这些 bank，因为它们没有在途事务，本身已处于静止。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717085220.3212274-5-gahing@gahingwoo.com/
-
-**[RFC,5/9] iommu/rockchip: skip orphaned-fault banks in CMD_ENABLE_STALL dispatch**
-
-- 日期：2026-07-17
-- 状态：社区讨论中
-- 作者邮箱：Jiaxing Hu <gahing@gahingwoo.com>
-- 概括：处理瑞芯微 IOMMU 中向孤立页错误 bank 发送停流命令的问题。带有固件遗留页错误的 bank 会静默丢弃停流命令，而该命令在共享总线上还会拖慢其他 bank 进入停流状态，使其超出轮询超时。补丁在派发停流命令时跳过这类页错误激活但未停流且空闲的 bank，与停流检查中使用的跳过条件保持一致。
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260717085220.3212274-6-gahing@gahingwoo.com/
-
-**▸ 组织：Amazon**（1 patches）
-
-**[RFC,09/14] iommu: lazy-populate iommu_group reserved_regions/type attrs**
-
-- 日期：2026-07-02
-- 状态：社区讨论中
-- 作者邮箱：Pavol Sakac <sakacpav@amazon.de>
-- 概括：把 IOMMU 组的保留区域和类型两个属性文件改为按需创建。它们只在 VFIO 或 iommufd 的查询路径上被读取，而每个 SR-IOV 虚拟功能通常各自拥有一个 IOMMU 组，在虚拟功能数以千计的系统中，启动时会为每个组多建两个内核文件节点。现在改为首次访问时再生成，组名属性仍走原有单独路径，用户态接口不变。
-- 来源：https://patchwork.kernel.org/project/kexec/patch/20260702175114.24659-5-sakacpav@amazon.de/
-
-**▸ 组织：中国科学院软件研究所**（1 patches）
-
-**iommu/msm: limit the per-master Machine ID list**
-
-- 日期：2026-07-22
-- 状态：社区讨论中
-- 作者邮箱：Pengpeng Hou <pengpeng@iscas.ac.cn>
-- 概括：高通 MSM IOMMU 在解析设备树中的流 ID 时，会向每个主控对象的固定大小数组追加条目，原先没有容量检查，可能越界写入。现在数组满时返回空间不足错误，不再写出数组边界。
-- 来源：https://patchwork.kernel.org/project/linux-arm-msm/patch/20260722041619.17735-1-pengpeng@iscas.ac.cn/
+  - iommu/qcom: Use identity domain for GPU and display
+  - iommu/msm: Use identity domain for GPU and display
+- 来源：https://patchwork.kernel.org/project/linux-arm-msm/patch/20261029212344.346069-2-robin.clark@oss.qualcomm.com/
 
 **▸ 组织：归属待核实（jannau.net）**（1 patches）
 
-**[v2,2/2] iommu: apple-dart: Support specifying the DMA aperture in the DT**
+**[v3,2/2] iommu: apple-dart: Support specifying the DMA aperture in the DT**
 
-- 日期：2026-08-31
+- 日期：2026-09-02
 - 状态：社区讨论中
 - 作者邮箱：Janne Grunau <j@jannau.net>
-- 概括：Apple DART 通常只允许设备使用其地址空间的一部分做 DMA，此前无法在设备树中指定这段范围。现在可通过设备树参数给出 DMA 窗口的起始和长度，驱动据此设置域孔径并限制页表映射范围；窗口可以超出 DART 的地址宽度，但不能跨越地址宽度边界或回绕。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260831-iommu-apple-dart-aperture-v2-2-d16ce3770299@jannau.net/
+- 概括：苹果 DART 常直接连接只允许将部分地址空间用于 DMA 的设备，其他范围可能被映射到别的用途；原先 DART 的 DMA 窗口只能由自身能力决定。补丁允许设备在设备树 iommus 参数中指定 64 位起始和长度，且范围可以位于 DART 输入地址空间之外，由硬件截断地址，页表仅映射低位；但不能跨越输入地址空间边界或回绕。这样苹果平台设备可精确声明可用的 DMA 孔径。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260902-iommu-apple-dart-aperture-v3-2-252ce55b7001@jannau.net/
+
+**▸ 组织：Individual Contributor**（1 patches）
+
+**[v1,1/2] iommu: export iommu_get_dma_domain()**
+
+- 日期：2026-09-28
+- 状态：社区讨论中
+- 作者邮箱：Jianfeng Liu <liujianfeng1994@gmail.com>
+- 概括：导出获取设备 DMA 域的 IOMMU 接口，供模块化的 drm/msm 驱动使用。启用 dma-buf 调试功能时，导入的 dma-buf 所附散列表不携带物理页，msm 需要借助附加设备的 DMA 域把散列表中的 DMA 地址转换回物理地址，进而映射到自身页表；该接口导出后，模块化驱动可以直接调用完成这一地址恢复。
+- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260928053901.7270-2-liujianfeng1994@gmail.com/
+
+**▸ 组织：Kernel.org**（1 patches）
+
+**[slab/for-next,09/14] iommu: specify SLAB_MAY_ACCOUNT for slab-backed page table caches**
+
+- 日期：2026-10-21
+- 状态：社区讨论中
+- 作者邮箱：Harry Yoo <harry@kernel.org>
+- 概括：为用户态设备直通路径（VFIO、iommufd 和 vhost-vdpa）使用的输入输出内存管理单元页表内核缓存补充允许内存控制组记账的属性。这些路径在建立映射时携带要求计入内存控制组的分配标志，但底层页表缓存原先未开放记账能力，导致页表内存无法归属对应内存控制组；修改后相关页表分配可被正确统计和限制。
+- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20261021-memalloc-prof-dont-waste-slabobj-ext-metadata-v1-9-096800aa3330@kernel.org/
 
 **▸ 组织：EPAM**（1 patches）
 
-**[v12,08/13] iommu/ipmmu-vmsa: Implement suspend/resume callbacks**
+**[v13,09/14] iommu/ipmmu-vmsa: Implement suspend/resume callbacks**
 
-- 日期：2026-08-27
+- 日期：2026-10-27
 - 状态：社区讨论中
 - 作者邮箱：Mykola Kvach <mykola_kvach@epam.com>
-- 概括：为 R-Car H3 等平台上的 IPMMU 驱动实现系统挂起与恢复。挂起时保存活动的上下文寄存器和微 TLB 配置，恢复时先还原根 IPMMU 的上下文状态，再还原缓存 IPMMU 的微 TLB，避免缓存单元先于根上下文恢复而读到过期或未初始化的上下文状态。
-- 来源：https://patchwork.kernel.org/project/xen-devel/patch/1f036e7ad5ad6efba635ca029b0fab133300603a.1787838455.git.mykola_kvach@epam.com/
+- 概括：为瑞萨 IPMMU-VMSA 在 Xen 下实现系统挂起与恢复：保存活跃上下文和微 TLB 寄存器，恢复时先恢复根 IPMMU 的上下文，再恢复缓存 IPMMU 的微 TLB；否则缓存 IPMMU 会通过微 TLB 配置选中根上下文，提前恢复可能暴露过期或未初始化的上下文。目前仅在 H3ULCB（R-Car Gen3）上测试。
+- 来源：https://patchwork.kernel.org/project/xen-devel/patch/3f8f4ecf30d38d589c2d08f5b2676bda93f8d880.1793129971.git.mykola_kvach@epam.com/
+
+**▸ 组织：归属待核实（chromium.org）**（1 patches）
+
+**iommu/mediatek: Track first resume with a dedicated boolean flag**
+
+- 日期：2026-10-28
+- 状态：社区讨论中
+- 作者邮箱：Chen-Yu Tsai <wenst@chromium.org>
+- 概括：联发科 IOMMU 驱动原先依赖写长度控制寄存器在首次运行时恢复前是否为零来判断是否为首次恢复，该默认值非零使判断隐晦且容易误读。现改用专用布尔标志直接记录首次运行时恢复是否已完成：首次恢复仅开启时钟并置位标志，后续恢复再恢复已保存的寄存器。流程更清晰，不改变实际行为。
+- 来源：https://patchwork.kernel.org/project/linux-mediatek/patch/20261028041651.3201911-1-wenst@chromium.org/
 
 **▸ 组织：归属待核实（reactivated.net）**（1 patches）
 
 **[SERIES] Add support for Broadcom BCM2712 IOMMU driver (Raspberry Pi 5)** （cover letter，2/2 个 patch 达到代码量阈值）
 
-- 日期：2026-08-25
+- 日期：2026-09-27
 - 状态：社区讨论中
 - 作者邮箱：Daniel Drake <dan@reactivated.net>
-- 概括：为树莓派 5 所用的博通 BCM2712 芯片新增 IOMMU 驱动，让显示流水线和多媒体设备的内存访问能经 IOMMU 转换。此前该芯片没有上游驱动，相关设备无法使用 IOMMU。驱动采用两级页表格式，并处理全芯片共享的二级 TLB，在修改或解除映射时刷新它；同时补充设备树节点，使图形显示模块启用 IOMMU。
+- 概括：为树莓派 5 所用博通 BCM2712 芯片增加 IOMMU 驱动和对应两级页表格式，用于显示流水线及多媒体设备的内存地址翻译，并支持刷新该芯片共享的二级快表；同时修正页表边界测试地址，使其适配该芯片较窄的物理地址空间，并补充设备树节点以启用显示硬件视频缩放器后的 IOMMU。
 - 达到阈值的 patches（2 个，显示前 5）：
   - iommu/generic_pt: Add Broadcom BCM2712 page table format
   - iommu: Add Broadcom BCM2712 IOMMU driver
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260825-bcm2712-iommu-submit-v3-3-7f143e7289b6@reactivated.net/
+- 来源：https://patchwork.kernel.org/project/devicetree/patch/20260927-bcm2712-iommu-submit-v7-4-dfa2b975cbc9@reactivated.net/
 
-**▸ 组织：ByteDance**（1 patches）
+**▸ 组织：Microsoft**（1 patches）
 
-**[SERIES] riscv: iommu: Add QoS ID support for resctrl device assignment** （cover letter，3/4 个 patch 达到代码量阈值）
+**[SERIES] Hyper-V: Add para-virtualized IOMMU support for Linux guests** （cover letter，1/3 个 patch 达到代码量阈值）
 
-- 日期：2026-07-14
+- 日期：2026-09-30
 - 状态：社区讨论中
-- 作者邮箱：Zhanpeng Zhang <zhangzhanpeng.jasper@bytedance.com>
-- 概括：为 RISC-V IOMMU 增加服务质量标识支持，让 resctrl 能把设备组分配到资源组并据此设置 RCID 和 MCID。此前 resctrl 只能管理任务，无法把外部设备请求方纳入资源控制。新增设备分配接口和每 IOMMU 全局标识的 sysfs 属性，分配前会校验所有成员，校验失败则不改动硬件。
-- 达到阈值的 patches（3 个，显示前 5）：
-  - iommu: Add group lookup by ID
-  - iommu/riscv: Program QoS IDs for assigned groups
-  - iommu/riscv: Expose global QoS IDs in sysfs
-- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/20260714130657.46963-2-zhangzhanpeng.jasper@bytedance.com/
-
-**▸ 组织：Google**（1 patches）
-
-**[SERIES] iommu: Add live update state preservation** （cover letter，16/16 个 patch 达到代码量阈值）
-
-- 日期：2026-08-08
-- 状态：社区讨论中
-- 作者邮箱：Samiullah Khawaja <skhawaja@google.com>
-- 概括：为内核热更新保留设备的 IOMMU 页表、域标识和进程地址空间标识表，在新内核恢复地址转换并重新挂接设备；保留期间禁止修改映射或更换地址空间。已实现底层恢复，但面向用户的 IOMMU 文件接口恢复流程仍待补齐，并附带状态保留测试。
-- 达到阈值的 patches（16 个，显示前 5）：
-  - iommu: Implement IOMMU Live update FLB callbacks
-  - iommu/pages: Add APIs to preserve/unpreserve/restore iommu pages
-  - iommupt: Implement preserve/unpreserve/restore callbacks
-  - iommu: Implement IOMMU domain preservation
-  - iommu: Implement device and IOMMU HW preservation
-  - ... 及其他 11 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260808022723.3893618-3-skhawaja@google.com/
-
-**▸ 组织：归属待核实（surriel.com）**（1 patches）
-
-**[SERIES] iommu/iova: convert from rbtree to maple tree** （cover letter，3/3 个 patch 达到代码量阈值）
-
-- 日期：2026-08-18
-- 状态：社区讨论中
-- 作者邮箱：Rik van Riel <riel@surriel.com>
-- 概括：把 IOMMU 的 IOVA 分配器从红黑树改为 maple tree，解决生产环境中多 CPU 同时线性遍历红黑树寻找空闲区间导致软锁死的问题，空闲区间查找变为对数复杂度；由于在原子上下文释放 IOVA 时树重平衡可能分配失败，改为先标记该区间再延后重试擦除，并新增 KUnit 测试覆盖对齐分配、碎片化空间和随机压力等场景。
-- 达到阈值的 patches（3 个，显示前 5）：
-  - iommu/iova: defer maple tree erase on GFP_ATOMIC failure
-  - iommu/iova: convert from rbtree to maple tree
-  - iommu/iova: add KUnit test suite
-- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20260818152505.1057922-3-riel@surriel.com/
-
-**▸ 组织：Individual Contributor**（1 patches）
-
-**[SERIES] IOMMU driver improvements for modern Exynos SysMMUs** （cover letter，2/4 个 patch 达到代码量阈值）
-
-- 日期：2026-08-20
-- 状态：社区讨论中
-- 作者邮箱：Markuss Broks <markuss.broks@gmail.com>
-- 概括：针对 Exynos8835 等不实现 BLOCK 模式的新款系统 MMU，原先使能时先写带使能位的阻塞寄存器，会在页表基址尚未配置好时就开始翻译，导致主设备事务被错误翻译；现在这类硬件保持关闭直到配置完成再一次性使能，TLB 失效不再等待阻塞状态而是直接写入失效寄存器，并在 v7 及以上故障报告中保留事务信息以区分同一主设备内多个 DMA 引擎。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/exynos: detect SysMMUs without BLOCK mode
-  - iommu/exynos: decode the v7 fault transaction info
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260820-exynos-iommu-fixes-v1-1-6bbcd673bb15@gmail.com/
-
-**▸ 组织：Rockchip**（1 patches）
-
-**[SERIES] iommu/rockchip: turn rk_iommu_ops into data** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-08-25
-- 状态：社区讨论中
-- 作者邮箱：Simon Xue <xxm@rock-chips.com>
-- 概括：针对 Rockchip IOMMU，原先各版本通过回调函数分别处理页表地址和表项编码，现改为按物理地址掩码在运行时选择布局，使版本操作结构只保留数据；同时新增检查，当地址超出硬件可寻址范围时直接拒绝映射，避免高位被静默截断而把设备指向错误页面。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/rockchip: Reject unsupported physical addresses
-  - iommu/rockchip: Reduce rk_iommu_ops to pure data
-- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20260825092132.154150-3-xxm@rock-chips.com/
-
----
-
-### ◆ 子系统：ARM SMMUv3（14 patches）
-
-**▸ 组织：NVIDIA**（7 patches）
-
-**[SERIES] iommu/arm-smmu-v3: Adopt the crashed kernel's stream table for kdump** （cover letter，10/13 个 patch 达到代码量阈值）
-
-- 日期：2026-08-30
-- 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：让 kdump 内核接管崩溃内核的流表：崩溃时设备可能仍在 DMA，常规复位会中止在途传输或让其绕过 SMMU 破坏内存。现在保留 SMMU 使能位、不重写流表基址，改为映射并校验崩溃内核的流表和上下文描述符表，预留其中在用的地址空间标识，跳过保留内存区域旁路改写，并关闭事件队列和页请求队列，使在途 DMA 能继续按旧页表完成后再由驱动接管。
-- 达到阈值的 patches（10 个，显示前 5）：
-  - iommu/arm-smmu-v3: Retain CR0_SMMUEN during kdump device reset
-  - iommu/arm-smmu-v3: Skip RMR bypass for kdump adoption
-  - iommu/arm-smmu-v3-kdump: Reserve crashed kernel's ASIDs and VMIDs
-  - iommu/arm-smmu-v3: Add ARM_SMMU_OPT_KDUMP_ADOPT for kdump kernel
-  - iommu/arm-smmu-v3: Detect ARM_SMMU_OPT_KDUMP_ADOPT in probe()
-  - ... 及其他 5 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/8280230c0906b4c62635c5eb2760bd0e25bbd1d1.1788130528.git.nicolinc@nvidia.com/
-
-**[SERIES] Use the generic iommu page table for SMMUv3** （cover letter，5/9 个 patch 达到代码量阈值）
-
-- 日期：2026-08-12
-- 状态：社区讨论中
-- 作者邮箱：Jason Gunthorpe <jgg@nvidia.com>
-- 概括：让 ARM SMMUv3 改用通用 IOMMU 页表实现，替换原有的 io-pgtable-arm：新增 ARMv8 64 位页表格式，支持连续页、多级叶页、可变顶层、脏位跟踪和软件位，并补齐脏位回写与 IOMMU 专用接口。切换后失效改为通过收集器直接下发，取消单独的刷新回调，同时移除顶层项数校验和收集结构中的页大小字段。
-- 达到阈值的 patches（5 个，显示前 5）：
-  - iommu/arm-smmu-v3: Move the DMA API comment to flush_iotlb_all
-  - iommu/arm-smmu-v3: Use the generic iommu page table
-  - iommupt/armv8: Add DBM support
-  - iommupt/armv8: Implement the iommu specific components
-  - iommupt/armv8: Add the 64 bit ARMv8 page table format
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/1-v2-563ee63886f0+1209-iommupt_armv8_jgg@nvidia.com/
-
-**[SERIES] Organize the SMMUv3 invalidation flow so iommupt can use it** （cover letter，8/8 个 patch 达到代码量阈值）
-
-- 日期：2026-08-05
-- 状态：社区讨论中
-- 作者邮箱：Jason Gunthorpe <jgg@nvidia.com>
-- 概括：重整 ARM SMMUv3 的失效流程，为后续接入通用页表失效方案做准备。把失效参数集中到结构体传递，把页粒度从失效描述中移出改为域属性，并预先算好失效命令、在调用链顶端填充描述。范围失效改为按延迟优先，尽量用单条命令覆盖整个区间，仅在检测到半虚拟化环境时才精确失效；同时支持 DS 扩展后 SCALE 上限提高到 39。
-- 达到阈值的 patches（8 个，显示前 5）：
-  - iommu/arm-smmu-v3: Keep track in the arm_smmu_invs if RIL is used
-  - iommu/arm-smmu-v3: Precompute the invalidation commands
-  - iommu/arm-smmu-v3: Support the DS expansion of RIL's SCALE
-  - iommu/arm-smmu-v3: Populate the tlbi at the top of the call chain
-  - iommu/arm-smmu-v3: Pass the parameters for the invalidation in a struct
-  - ... 及其他 3 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/4-v4-1802653d8886+492-smmu_tlbi_jgg@nvidia.com/
-
-**[v5,1/6] iommu/arm-smmu-v3: Support IDR5.DS and widen the TLBI SCALE field**
-
-- 日期：2026-07-28
-- 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：为支持扩展失效范围的 SMMU 增加识别：这类硬件把范围失效命令的规模字段从 5 位扩展到 6 位，最大值由 31 提高到 39，并允许 16KB 页粒度下的一种层级提示。驱动新增对应特性位并加宽该字段，但范围失效路径仍按原来的 5 位截断发出命令，行为不变；同时把该特性列入向用户态报告的硬件信息字段，便于虚拟机监视器判断能否透传给客户机。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/1b35fa8c417a21ac80a4a3f19db34d81ef6ca490.1785258826.git.nicolinc@nvidia.com/
-
-**[SERIES] iommu/arm-smmu-v3: Tegra264 invalidation workaround** （cover letter，2/4 个 patch 达到代码量阈值）
-
-- 日期：2026-07-26
-- 状态：社区讨论中
-- 作者邮箱：Ashish Mhetre <amhetre@nvidia.com>
-- 概括：针对 Tegra264 的 SMMU 勘误：TLB 表项在并发访问下可能躲过失效操作，硬件建议每条失效命令连同同步命令执行两遍。现在新增重复执行机制，仅对失效类命令生效、不重复地址转换缓存命令，并在设备树匹配到该芯片时启用；同时向用户空间报告该勘误，使客户机自行处理失效时主机不再重复执行，避免同一失效被执行四次。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/arm-smmu-v3: Enable CFGI/TLBI-repeat workaround on Tegra264
-  - iommu/arm-smmu-v3-iommufd: Report CFGI/TLBI-repeat erratum
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260726081904.1408859-2-amhetre@nvidia.com/
-
-**[3/7] iommupt: Add the 64 bit ARMv8 page table format**
-
-- 日期：2026-07-06
-- 状态：社区讨论中
-- 作者邮箱：Jason Gunthorpe <jgg@nvidia.com>
-- 概括：为通用 IOMMU 页表框架新增 64 位 ARMv8 页表格式支持，覆盖连续页、多级叶页、可变顶层、脏页跟踪等特性，并实现 LPA、LVA、LPA2 等可选能力，在驱动实际需要前默认不编译；同时用与旧实现对比的测试验证各级页表结果一致。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/3-v1-807e2d1a5efb+e1-iommupt_armv8_jgg@nvidia.com/
-
-**[SERIES] iommu/arm-smmu-v3: Quarantine device upon ATC invalidation timeout** （cover letter，4/12 个 patch 达到代码量阈值）
-
-- 日期：2026-07-03
-- 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：这组补丁处理 ARM SMMUv3 在地址转换缓存失效超时后的设备隔离：重置探测不再无故挂起 IOMMU，重置失败时设备保持阻断而不恢复地址转换，避免残留缓存项造成内存破坏；同时修复流表节点误删、服务失败模式下继续处理其他错误、命令队列错误与同步超时的记录，并让超时命令能定位到对应设备以便隔离。
-- 达到阈值的 patches（4 个，显示前 5）：
-  - iommu: Convert gdev->blocked from bool to enum gdev_blocked
-  - iommu/arm-smmu-v3: Don't rb_erase() a never-inserted stream node
-  - iommu: Pass in reset result to pci_dev_reset_iommu_done()
-  - iommu/arm-smmu-v3: Thread arm_smmu_master_domain on a per-master list
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/05da17325cf02758fb0eb3bde34c8ef2a22decbe.1783044582.git.nicolinc@nvidia.com/
-
-**▸ 组织：Google**（4 patches）
-
-**[SERIES] iommu/arm-smmu-v3: Fixes reported by Sashiko** （cover letter，2/7 个 patch 达到代码量阈值）
-
-- 日期：2026-08-28
-- 状态：社区讨论中
-- 作者邮箱：Mostafa Saleh <smostafa@google.com>
-- 概括：修复 Sashiko 报告的 ARM SMMUv3 问题：在写 L1 表指针前增加内存屏障，避免硬件先看到已分配但未写入描述符的表而读到随机数据；重复 StreamID 的节点初始化为空节点并在擦除前检查，防止红黑树被破坏；修正 VIOMMU 批量失效命令失败时返回给用户的已处理条目数；并修复单元测试中回调误用、缺少错误检查、越界读取和未设置数组计数导致的未定义行为报错。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommu/arm-smmu-v3: Ensure L2 tables are visible before L1 ptrs
-  - iommu/arm-smmu-v3: Prevent rbtree corruption from duplicate streams
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260828125409.1921538-4-smostafa@google.com/
-
-**iommu/arm-smmu-v3: Convert to use atomic poll timeout**
-
-- 日期：2026-07-28
-- 状态：社区讨论中
-- 作者邮箱：Pranjal Shrivastava <praan@google.com>
-- 概括：ARM SMMUv3 在发生全局错误进入服务失败模式时，会在硬中断上下文里关闭设备，而关闭流程中的寄存器同步等待可能睡眠，存在在硬中断中睡眠的问题。现改用不睡眠的原子轮询等待，使该路径在中断上下文中可以安全完成。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260728211123.1059708-1-praan@google.com/
-
-**[SERIES] iommu/arm-smmu-v3: Implement Runtime/System Sleep ops** （cover letter，7/12 个 patch 达到代码量阈值）
-
-- 日期：2026-07-28
-- 状态：社区讨论中
-- 作者邮箱：Pranjal Shrivastava <praan@google.com>
-- 概括：为 ARM SMMUv3 实现运行时和系统休眠支持，使 SMMU 在空闲时可断电。挂起前先停止接受新命令并排空命令队列，处理待上报的全局错误，缓存并恢复 MSI 配置；恢复时重置设备并还原队列状态。对英伟达 Tegra241 的虚拟命令队列也做排空和状态恢复，并补充单元测试验证挂起期间的失效命令被正确省略。
-- 达到阈值的 patches（7 个，显示前 5）：
-  - iommu/arm-smmu-v3: Refactor arm_smmu_setup_irqs
-  - iommu/tegra241-cmdqv: Restore PROD and CONS after resume
-  - iommu/arm-smmu-v3: Cache and restore MSI config
-  - iommu/arm-smmu-v3: Enable pm_runtime and setup devlinks
-  - iommu/arm-smmu-v3: Implement pm_runtime & system sleep ops
-  - ... 及其他 2 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260728210928.1050849-2-praan@google.com/
-
-**[SERIES] KVM: arm64: SMMUv3 driver for pKVM (trap and emulate)** （cover letter，17/17 个 patch 达到代码量阈值）
-
-- 日期：2026-07-15
-- 状态：社区讨论中
-- 作者邮箱：Mostafa Saleh <smostafa@google.com>
-- 概括：为受保护虚拟机场景实现运行在 EL2 的 SMMUv3 驱动，由虚拟机监控程序接管 SMMU 硬件并以陷入模拟方式向宿主内核呈现模拟设备。此前受保护模式下宿主可直接控制 SMMU，无法阻止宿主设备访问虚拟机内存。补丁让监控程序独占 SMMU 的 MMIO 和命令队列，建立影子流表、影子命令队列和影子页表，过滤并转发宿主的失效命令，从而为虚拟机建立 DMA 隔离；宿主内核侧驱动通过辅助总线探测模拟出的 SMMU，其余流程与普通驱动一致。
-- 达到阈值的 patches（17 个，显示前 5）：
-  - iommu/arm-smmu-v3: Split code with hyp
-  - iommu/arm-smmu-v3: Move TLB range invalidation into common code
-  - iommu/arm-smmu-v3-kvm: Add SMMUv3 driver
-  - iommu/arm-smmu-v3-kvm: Probe SMMU HW
-  - iommu/arm-smmu-v3-kvm: Add MMIO emulation
-  - ... 及其他 12 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260715115906.2664882-4-smostafa@google.com/
-
-**▸ 组织：Kernel.org**（1 patches）
-
-**[v3] iommu/arm-smmu-v3: Shrink command/event/PRI queues in kdump kernel**
-
-- 日期：2026-07-06
-- 状态：社区讨论中
-- 作者邮箱：Kiryl Shutsemau <kas@kernel.org>
-- 概括：在 kdump 捕获内核中把 ARM SMMUv3 的命令、事件和 PRI 队列都缩小到单页。这些队列原本按硬件上报的最大值分配，每个实例可达数兆字节，在 SMMU 实例较多的系统上会占用数十兆一致性 DMA 内存，而捕获内核只驱动少数设备保存转储，深队列没有意义。缩小后命令队列仍能容纳至少一个批次加一次同步，命令批处理不受影响，转储吞吐也不受影响。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260706084708.8072-1-kas@kernel.org/
-
-**▸ 组织：Linaro**（1 patches）
-
-**[2/2] iommu/arm-smmu-v3: Override for Inst/Data attribute**
-
-- 日期：2026-07-24
-- 状态：社区讨论中
-- 作者邮箱：Peter Griffin <peter.griffin@linaro.org>
-- 概括：在 ARM SMMUv3 上新增设备树属性，可把进入 SMMU 的流量统一按数据访问处理，覆盖原本的指令/数据属性。该选项写入所有流表项，若硬件不支持相应覆盖能力则探测失败并报错，适用于需要强制数据属性的平台。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260724-arm-smmu-v3-instcfg-override-v1-2-e7acf4a8a525@linaro.org/
-
-**▸ 组织：Nebius**（1 patches）
-
-**[RFC] iommu/arm-smmu-v3: Allow nested attach for PCI bridges without vDEVICE**
-
-- 日期：2026-08-14
-- 状态：社区讨论中
-- 作者邮箱：Dmitry Malkin <dma@nebius.com>
-- 概括：在 ARM SMMUv3 上，把直通设备及其宿主 PCI 桥一起做嵌套域附加时，由于桥没有对应的虚拟设备关联，整组附加会失败，导致 VFIO 设备无法附加到用户态 IOMMU。现在允许没有虚拟设备关联的 PCI 桥跳过该要求完成附加，端点设备仍必须提供虚拟设备关联，以保留虚拟流标识处理。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/PA1P190MB25578C482C8A3B06A4DCC6FDDBDA2@PA1P190MB2557.EURP190.PROD.OUTLOOK.COM/
-
----
-
-### ◆ 子系统：AMD IOMMU（7 patches）
-
-**▸ 组织：AMD**（3 patches）
-
-**[v2] iommu/amd: Force identity mode for selected GPUs only**
-
-- 日期：2026-08-24
-- 状态：社区讨论中
-- 作者邮箱：Vasant Hegde <vasant.hegde@amd.com>
-- 概括：AMD 平台此前用 PASID 能力判断哪些设备必须走 IOMMU 直通模式，结果把所有支持 PASID 的设备都强制直通，范围过宽。现在改为只对 APU 中直连的 AMD 显示类 GPU 强制直通，其余支持 PASID 的设备在 DMA 转换模式下使用客户机页表，不支持 PASID 的设备使用主机页表；内存加密开启时这些 GPU 仍走重映射。
-- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260824085821.5422-1-vasant.hegde@amd.com/
-
-**[SERIES] Add support for AMD IOMMU GAPPI** （cover letter，4/5 个 patch 达到代码量阈值）
-
-- 日期：2026-08-21
-- 状态：社区讨论中
-- 作者邮箱：Sairaj Kodilkar <sarunkod@amd.com>
-- 概括：为 AMD IOMMU 增加 GAPPI 唤醒机制：此前非运行状态 vCPU 的设备中断靠 GA 日志通知主机，现在可在支持该特性的硬件上改用物理 APIC 中断直接通知主机，同时仍更新客户机虚拟 APIC。为此把接口中的 CPU 字段改名为 APIC ID、把 GA 日志标志改名为唤醒标志，并显式传入 vCPU 运行状态；该功能默认关闭，需内核参数启用，未启用时回退到原有 GA 日志路径。
-- 达到阈值的 patches（4 个，显示前 5）：
-  - iommu/amd: Provide kernel command line option to enable GAPPI
-  - iommu/amd: KVM: SVM: Rename cpu to apicid in IOMMU interface
-  - iommu/amd: KVM: SVM: Rename ga_log_intr to wakeup_intr in IOMMU interface
-  - iommu/amd: Program guest-mode IRTEs for GAPPI wakeup when IRTE[IsRun] = 0
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260821055611.27138-8-sarunkod@amd.com/
-
-**[SERIES] acpi_build: Refactor and cleanup AMD IVRS build** （cover letter，1/3 个 patch 达到代码量阈值）
-
-- 日期：2026-08-07
-- 状态：社区讨论中
-- 作者邮箱：Sairaj Kodilkar <sarunkod@amd.com>
-- 概括：整理 AMD IOMMU 的 ACPI 表构建：此前 IVRS 中的设备标识只用设备号和功能号，IOMMU 挂在非零总线时会写错；特性报告硬编码且缺少地址转换相关位，还向客户机公布了硬件并不支持的预取和硬件错误特性。现在用扩展特性寄存器生成报告，按实际能力更新地址宽度，并去掉不支持的特性。
+- 作者邮箱：Yu Zhang <zhangyu1@linux.microsoft.com>
+- 概括：为 Hyper-V Linux 客户机新增半虚拟化 IOMMU 驱动，基于超级调用在客户机内构建第一阶段地址翻译页表，管理设备域、设备附加和 IOTLB 失效；客户机页表与宿主第二阶段页表嵌套，映射操作可避免虚拟机退出，但解除映射后的 IOTLB 刷新仍会退出。同时增加逻辑设备编号注册表以标识 PCI 直通设备，并支持页选择 IOTLB 刷新，失败回退全域刷新。初始版本不支持客户机休眠和恢复。
 - 达到阈值的 patches（1 个，显示前 5）：
-  - amd_iommu: Return empty efr for stub call
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260807061250.27739-2-sarunkod@amd.com/
+  - iommu/hyperv: Add para-virtualized IOMMU support for Hyper-V guest
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260930141409.437904-4-zhangyu1@linux.microsoft.com/
+
+**▸ 组织：Amazon**（1 patches）
+
+**[SERIES] iommu: Reduce iommu_probe_device_lock contention** （cover letter，3/3 个 patch 达到代码量阈值）
+
+- 日期：2026-09-11
+- 状态：社区讨论中
+- 作者邮箱：Sakac, Pavol <sakacpav@amazon.de>
+- 概括：并行初始化虚拟功能时，IOMMU 设备探测的全局锁成为主要争用点，其中向 sysfs 发布成员链接和首次设置默认域占用了大量持锁时间。补丁将这两项工作移出全局锁：先在全局锁内完成组成员分配并持有组引用，释放全局锁后在组锁下发布链接、设置默认域；发布或设置失败时按现有失败语义回退。这样缩短全局锁持有时间，缓解大量设备并行探测时的锁竞争。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu: split sysfs link publication out of iommu_group_alloc_device()
+  - iommu: create device sysfs links outside iommu_probe_device_lock
+  - iommu: set up the default domain outside iommu_probe_device_lock
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260911125907.67105-1-sakacpav@amazon.de/
+
+---
+
+### ◆ 子系统：RISC-V IOMMU（10 patches）
+
+**▸ 组织：归属待核实（sanechips.com.cn）**（2 patches）
+
+**[SERIES] iommu/riscv: Add nested translation (vIOMMU) support** （cover letter，3/9 个 patch 达到代码量阈值）
+
+- 日期：2026-10-29
+- 状态：社区讨论中
+- 作者邮箱：Gong Shuai <gong.shuai@sanechips.com.cn>
+- 概括：为RISC-V IOMMU增加嵌套翻译和vIOMMU支持，使虚拟机可经iommufd分配嵌套域，将客户机一级页表上下文与宿主二级父域组合，设备DMA经两级翻译；新增硬件能力查询与客户机缓存失效命令转发，转发前校验并替换隔离标识，防止客户机越权失效其他客户机的缓存，同时改用设备上下文有效位判断并传递完整设置。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu/riscv: Add nested domain allocation
+  - iommu/riscv: Use DC.tc.V as the device context valid bit
+  - iommu/riscv: Add vIOMMU cache invalidation
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20261029061131.584453-6-gong.shuai@sanechips.com.cn/
+
+**[RFC,11/12] iommu/riscv: Accept unpublished interrupt files in IRQ forwarding**
+
+- 日期：2026-10-15
+- 状态：社区讨论中
+- 作者邮箱：Gong Shuai <gong.shuai@sanechips.com.cn>
+- 概括：在 RISC-V 虚拟机使用虚拟 IOMMU 转发消息中断时，首个设备转发会安装整机消息中断表，但此时部分虚拟 CPU 的中断文件可能尚未发布，原有校验会因目标不完整而拒绝整个请求，导致整机失去中断旁路。现在跳过未发布的目标，只有解析到这些目标的消息中断会产生对应虚拟 CPU 的故障记录，使其余目标上的转发可继续建立。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261015065232.604503-12-gong.shuai@sanechips.com.cn/
+
+**▸ 组织：Alibaba**（2 patches）
+
+**[SERIES] iommu/riscv: Add irqbypass support without MSI page table** （cover letter，3/4 个 patch 达到代码量阈值）
+
+- 日期：2026-10-14
+- 状态：社区讨论中
+- 作者邮箱：yu fangyu <fangyu.yu@linux.alibaba.com>
+- 概括：为不具备平坦MSI页表能力的RISC-V IOMMU实现无需MSI页表的中断转发，将客户机IMSIC页面映射到宿主IMSIC物理地址，使设备MSI写直接到达vCPU中断文件；在vCPU迁移导致宿主页移动时，用原子替换页表叶子条目替代先解除再映射，避免窗口期内设备MSI写触发页故障。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu/riscv: Support IRQ forwarding without MSI page tables
+  - iommu/riscv: Extract IRQ forwarding payload validation
+  - iommupt: Add replace_leaf to atomically swap a leaf OA
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20261014141124.48569-5-fangyu.yu@linux.alibaba.com/
+
+**[SERIES] iommu/riscv: Fix command queue publishing races** （cover letter，1/3 个 patch 达到代码量阈值）
+
+- 日期：2026-09-01
+- 状态：社区讨论中
+- 作者邮箱：yu fangyu <fangyu.yu@linux.alibaba.com>
+- 概括：修复 RISC-V IOMMU 命令队列发布的竞态。原先多个处理器并发写命令时，软件生产者状态可能在硬件尾指针更新前推进，导致队列状态不一致。现在增加原始自旋锁串行化命令发布，确保命令写入且硬件尾更新后才推进；队列满时在锁外等待硬件消耗，避免阻塞其他处理器；入队失败时不等待输入输出栅栏命令完成，避免产生误导性执行超时。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommu/riscv: Serialize command queue publishing
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20260901133920.14550-2-fangyu.yu@linux.alibaba.com/
+
+**▸ 组织：Qualcomm**（2 patches）
+
+**[SERIES] iommu/riscv: Add irqbypass support** （cover letter，7/10 个 patch 达到代码量阈值）
+
+- 日期：2026-09-28
+- 状态：社区讨论中
+- 作者邮箱：Andrew Jones <andrew.jones@oss.qualcomm.com>
+- 概括：为 RISC-V 输入输出内存管理单元增加中断旁路支持，使虚拟机的客户机中断控制器地址能够通过二级阶段的 MSI 页表转发给设备，而不是直接访问主机物理地址。新增 MSI 表分配、中断重映射域、转发请求校验与硬件编程，并且在设备仍有转发中断时拒绝直接替换二级域，避免中断状态指向已分离页表。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - iommu/riscv: Allocate MSI tables for second-stage domains
+  - iommu/riscv: Prepare domain bonds for outer locking
+  - iommu/riscv: Cache the programmed device context
+  - iommu/riscv: Validate IRQ forwarding requests
+  - iommu/riscv: Add IRQ domain for interrupt remapping
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260928143113.49838-2-andrew.jones@oss.qualcomm.com/
+
+**[SERIES] iommu/riscv: Enable MSI remapping, IOMMU_DMA and VFIO** （cover letter，7/7 个 patch 达到代码量阈值）
+
+- 日期：2026-09-25
+- 状态：社区讨论中
+- 作者邮箱：Andrew Jones <andrew.jones@oss.qualcomm.com>
+- 概括：64 位 RISC-V 上新打通消息中断重映射、设备 DMA 地址映射支持和 VFIO 直通：iommufd 中软件消息中断映射改为按需增长并支持物理地址列表的原子安装，IMSIC 提供所有可能 CPU 的中断页地址列表并由 IOMMU 映射为连续 I/O 虚拟地址范围；为 iommufd 保留每 CPU 一页的消息中断窗口，仅避开已知客户机布局，仍可能冲突；同时开启设备 DMA 地址映射支持、VFIO 与 KVM/VFIO 接口。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - iommufd: Split software MSI map lookup and allocation
+  - iommufd: Prepare software MSI maps for address lists
+  - iommufd: Install software MSI map ranges atomically
+  - iommufd: Bound software MSI mappings to the reserved range
+  - iommu/riscv: Reserve an MSI IOVA window for iommufd
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20260925151659.419512-4-andrew.jones@oss.qualcomm.com/
+
+**▸ 组织：SiFive**（1 patches）
+
+**[v16,2/2] iommu/riscv: create a auxiliary device for HPM**
+
+- 日期：2026-10-06
+- 状态：社区讨论中
+- 作者邮箱：Zong Li <zong.li@sifive.com>
+- 概括：RISC-V IOMMU 若具备硬件性能监视器能力，原先没有内核侧设备供性能监视驱动绑定。补丁在 IOMMU 初始化检测到该能力时注册一个辅助设备，作为硬件性能监视器的枚举入口；即使创建失败只记录警告，IOMMU 仍继续工作。该能力使 RISC-V 平台能够为 IOMMU 性能监视单元加载对应驱动并采集性能计数。
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20261006090327.309550-3-zong.li@sifive.com/
+
+**▸ 组织：The Good Penguin**（1 patches）
+
+**iommu/riscv: Use named initializers for acpi_device_id**
+
+- 日期：2026-10-14
+- 状态：社区讨论中
+- 作者邮箱：Pawel Zalewski <pzalewski@thegoodpenguin.co.uk>
+- 概括：将 RISC-V 输入输出内存管理单元的 ACPI 设备匹配表改为按字段名初始化，省略冗余的显式置零，并统一结尾项的括号空格和末尾逗号风格。这是纯代码可读性和一致性调整，使该列表与内核其他同类初始化写法保持一致，不影响设备匹配行为。
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20261014-acpi-iommu-v1-1-1744523fa658@thegoodpenguin.co.uk/
+
+**▸ 组织：Linux Community**（1 patches）
+
+**[SERIES] iommu/riscv: Enable MSI remapping and IOMMU_DMA** （cover letter，2/3 个 patch 达到代码量阈值）
+
+- 日期：2026-10-22
+- 状态：社区讨论中
+- 作者邮箱：Andrew Jones <andrew.jones@linux.dev>
+- 概括：为 64 位 RISC-V 的 IMSIC 中断控制器增加消息中断目标地址列表支持，收集所有可能 CPU 的中断页物理地址，提供接口在首次调用时把它们映射到一个连续 I/O 虚拟地址范围并缓存基址，使中断亲和性变化时可在原子上下文中按逻辑 CPU 位置直接选择目标；同时开启 64 位 RISC-V 上的设备 DMA 地址映射支持，使内核 DMA 映射路径可用于该平台。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommu/dma: Prepare MSI physical address lists
+  - iommu/dma: Enable IOMMU_DMA for 64-bit RISC-V
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20261022154603.1374754-2-andrew.jones@linux.dev/
 
 **▸ 组织：Individual Contributor**（1 patches）
 
-**[1/2] amd_iommu: Honor DTE[IR] and DTE[IW] when DTE[Mode] is 0**
+**[SERIES] iommu/riscv: Keep page table pages when IOTLB invalidation fails** （cover letter，1/2 个 patch 达到代码量阈值）
 
-- 日期：2026-07-18
+- 日期：2026-10-20
 - 状态：社区讨论中
-- 作者邮箱：Daniel Paziyski <danielpaziyski@gmail.com>
-- 概括：AMD IOMMU 模拟在设备表项有效且模式为 0 的直通场景下，原先无条件放行读写，忽略了设备表项中的读、写权限位。现在按这些权限位决定是否启用直通内存区域，使直通访问也受读写权限约束，符合规范要求。
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260718175208.118721-2-danielpaziyski@gmail.com/
+- 作者邮箱：Yuho Choi <oss.patchbox@gmail.com>
+- 概括：修复RISC-V IOMMU在IOTLB失效命令未能确认完成时仍释放页表页，使IOMMU可能继续使用缓存指向已释放页，后续写入被当作页表项遍历；现在命令发送与同步返回错误，未确认失效时保留页面并一次性告警，同时将命令队列停滞报错而非视为完成，避免误释放。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommu/riscv: Do not report a stalled command queue as completed
+- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20261020053435.1179054-5-oss.patchbox@gmail.com/
+
+---
+
+### ◆ 子系统：Intel VT-d（6 patches）
+
+**▸ 组织：Intel**（4 patches）
+
+**[SERIES] intel_iommu: Enable PRQ support for passthrough device** （cover letter，4/4 个 patch 达到代码量阈值）
+
+- 日期：2026-10-20
+- 状态：社区讨论中
+- 作者邮箱：Duan, Zhenzhong <zhenzhong.duan@intel.com>
+- 概括：为 Intel 输入输出内存管理单元的直通设备新增页请求队列支持：客户机启用后，主机侧可恢复故障事件被接收并注入客户机，客户机的响应也能写回主机；客户机侧溢出或满错误时，低优先级页请求按丢弃后返回成功响应，其他错误返回无效请求。故障队列资源释放被推迟到底半部执行，避免因轮询尚未退出、文件仍持有引用而导致释放返回忙错误。
+- 达到阈值的 patches（4 个，显示前 5）：
+  - intel_iommu_accel: Add PRQ injection for passthrough device
+  - intel_iommu_accel: Guard VTDAccelPASIDCacheEntry definition
+  - intel_iommu_accel: Accept PRQ response for passthrough device
+  - intel_iommu_accel: Teardown FAULTQ resources in bottom half
+- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20261020091955.1607161-5-zhenzhong.duan@intel.com/
+
+**[v2,3/4] iommu/vt-d: Add an API for tdx-host when enabling trusted DMA**
+
+- 日期：2026-10-15
+- 状态：社区讨论中
+- 作者邮箱：Baolu Lu <baolu.lu@linux.intel.com>
+- 概括：为 Intel VT-d 驱动新增与 TDX 主机模块配合的接口，用于启用可信 DMA。初始化遍历支持可信 DMA 扩展的输入输出内存管理单元，先检查地址翻译、队列失效和可扩展模式等前提，避免之后再报出晦涩状态；再把域标识符空间限制到低半段，回调主机模块完成安全模式切换，失败时恢复并上报，成功后标记。处于安全模式的单元禁止热移除，因为 TDX 模块仍持有其资源。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261015010705.1973284-4-baolu.lu@linux.intel.com/
+
+**[v8,6/6] intel_iommu_accel: teardown FAULTQ resources in bottom half**
+
+- 日期：2026-10-09
+- 状态：社区讨论中
+- 作者邮箱：Duan, Zhenzhong <zhenzhong.duan@intel.com>
+- 概括：在 Intel 输入输出内存管理单元直通设备中，当地址空间标识条目失效时，原先释放故障队列会立即关闭处理函数并释放队列编号，但存在一个窗口：轮询尚未退出时文件仍持有队列引用，可能使释放返回忙错误。现改为把故障队列及关联文件、队列编号的释放推迟到下半部回调执行，确保轮询退出并放下引用后再清理。
+- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20261009090737.3930000-7-zhenzhong.duan@intel.com/
+
+**[SERIES] iommu/vt-d: Introduce trusted DMA initialization support** （cover letter，3/3 个 patch 达到代码量阈值）
+
+- 日期：2026-09-15
+- 状态：社区讨论中
+- 作者邮箱：Baolu Lu <baolu.lu@linux.intel.com>
+- 概括：为 Intel TDX Connect 主机引入可信 DMA 初始化路径。检测支持扩展的 VT-d IOMMU，分配失效队列和元数据页后通过 TDX 模块将其切入安全模式，使 DMA 翻译和失效资源由 TDX 管理；同时将域 ID 高半区保留给 TDX 模块，宿主只使用低半区，并在切换前检查高半区无已分配域。不支持或返回无效操作数的 IOMMU 跳过，其他失败则回滚已初始化单元，适用于需要将设备可信分配给 TDX 客户机的场景。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu/vt-d: Add interfaces for trusted DMA initialization
+  - iommu/vt-d: Add helpers to set up and tear down TDX extensions
+  - iommu/vt-d: Reserve MSB of domain ID space for TDX module
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260915074235.1219183-4-baolu.lu@linux.intel.com/
 
 **▸ 组织：Red Hat**（1 patches）
 
-**[SERIES] amd_iommu: Fix opcode reported in invalid command handling** （cover letter，4/6 个 patch 达到代码量阈值）
+**[SERIES] virtio: fix exit(1) on DMA mapping failure during migration restore** （cover letter，5/7 个 patch 达到代码量阈值）
 
-- 日期：2026-07-05
+- 日期：2026-09-11
 - 状态：社区讨论中
 - 作者邮箱：Michael S. Tsirkin <mst@redhat.com>
-- 概括：修正 AMD 与 Intel 虚拟化 IO 设备模拟中的若干缺陷：非法命令记录时取错命令字导致跟踪与事件日志中的操作码不符，Intel 设备把页表支持位放错寄存器，中断控制寄存器与中断重映射表项改用与主机字节序无关的方式解析，命令缓冲区与事件日志按小端读写，页表遍历辅助函数返回类型改为有符号整数以消除类型不匹配告警。
+- 概括：修复 QEMU 的 virtio 迁移恢复路径：直接内存访问地址损坏导致映射失败时不再直接退出，改为清理并返回错误；配置长度恶意值不再造成 CPU 长时间空转，已启用队列的重复启用被拒绝。调整 Intel/AMD IOMMU 模拟，支持并发页故障与页请求接口，写页表时一次写入全部标志并仅在有写权限时标脏，移除 AMD 未实现的页请求和硬件错误扩展特性。
+- 达到阈值的 patches（5 个，显示前 5）：
+  - intel_iommu: Support concurrent page fault handling with PRI
+  - intel_iommu: Always write all the flags passed to vtd_set_flag_in_pte
+  - intel_iommu: Only set dirty bit when PTE exposes write permission
+  - intel_iommu: Expose SMPWC when SVM is enabled
+  - amd_iommu: Return empty efr for stub call
+- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/f19df1b13d1a0b5601b4b58067b8c2e91ae76ef3.1789117222.git.mst@redhat.com/
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] iommu: Add live update state preservation** （cover letter，17/17 个 patch 达到代码量阈值）
+
+- 日期：2026-10-25
+- 状态：社区讨论中
+- 作者邮箱：Samiullah Khawaja <skhawaja@google.com>
+- 概括：新增 IOMMU live update 状态保存：在 kexec 切换内核时保留 iommufd 硬件页表、域和 VT-d 根表/上下文表/PASID 表等设备与 IOMMU 状态，新内核启动后恢复并重新附加到设备，同时标记页表为不可变以禁止映射变化。适用于需要内核更新期间不中断设备 DMA 的 live update 场景，当前由 VT-d 驱动实现。
+- 达到阈值的 patches（17 个，显示前 5）：
+  - iommu: Implement IOMMU Live update FLB callbacks
+  - iommu/pages: Add APIs to preserve/unpreserve/restore iommu pages
+  - iommupt: Implement preserve/unpreserve/restore callbacks
+  - iommu/vt-d: Clear unpreserved context entries during shutdown
+  - iommu: Add APIs to get iommu and device preserved state
+  - ... 及其他 12 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261025021930.674647-2-skhawaja@google.com/
+
+---
+
+### ◆ 子系统：AMD IOMMU（5 patches）
+
+**▸ 组织：AMD**（3 patches）
+
+**[SERIES] Add support for AMD IOMMU GAPPI** （cover letter，4/5 个 patch 达到代码量阈值）
+
+- 日期：2026-10-22
+- 状态：社区讨论中
+- 作者邮箱：Sairaj Kodilkar <sarunkod@amd.com>
+- 概括：为AMD IOMMU新增GAPPI宿主唤醒通知机制，在AVIC模式下设备中断到达未运行vCPU时，由IOMMU按中断重映射条目中的目标字段向指定主机CPU直接发送物理APIC中断并携带唤醒向量，替代GA log唤醒KVM调度该vCPU；KVM将阻塞vCPU排到最近运行的CPU，未启用GAPPI时回退到原GA log路径。
 - 达到阈值的 patches（4 个，显示前 5）：
-  - intel_iommu: Correctly set pt bit in extended capability register
-  - amd_iommu: Decode XT interrupt control register without bitfields
-  - amd_iommu: Return int from page walk status helpers
-  - amd_iommu: Decode IRTEs without bitfields
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/0611d393031f9941fcfaf3f17c3ac2b7a0ea00d1.1783261895.git.mst@redhat.com/
+  - iommu/amd: KVM: SVM: Rename cpu to apicid in IOMMU interface
+  - iommu/amd: KVM: SVM: Rename ga_log_intr to wakeup_intr in IOMMU interface
+  - iommu/amd: Program guest-mode IRTEs for GAPPI wakeup when IRTE[IsRun] = 0
+  - iommu/amd: Provide kernel command line option to enable GAPPI
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261022140425.27465-2-sarunkod@amd.com/
+
+**[SERIES] amd_iommu: Allow IOMMU to attach on non system bus** （cover letter，2/5 个 patch 达到代码量阈值）
+
+- 日期：2026-10-14
+- 状态：社区讨论中
+- 作者邮箱：Sairaj Kodilkar <sarunkod@amd.com>
+- 概括：允许AMD IOMMU连接到非系统总线（如扩展根端口），并以向上遍历得到的第一个根总线为边界只服务其下设备，从而隔离PCI子树；同时KVM按设备查找实际服务的IOMMU进行中断重映射，修复此前固定使用默认系统IOMMU导致设备不在范围内时中断重映射表项未编程的问题，并修正在禁用中断重映射时IOAPIC仍被分配IOMMU地址空间的问题。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - amd_iommu: Assign ioapic_as only when interrupt remapping is supported.
+  - amd_iommu: Allow IOMMU to attachment on non-system (pcie.0) bus
+- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20261014053433.24564-2-sarunkod@amd.com/
+
+**[SERIES] iommu/amd: Implement live update state preservation** （cover letter，5/6 个 patch 达到代码量阈值）
+
+- 日期：2026-10-05
+- 状态：社区讨论中
+- 作者邮箱：Ankit Soni <Ankit.Soni@amd.com>
+- 概括：为 AMD 输入输出内存管理单元增加热升级状态保存与恢复，解决非崩溃转储启动中设备附加被错误延迟导致无法 DMA 的问题，并提前解析交接状态。升级关闭时阻止未保留设备并等待命令、事件等引擎空闲，随后保存设备表、域标识和 PASID 地址翻译表；新内核接管这些状态，继续让保留设备翻译，未保留设备则被阻断。
+- 达到阈值的 patches（5 个，显示前 5）：
+  - iommu/amd: defer device attach only on a kdump boot
+  - iommu/amd: preserve IOMMU and device state for live update
+  - iommu/amd: restore preserved state on a live-update boot
+  - iommu/amd: clear unpreserved DTEs and quiesce logs at live-update shutdown
+  - iommu/amd: reattach preserved devices to their restored domains
+- 来源：https://patchwork.kernel.org/project/kexec/patch/20261005064018.1558-2-Ankit.Soni@amd.com/
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] iommu/amd: Refactors for ATS robustness** （cover letter，1/3 个 patch 达到代码量阈值）
+
+- 日期：2026-09-10
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：整理 AMD IOMMU 设备探测和 ATS 初始化路径。移除探测失败时清空设备表项和反向查找表的旧处理，因为正常启动时表项本就未配置，而 kdump 启动中这样清表可能破坏尚在使用的翻译和中断重映射，且直接写表缺乏缓存刷新。现在 ATS 能力初始化失败会使设备探测失败，PCI ATS 准备接口也要求调用者先确认设备支持 ATS，不再静默忽略不支持设备。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - iommu/amd: Refactor device probe and capability initialization
+- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260910142655.3281464-2-praan@google.com/
 
 **▸ 组织：Oracle**（1 patches）
 
-**[SERIES] amd_iommu: Do not create duplicate MSI capability** （cover letter，5/5 个 patch 达到代码量阈值）
+**[SERIES] amd_iommu: Bugfix and Cleanup for IO Page Fault** （cover letter，5/5 个 patch 达到代码量阈值）
 
-- 日期：2026-07-24
+- 日期：2026-10-30
 - 状态：社区讨论中
-- 作者邮箱：Dongli Zhang <dongli.zhang@oracle.com>
-- 概括：修复 QEMU 中 AMD 虚拟 IOMMU 的若干问题：设备曾暴露两个 MSI 能力，现只保留一个；页错误日志此前只带设备功能号，位于根端口后的设备会被记成错误请求者，现改用完整总线号；扩展特性寄存器此前允许客户机改写第 4 位，现改为只读；客户机清除状态位时可能误置 GA 日志溢出位并反复重启 GA 日志，现不再锁存这些位。
+- 作者邮箱：Alejandro Jimenez <alejandro.j.jimenez@oracle.com>
+- 概括：修复 QEMU 中 AMD IOMMU 仿真的 IO 页故障报告和寄存器语义：地址空间改用完整总线/设备/功能号，使根端口之后设备产生的页故障能归到正确请求者，不再误报为 00:00.0；初始化时避免重复创建 MSI 能力；将扩展特性寄存器设为只读，让功能位完全由 QEMU 控制；拒绝客户机对未产生的 GA 日志状态位进行写清除时锁存虚假溢出，从而避免客户机反复重启 GA 日志。
 - 达到阈值的 patches（5 个，显示前 5）：
-  - amd_iommu: Define MMIO register masks
-  - amd_iommu: Do not latch unsupported GA log status bits
-  - amd_iommu: Do not create duplicate MSI capability
   - amd_iommu: Make extended feature register read-only
+  - amd_iommu: Do not create duplicate MSI capability
+  - amd_iommu: Do not latch unsupported GA log status bits
   - amd_iommu: Use full BDF when reporting page faults
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260724223216.108667-4-dongli.zhang@oracle.com/
-
-**▸ 组织：Google**（1 patches）
-
-**[SERIES] iommu/amd: Refactors for ATS robustness** （cover letter，1/4 个 patch 达到代码量阈值）
-
-- 日期：2026-08-24
-- 状态：社区讨论中
-- 作者邮箱：Pranjal Shrivastava <praan@google.com>
-- 概括：针对 AMD IOMMU 驱动，重构设备探测流程并修复 ATS 配置问题：原先清除设备表项时用整块清零，可能与硬件读取产生撕裂写，且先清查找表导致 DMA 别名无法清除；现在改为先清有效位再清高位并同步到别名，探测失败时区分初始化失败与配置失败以保留中断重映射所需的查找表项，ATS 配置失败时直接让探测失败，并要求调用方先确认设备支持 ATS 再配置。
-- 达到阈值的 patches（1 个，显示前 5）：
-  - iommu/amd: Refactor device probe and capability initialization
-- 来源：https://patchwork.kernel.org/project/linux-pci/patch/20260824122347.1588592-2-praan@google.com/
+  - amd_iommu: Define MMIO register masks
+- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20261030003817.3521476-5-alejandro.j.jimenez@oracle.com/
 
 ---
 
-### ◆ 子系统：RISC-V IOMMU（4 patches）
-
-**▸ 组织：ByteDance**（2 patches）
-
-**[v3] iommu/riscv: Use 32-bit MMIO accesses for 64-bit registers**
-
-- 日期：2026-07-13
-- 状态：社区讨论中
-- 作者邮箱：Zhanpeng Zhang <zhangzhanpeng.jasper@bytedance.com>
-- 概括：RISC-V IOMMU 规范允许 64 位寄存器用两次 32 位访问完成，且未规定 8 字节访问的原子性。驱动改用先高后低的 32 位访问方式读写普通 64 位寄存器，对 DDTP 先轮询低半部分的忙标志再读高半部分，避免依赖不保证的原子 64 位访问。
-- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20260713122903.9458-1-zhangzhanpeng.jasper@bytedance.com/
-
-**[RFC,1/3] iommu/riscv: Complete MRIF MSI PTE setup**
-
-- 日期：2026-07-01
-- 状态：社区讨论中
-- 作者邮箱：Zhanpeng Zhang <zhangzhanpeng.jasper@bytedance.com>
-- 概括：补全 RISC-V IOMMU 的 MRIF 中断投递路径。此前该路径只能改写已有的 MSI 表项，无法正确安装新的 MRIF 表项，且用普通物理页号方式编码 MRIF 地址。现在新增专门的 MRIF 表项编码，新建和改写两条路径都使用它，普通 MSI 编码保持不变；写入时先发布通知信息再置有效位，改写活动表项时先清有效位，避免设备中断读到有效表项却看到过期的通知数据。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260701040017.42707-2-zhangzhanpeng.jasper@bytedance.com/
+### ◆ 子系统：ARM SMMU (v1/v2)（3 patches）
 
 **▸ 组织：Qualcomm**（1 patches）
 
-**[SERIES] iommu/riscv: Enable MSI remapping, IOMMU_DMA and VFIO** （cover letter，11/11 个 patch 达到代码量阈值）
+**iommu: arm-smmu-qcom: Skip fault-info reads when suspended**
 
-- 日期：2026-08-31
+- 日期：2026-09-11
 - 状态：社区讨论中
-- 作者邮箱：Andrew Jones <andrew.jones@oss.qualcomm.com>
-- 概括：让 64 位 RISC-V 上的 IOMMU 支持 MSI 重映射、DMA 地址映射和 VFIO 设备直通。原先软件 MSI 映射数量受固定上限限制，无法为每个 CPU 建立映射，且缺少保留的 MSI 地址窗口。现在把映射表改为可增长、支持按物理地址列表建立连续映射并原子安装，为每个可能 CPU 预留一页 MSI 地址窗口，报告缓存一致性能力，并开启相关内核配置与自测。
-- 达到阈值的 patches（11 个，显示前 5）：
-  - iommufd: Convert struct iommufd_sw_msi_maps to a growable bitmap
-  - iommu/dma: Enable IOMMU_DMA for 64-bit RISC-V
-  - iommu/riscv: Reserve an MSI IOVA window for iommufd
-  - iommu/riscv: Report cache coherency capability
-  - iommu/dma: Prepare MSI physical address lists
-  - ... 及其他 6 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20260831145943.313726-3-andrew.jones@oss.qualcomm.com/
+- 作者邮箱：Bibek Kumar Patro <bibek.patro@oss.qualcomm.com>
+- 概括：高通 Adreno GPU 的 IOMMU 故障信息回调在无运行时电源管理引用的情况下直接读取 SMMU 寄存器。故障虽在 SMMU 活跃时触发，但 GPU 可能在处理线程到达前撤销电源投票，使 SMMU 运行时挂起；此时访问寄存器不安全，可能使后续恢复运行时出现 NoC 错误和异步 SError。补丁在读取前尝试保持设备活跃，若挂起已经开始则跳过寄存器读取，避免破坏故障现场和触发后续错误。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260912-priv_call_runtime_handlers-v1-1-fc0c3a17523f@oss.qualcomm.com/
 
-**▸ 组织：Alibaba**（1 patches）
+**▸ 组织：归属待核实（brar.si）**（1 patches）
 
-**[SERIES] iommu/riscv: Add hardware dirty tracking for second-stage domains** （cover letter，4/7 个 patch 达到代码量阈值）
+**[v2,2/2] iommu/arm-smmu-qcom: Skip PRR setup on SM7250 GPU SMMU**
 
-- 日期：2026-08-21
+- 日期：2026-10-23
 - 状态：社区讨论中
-- 作者邮箱：yu fangyu <fangyu.yu@linux.alibaba.com>
-- 概括：为 RISC-V IOMMU 的第二阶段（iohgatp）域增加硬件脏页跟踪，用于 KVM 下 VFIO 设备直通场景：新增 Sv39x4/Sv48x4/Sv57x4 页表格式与脏位读写操作，支持 GSCID 和 GVMA 失效命令，按分配标志选择第一阶段或第二阶段域，并在硬件支持原子操作时预使能脏位更新，使 iommufd 能通过脏页跟踪接口获取写访问信息。
-- 达到阈值的 patches（4 个，显示前 5）：
-  - iommu/riscv: use data structure instead of individual values
-  - iommupt: Add RISC-V Second-stage (iohgatp) page table support
-  - iommu/riscv: support GSCID and GVMA invalidation command
-  - iommu/riscv: Pre-enable GADE for second-stage domains
-- 来源：https://patchwork.kernel.org/project/linux-riscv/patch/20260821132749.82070-5-fangyu.yu@linux.alibaba.com/
-
----
-
-### ◆ 子系统：IOMMUFD（4 patches）
-
-**▸ 组织：NVIDIA**（2 patches）
-
-**[SERIES] iommufd: Iterate the cache invalidation array in the core** （cover letter，5/5 个 patch 达到代码量阈值）
-
-- 日期：2026-08-30
-- 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：把缓存失效请求数组的遍历从各驱动上移到 iommufd 核心，并收紧 Arm SMMUv3 对来宾失效命令的校验。此前每个驱动各自遍历整个数组并自行处理分批，SMMUv3 只校验虚拟机和流标识就把命令原样转发，来宾可设置宿主未打算转发的保留位，使命令被判为非法；转换失败时还会上报尚未真正下发的命令，导致用户空间跳过未执行的失效。
-- 达到阈值的 patches（5 个，显示前 5）：
-  - iommufd/selftest: Convert cache invalidation mocks to the core array loop
-  - iommufd: Iterate the cache invalidation array in the core
-  - iommu/arm-smmu-v3-iommufd: Reject unsupported bits in invalidation commands
-  - iommu/vt-d: Convert nested cache invalidation to the core array loop
-  - iommu/arm-smmu-v3-iommufd: Convert cache invalidation to the core array loop
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/535f3b97e16c437f1df0c988a96229f623142ee9.1788127877.git.nicolinc@nvidia.com/
-
-**[SERIES] iommufd: Fix vDEVICE allocation lifecycle bugs** （cover letter，2/3 个 patch 达到代码量阈值）
-
-- 日期：2026-07-06
-- 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：修复 iommufd 虚拟设备分配的生命周期问题：驱动校验失败时未释放组锁，会让该组后续虚拟设备操作死锁；虚拟设备在驱动初始化成功前就加入查找表，并发的失效操作可能命中一个本应被拒绝的设备；ARM SMMUv3 把客户机虚拟流 ID 映射到设备首个物理流 ID，多流设备其余流不会被失效覆盖，无流设备则越界读取。现在修正解锁路径、初始化成功后再发布，并要求设备恰好一个流 ID。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommufd/viommu: Publish a vDEVICE only after vdevice_init() succeeds
-  - iommu/arm-smmu-v3-iommufd: Require exactly one Stream ID for a vDEVICE
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/e903f775d491296a525097e2a90b3eb6a47cf2ef.1783311134.git.nicolinc@nvidia.com/
-
-**▸ 组织：Google**（1 patches）
-
-**[2/2] iommufd: Periodically reschedule when unmapping**
-
-- 日期：2026-07-14
-- 状态：社区讨论中
-- 作者邮箱：Aaron Lewis <aaronlewis@google.com>
-- 概括：在 iommufd 解除大范围 DMA 映射时，逐页处理可能长时间不让出 CPU，导致内核调度告警。现在每处理一定数量的页就主动让出调度，使解除映射过程不再长时间独占 CPU，缓解调度延迟问题。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260714210303.3967981-3-aaronlewis@google.com/
-
-**▸ 组织：Infradead Community**（1 patches）
-
-**[SERIES] KVM: selftests: sev_smoke_test: Only run VM types the host offers** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-07-20
-- 状态：社区讨论中
-- 作者邮箱：David Woodhouse <dwmw2@infradead.org>
-- 概括：为 KVM 自测程序调整 SEV 相关用例的运行条件：原先只要处理器报告支持 SEV 就无条件执行普通 SEV 子测试，但当全部 SEV 标识符都分配给 SNP 时，内核并不提供该虚拟机类型，测试会在创建虚拟机时直接中止。现在改为依据内核实际提供的虚拟机类型来决定是否运行，并在类型不可用时干净跳过，使测试在仅支持 SNP 的主机上也能正常完成其余可用模式的检查。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommufd: Plumb dma-buf memory-type (RAM vs MMIO) through the phys map
-  - iommufd: Look up private-interconnect phys via exporter symbols
-- 来源：https://patchwork.kernel.org/project/linux-kselftest/patch/a7ca2d885903679dc63c85620bff72fea21f5c18.1784545391.git.dwmw@amazon.co.uk/
-
----
-
-### ◆ 子系统：ARM SMMU (v1/v2)（4 patches）
-
-**▸ 组织：Qualcomm**（3 patches）
-
-**[SERIES] iommu: qcom_iommu: implement support for instances on MSM8974** （cover letter，9/10 个 patch 达到代码量阈值）
-
-- 日期：2026-08-09
-- 状态：社区讨论中
-- 作者邮箱：Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-- 概括：为 MSM8974 上的高通 IOMMU 实例增加支持，使该芯片的显示、视频和 GPU 能使用 IOMMU。这些实例不受可信执行环境管理，需要操作系统自行配置全局寄存器空间，且只支持短描述符页表，此前驱动硬编码 LPAE 格式导致访问全部出错。新增按实例配置、非安全模式编程、电源域崩溃后恢复上下文，并在编程上下文时暂停微 MMU 以避免与在途事务竞争。
-- 达到阈值的 patches（9 个，显示前 5）：
-  - iommu: qcom_iommu: extract context bank programming into a helper
-  - iommu: qcom_iommu: support the short-descriptor pagetable format
-  - iommu: qcom_iommu: handle the SMMU global register space
-  - iommu: qcom_iommu: support non-TZ-managed instances
-  - iommu: qcom_iommu: restore context bank state after power collapse
-  - ... 及其他 4 个 patch
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260809-msm8974-iommu-upstream-v1-2-87f5cd492560@oss.qualcomm.com/
-
-**[v4] iommu/arm-smmu: Use pm_runtime in fault handlers**
-
-- 日期：2026-08-06
-- 状态：社区讨论中
-- 作者邮箱：Prakash Gupta <prakash.gupta@oss.qualcomm.com>
-- 概括：在 SMMU 位于电源域的系统上，故障处理函数会访问寄存器，而 Adreno SMMU 在故障风暴时关闭了停顿，SMMU 可能在掉电状态下产生故障，导致未上电的寄存器读取和 NoC 错误。现在故障处理前先获取运行时电源，未激活则忽略故障；挂起前关闭故障上报并同步中断，避免电平触发中断在掉电过程中反复触发。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260806-smmu-rpm-v4-1-8183d007331c@oss.qualcomm.com/
-
-**[SERIES] iommu/qcom: Misc Fixes** （cover letter，4/6 个 patch 达到代码量阈值）
-
-- 日期：2026-07-17
-- 状态：社区讨论中
-- 作者邮箱：Mukesh Ojha <mukesh.ojha@oss.qualcomm.com>
-- 概括：修复高通 IOMMU 驱动的若干缺陷：故障上报判断写反导致已处理的故障被误报为未处理；探测时未检查运行时恢复返回值，可能在时钟未开时访问硬件；域初始化失败路径会永久泄漏页表；页表指针在解锁后才发布，并发映射可能拿到空指针而拒绝合法映射；上下文探测在时钟未开时读写寄存器。
-- 达到阈值的 patches（4 个，显示前 5）：
-  - iommu/qcom: Use devm_pm_runtime_enable() in qcom_iommu_device_probe()
-  - iommu/qcom: Check pm_runtime_resume_and_get() return in probe
-  - iommu/qcom: Publish pgtbl_ops before releasing init_mutex
-  - iommu/qcom: Enable clocks before hardware access in qcom_iommu_ctx_probe()
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717144608.3216274-2-mukesh.ojha@oss.qualcomm.com/
+- 作者邮箱：Ishu Brar <patches@brar.si>
+- 概括：针对高通 SM7250 平台的 Adreno GPU SMMU，写入页请求相关寄存器时固件会将设备复位，首次创建每进程 GPU 页表即触发。现按 SM8250 同样方式，在 SM7250 上跳过安装页请求回调，避免设备复位，使 OnePlus Nord 上的 Vulkan 图形工作能正常创建页表。
+- 来源：https://patchwork.kernel.org/project/linux-arm-msm/patch/20261023-smmu-sm7250-v2-2-8bb881ce19f5@brar.si/
 
 **▸ 组织：Individual Contributor**（1 patches）
 
 **[SERIES] Enable LPAC on a7xx series GPUs** （cover letter，1/2 个 patch 达到代码量阈值）
 
-- 日期：2026-07-05
+- 日期：2026-10-29
 - 状态：社区讨论中
 - 作者邮箱：Anna Maniscalco <anna.maniscalco2000@gmail.com>
-- 概括：为高通 a7xx 系列 GPU 启用 LPAC 低优先级队列：此前 GPU 的 SID 0 和 1 共用同一地址空间，LPAC 无法独立更新页表。现在把 SID 1 拆到独立的 LPAC 设备节点，为其分配独立上下文和地址空间，配置固件访问窗口，并新增 LPAC 环的初始化、提交队列接口和崩溃转储信息，使 GPU 能通过独立环提交低优先级任务。
+- 概括：为高通 Adreno 7xx 系列 GPU 引入低优先级异步计算队列。此前低优先级计算与主图形队列共用 SMMU 域和页表，无法独立更新映射，也不能单独提交任务；系列在 SMMU 中为低优先级设备分配独立上下文和拆分地址空间，通过设备树识别对应节点并配置固件孔径，新增独立环形队列和用户态提交接口，默认在 Adreno 750 上开启，其他目标由模块参数控制。这样低优先级计算可与主队列并行提交，故障时还能转储低优先级环状态。
 - 达到阈值的 patches（1 个，显示前 5）：
   - iommu: arm-smmu-qcom: Configure lpac device with split address space
-- 来源：https://patchwork.kernel.org/project/dri-devel/patch/20260705-descriptive-name-lpac-upstream-v1-1-01d50c3e0c99@gmail.com/
+- 来源：https://patchwork.kernel.org/project/linux-arm-msm/patch/20261029-descriptive-name-lpac-upstream-v2-1-a21a5c850961@gmail.com/
 
 ---
 
-### ◆ 子系统：Intel VT-d（3 patches）
-
-**▸ 组织：Bull**（2 patches）
-
-**[v2] intel_iommu: Expose SMPWC when SVM is enabled**
-
-- 日期：2026-08-08
-- 状态：社区讨论中
-- 作者邮箱：Clément MATHIEU--DRIF <clement.mathieu--drif@bull.com>
-- 概括：QEMU 的 Intel 虚拟 IOMMU 在启用共享虚拟内存时，没有向客户机暴露可扩展模式一致性页表遍历能力，而 Linux 的共享虚拟内存依赖该能力。现在启用共享虚拟内存时一并暴露该能力，并在宿主 IOMMU 不支持时拒绝加速，避免客户机使用后出错。
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260808153626.873965-1-clement.mathieu--drif@bull.com/
-
-**[v2] intel_iommu: Check address mask before using it in pasid-based iotlb invalidation**
-
-- 日期：2026-07-24
-- 状态：社区讨论中
-- 作者邮箱：Clément MATHIEU--DRIF <clement.mathieu--drif@bull.com>
-- 概括：在 Intel IOMMU 模拟中处理基于 PASID 的 IOTLB 失效描述符时，先检查地址掩码是否超出硬件允许的最大值，若非法则报错并拒绝执行，避免有缺陷的驱动触发格式错误的失效操作。
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260724111424.376680-1-clement.mathieu--drif@bull.com/
-
-**▸ 组织：Intel**（1 patches）
-
-**[SERIES] intel_iommu: Enable PRQ support for passthrough device** （cover letter，4/4 个 patch 达到代码量阈值）
-
-- 日期：2026-08-31
-- 状态：社区讨论中
-- 作者邮箱：Duan, Zhenzhong <zhenzhong.duan@intel.com>
-- 概括：为直通设备启用 Intel VT-d 的页请求队列支持。此前客户机在虚拟 IOMMU 中开启页请求时，主机侧可恢复缺页事件无法回传客户机。现在分配故障队列对象并注册事件处理，把主机产生的可恢复缺页转发给客户机，再把客户机的响应写回主机，同时缓存每个故障组的标识；PASID 条目失效时在底半部释放故障队列资源，避免文件引用未释放导致释放失败。
-- 达到阈值的 patches（4 个，显示前 5）：
-  - intel_iommu_accel: teardown FAULTQ resources in bottom half
-  - intel_iommu_accel: Guard VTDAccelPASIDCacheEntry definition
-  - intel_iommu_accel: Accept PRQ response for passthrough device
-  - intel_iommu_accel: Add PRQ injection for passthrough device
-- 来源：https://patchwork.kernel.org/project/qemu-devel/patch/20260831095200.1279366-7-zhenzhong.duan@intel.com/
-
----
-
-### ◆ 子系统：ARM SMMU Acceleration（2 patches）
+### ◆ 子系统：IOMMU DMA-API（3 patches）
 
 **▸ 组织：NVIDIA**（2 patches）
 
-**[v3] iommu/tegra241-cmdqv: Reject a VCMDQ base above the 48-bit hardware limit**
+**[SERIES] Make the 32-bit ARM DMA API work with normal IOMMU DMA default domains (+ Tegra PoC)** （cover letter，3/5 个 patch 达到代码量阈值）
 
-- 日期：2026-07-29
+- 日期：2026-10-26
 - 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：NVIDIA Tegra241 的命令队列分配中，虚拟命令队列基址寄存器只保存 48 位地址，而分配出的基址可能带更高位，掩码写入会静默截断，导致硬件从错误内存取命令。现在检测到超出 48 位的基址就告警并让队列初始化失败，避免静默截断；真实硬件不会出现该情况，只有虚拟机监控器给出不匹配的地址宽度时才可能触发。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260729220329.805417-1-nicolinc@nvidia.com/
+- 作者邮箱：Mikko Perttunen <mperttunen@nvidia.com>
+- 概括：32 位 ARM 平台原本强制使用传统 ARM DMA 域，不允许 IOMMU 核心管理的默认 DMA 域；现在为大多数平台启用核心管理的默认 DMA 域，传统 ARM DMA 路径继续保留，部分兼容性尚不足的平台仍使用身份域。Tegra SMMU 对显示控制器保持旁路，直到驱动接管并设置最终域，避免开机扫描时的翻译故障；并按软件组为图形和主机设备启用 DMA 默认域，修复多设备同组探测问题。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - iommu/tegra-smmu: Defer display client translation to driver handover
+  - iommu/tegra-smmu: Use a DMA API default domain per swgroup
+  - iommu: Enable DMA default domains on (most) 32-bit ARM platforms
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20261026-b4-arm32-iommu-dma-cookie-v3-1-3901d74b1ff2@nvidia.com/
 
-**[SERIES] iommu/tegra241-cmdqv: Fix error-interrupt races and VINTF lifecycle bugs** （cover letter，5/11 个 patch 达到代码量阈值）
+**[v2,07/11] iommu: Let 32-bit ARM drivers opt into a DMA API default domain**
 
-- 日期：2026-07-14
+- 日期：2026-10-16
 - 状态：社区讨论中
-- 作者邮箱：Nicolin Chen <nicolinc@nvidia.com>
-- 概括：针对 Tegra241 的 CMDQV 硬件，修复错误中断与虚拟接口生命周期之间的竞态：命令队列在完全初始化前就被发布，错误中断可能读到空指针或已释放对象；虚拟接口销毁与中断处理未同步，可能读到半清除的槽位或已释放对象；错误映射索引越界会读越界；探测阶段中断过早注册会遍历未初始化数组；移除时先拆虚拟接口后释放中断也会读到失效指针。
-- 达到阈值的 patches（5 个，显示前 5）：
-  - iommu/tegra241-cmdqv: Publish an LVCMDQ only after it is fully initialized
-  - iommu/tegra241-cmdqv: Reject a vSID wider than the SID_MATCH field
-  - iommu/tegra241-cmdqv: Don't fall back to a freed smmu after devm_krealloc()
-  - iommu/tegra241-cmdqv: Require exactly one Stream ID for a vSID
-  - iommu/tegra241-cmdqv: Warn on a VCMDQ base above the 48-bit hardware limit
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/3e0d9156cd7ade5a5ee0b9a63a326dc324866ddf.1784059577.git.nicolinc@nvidia.com/
+- 作者邮箱：Mikko Perttunen <mperttunen@nvidia.com>
+- 概括：解除 32 位 ARM 平台上对默认域类型的强制身份域覆盖，让 IOMMU 驱动可以通过默认域类型回调自行选择真正的 DMA API 默认域；当通用 DMA 域实现未启用但 ARM DMA API 实现可用时，允许驱动显式请求的 DMA 域通过。普通路径仍不会自动回退到 DMA 域，因此现有 32 位 ARM 驱动在未设置回调或显式返回身份域时行为保持不变。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20261016-b4-arm32-iommu-dma-cookie-v2-7-b06842a01938@nvidia.com/
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] DMA_PMD: PMD_SIZE-backed IO buffer pools** （cover letter，12/12 个 patch 达到代码量阈值）
+
+- 日期：2026-10-03
+- 状态：社区讨论中
+- 作者邮箱：Luigi Rizzo <lrizzo@google.com>
+- 概括：为直接内存访问缓冲新增基于 2MB 物理连续大页的分配池，使输入输出内存管理单元能使用大页映射，降低输入输出旁路转换缓冲压力及映射、解映射和刷新开销。池会动态分配回收大页，并用全局上限和收缩器限制空闲内存；域销毁时清理存活映射，确保内存仅在输入输出内存管理单元映射移除并刷新后才归还伙伴分配器。
+- 达到阈值的 patches（12 个，显示前 5）：
+  - iommu/dma: introduce CONFIG_DMA_PMD and metadata table
+  - iommu/dma: add DMA_PMD pool lifecycle and page recycle hook
+  - iommu/dma: Global cap and shrinker for DMA_PMD pool memory
+  - iommu/dma: add DMA_PMD pool block allocation
+  - iommu/dma: reserve a per-domain IOVA window for DMA_PMD pages
+  - ... 及其他 7 个 patch
+- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20261003212241.3432303-2-lrizzo@google.com/
 
 ---
 
-### ◆ 子系统：IOMMU DMA-API（1 patches）
+### ◆ 子系统：IOMMU SVA/SVM（2 patches）
 
-**▸ 组织：Kernel.org**（1 patches）
+**▸ 组织：Individual Contributor**（1 patches）
 
-**[v8,03/23] iommu/dma: Check atomic pool allocation result directly**
+**[RFC,1/2] iommu: Add iommu_map_sgtable_dma()**
 
-- 日期：2026-07-17
+- 日期：2026-10-09
 - 状态：社区讨论中
-- 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-- 概括：修正 IOMMU DMA 分配中非阻塞、非一致性路径的失败判断。该路径调用原子池分配，成功时才填充 CPU 地址，原代码却依赖 CPU 地址判断是否失败。现在改为直接检查返回的页指针，为空即返回失败，避免在分配失败时继续用无效页做 IOMMU 映射。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260717180442.110954-4-aneesh.kumar@kernel.org/
+- 作者邮箱：Karl Mehltretter <kmehltretter@gmail.com>
+- 概括：新增一个输入输出内存管理 DMA 辅助接口，用于把活动 DMA 映射的底层内存映射到另一个地址域。针对共享缓冲区导入方（如 Rockchip）只有 DMA 地址而现有映射需要 CPU 页的问题，该接口通过设备默认 DMA 域反查物理地址并建立目标映射，出错时回滚已建立的映射。当前仅支持非反弹的 IOMMU DMA 映射，其他 DMA 后端、总线地址和零转换都会返回不支持。
+- 来源：https://patchwork.kernel.org/project/linux-rockchip/patch/20261009002114.67851-2-kmehltretter@gmail.com/
+
+**▸ 组织：归属待核实（utexas.edu）**（1 patches）
+
+**iommu/sva: Charge IOPF allocations to the faulting mm's memcg**
+
+- 日期：2026-10-12
+- 状态：社区讨论中
+- 作者邮箱：Peizhe Liu <peizheliu@utexas.edu>
+- 概括：修复设备缺页处理在工作队列中未设置活动内存控制组的问题：此前文件后端缺页产生的页缓存被计入根控制组，逃逸任务的内存上限。现在处理缺页前切换到故障进程所属的内存控制组，完成后恢复原值，使设备触发的页缓存分配正确归属并受内存限制约束。
+- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20261012200823.699316-1-peizheliu@utexas.edu/
 
 ---
 
@@ -789,13 +997,30 @@
 
 **▸ 组织：Qualcomm**（1 patches）
 
-**[v4] iommu/io-pgtable-arm: Add support for contiguous hint bit**
+**[v5] iommu/io-pgtable-arm: Add support for contiguous hint bit**
 
-- 日期：2026-08-04
+- 日期：2026-09-21
 - 状态：社区讨论中
 - 作者邮箱：Vijayanand Jitta <vijayanand.jitta@oss.qualcomm.com>
-- 概括：为 ARM LPAE 页表增加连续提示位支持：当一组连续页表项映射自然对齐的连续内存时，硬件可将其合并为单个 TLB 项，减少 TLB 占用。各页粒度对应的连续块大小会通过页大小位图上报，便于调用方按这些大小对齐分配；对连续组的局部解映射会被拒绝，保证整组一起失效。硬件存在相关缺陷时，驱动可通过一个禁用标志在运行时关闭该特性。
-- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260804-iommu_contig_hint-v4-1-d7a47ed5db98@oss.qualcomm.com/
+- 概括：为 ARM LPAE 页表引入连续提示位支持：当一组连续页表项映射自然对齐的连续内存块时，在相关页表项上设置连续提示，使硬件合并地址翻译并扩大 TLB 覆盖。支持的连续组大小通过页大小位图通告，调用者按正常页大小选择路径使用；对已标记连续组的部分取消映射在改动任何表项前直接拒绝，避免留下半取消状态。另提供兼容开关，便于有硬件缺陷的 SMMU 驱动关闭该功能。
+- 来源：https://patchwork.kernel.org/project/linux-arm-kernel/patch/20260921-iommu_contig_hint-v5-1-e7fbd1c3774d@oss.qualcomm.com/
+
+---
+
+### ◆ 子系统：IOMMUPT（1 patches）
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] iommupt: Introduce IO page table shrinker** （cover letter，2/5 个 patch 达到代码量阈值）
+
+- 日期：2026-10-01
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：在通用页表库中加入内存压力驱动的页表收缩器，用叶条目引用计数识别完全空目录并登记到域的回收列表；收缩器在内存紧张时无锁切断这些空分支，等待宽限期后释放并刷新设备旁路缓存，从而自动回收稀疏解除映射残留的页表目录。映射路径与收缩器竞争失败时返回重试。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommupt: Introduce lockless page table shrinker
+  - iommupt: Return real page count to the shrinker core
+- 来源：https://patchwork.kernel.org/project/linux-mm/patch/20261001230219.818128-2-praan@google.com/
 
 ---
 
@@ -845,4 +1070,4 @@ python3 tracker.py 子系统 --start 2026-03-01 --end 2026-04-30
 
 ---
 
-*报告由 Linux Patches Tracker 自动生成 | 2026-09-11 18:21:35*
+*报告由 Linux Patches Tracker 自动生成 | 2026-11-11 13:30:54*
