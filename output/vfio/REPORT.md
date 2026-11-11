@@ -19,8 +19,9 @@
 
 | 状态 | 数量 | 占比 |
 |------|------|------|
-| 社区讨论中 | 41 | 100.0% |
-| 已合入 | 0 | 0.0% |
+| 社区讨论中 | 29 | 70.7% |
+| 已合入 | 12 | 29.3% |
+| 已关闭 | 0 | 0.0% |
 | **总计** | **41** | **100%** |
 
 ### 按组织分类（TOP 15）
@@ -46,8 +47,8 @@
 | 子系统 | 数量 | 占比 |
 |--------|------|------|
 | VFIO PCI | 17 | 41.5% |
-| VFIO Core | 12 | 29.3% |
-| VFIO Selftests | 3 | 7.3% |
+| VFIO Core | 13 | 31.7% |
+| VFIO Selftests | 2 | 4.9% |
 | VFIO FSL-MC | 1 | 2.4% |
 | VFIO Platform | 1 | 2.4% |
 | VFIO AP (s390) | 1 | 2.4% |
@@ -62,216 +63,60 @@
 
 ### 已合入
 
-暂无。
+| 厂商 | 简介 |
+|------|------|
+| NVIDIA | [PATCH v7 00/10] mlx5 support for VFIO self test ------为 VFIO 自测试框架补充迈络思 ConnectX 网卡的用户态驱动支持：先调整内核声明以提供硬件命令和工作队列描述符等字段布局，并把字段访问宏拆出供自测试使用；然后自测试驱动通过命令接口完成 HCA 初始化、页分配、保护域和内存密钥建立，再创建自环队列对执行 DMA 数据搬运，最后把完成事件连接到 MSI-X 向量，使 VFIO 测试能覆盖该设备的数据通路和中断上报。 |
+| Individual Contributor | [PATCH v2 00/7] vfio: mmap()/mprotect() hygiene for MMIO region mappings ------针对 VFIO 平台、fsl-mc 和 CDX 设备的 MMIO 区域映射，修复只读区域可能先只读映射再通过内存保护修改升级为可写而被写入的问题，做法是清除对应虚拟内存的可写许可；同时保持逻辑文件偏移并拒绝非共享映射，避免将来设备撤销映射时因偏移被物理页帧号覆盖而留下失效映射。当前这些路径多为防御性处理，尚无驱动实际暴露只读区域。 |
+| Individual Contributor | [v2,1/2] vfio/nvgrace-gpu: Use a core-only open_device in fallback mode ------在 ACPI 内存属性缺失或芯片间高速链路断开时，英伟达 nvgrace GPU 的 VFIO 设备进入降级模式，原打开路径会无条件注册长度为零的地址范围，导致残留节点使第二次打开失败，并可能在重新绑定后触发已释放内存访问。现在为降级模式改用只执行核心 PCI 启用的打开流程，不再注册该地址范围，使打开关闭对称，消除残留和释放后使用问题。 |
+| Huawei | [v6,2/2] hisi_acc_vfio_pci: reject live migration on 64KB page with QM_HW_V3 hardware ------华为加速器虚拟功能直通设备在第三代队列管理硬件且系统页为 64KB 时，功能区域与迁移寄存器共享同一个物理页且缺少隔离，可能把迁移寄存器暴露给客户机，并在 KVM 模拟设备方案下触发客户机内核调用栈错误。此前在打开设备时直接拒绝，导致直通完全不可用；现在改为探测阶段识别该情形并绑定通用操作接口，保持设备直通可用，仅禁用实时迁移。 |
+| NVIDIA | [v2,1/4] vfio: Reject a second cdev open before mutating shared device state ------修复 VFIO 设备字符设备路径中，第二个绑定 IOMMUFD 的调用会先更新设备令牌和 KVM 关联，然后才在打开阶段被拒绝，错误路径会破坏当前打开者的 KVM 关联或留下被覆盖的令牌；现将单次打开检查前移到这些共享状态修改之前，并以设备忙返回，使无法完成的绑定不会污染现有用户。 |
+| Google | [v2] vfio: selftests: Add documentation ------为 VFIO 自测试新增专门文档，覆盖设备挑选与设置、测试运行和清理、利用测试框架编写用例的基本步骤，以及辅助库提供的设备与 IOMMU 对象等接口；文档纳入驱动 API 目录，为内核开发者使用和扩展 VFIO 自测试提供入门参考。 |
+| 归属待核实（baidu.com） | [PATCH] vfio/pci: Restore 8-byte ioeventfd support ------VFIO PCI 的 ioeventfd 注册一度支持 8 字节访问，但此前的一次清理把仅在缺少 64 位写入接口时需要的限制误保留为无条件拒绝，导致所有 8 字节事件寄存器注册失败。现在删除这项无条件检查，恢复 8 字节 ioeventfd 的正常注册。 |
+| NVIDIA | [v3,1/1] vfio/pci: Remove the core dependency on driver data ------VFIO PCI 核心原先强制各设备驱动把核心设备结构放在驱动私有数据开头，使变体驱动无法自由安排私有数据布局。现在新增回调包装宏，让各驱动在私有数据中保存自己的结构体，并通过生成的包装把核心设备传给公共辅助函数，从而解除核心对驱动私有数据布局的依赖，为 Rust PCI 类型化驱动数据等不同设计腾出空间。 |
+| Individual Contributor | [v4] vfio/platform: prevent read-only region mappings from becoming writable ------VFIO 平台设备在区域没有写标志时虽拒绝初始可写映射，但没有清除虚拟内存区域的可写升级许可，用户空间可以先只读映射再用内存保护调用改成可写。现在对这类只读区域清除后续可写许可，堵住只读映射被升级为可写的路径；当前没有平台驱动发布只读区域，属于防御性加固。 |
+| Individual Contributor | [v3] vfio/fsl-mc: prevent read-only region mappings from becoming writable ------VFIO 的 FSL-MC 总线设备在区域没有写标志时同样只拒绝初始可写映射，却保留后续可写升级许可，用户空间可先只读映射再改为可写。现在对这些区域清除虚拟内存区域的后续可写许可，防止只读映射被升级；目前所有 FSL-MC 设备区域都带有写标志，此改动为防御性加固。 |
+| Individual Contributor | [v2] vfio/type1: avoid walking reserved-only mappings while unpinning ------修复 VFIO 类型 1 IOMMU 拆除只包含保留页的大型设备直通 DMA 映射时，仍遍历数千万个物理页进行无效分类，导致单次解除映射长时间占用 CPU 并触发软锁；现在区分是否混有非保留页，全部为保留页时跳过遍历直接结束，避免此类拆除路径卡死。 |
+| Individual Contributor | [1/3] vfio/pci: Drain eventfd RCU callbacks on module exit ------修复 VFIO PCI 在替换错误或请求通知的事件文件描述符时，释放回调通过 RCU 延迟执行；设备关闭后回调可能仍排队，导致依赖驱动移除后 vfio-pci-core 模块被卸载而回调仍指向模块代码。现在模块退出前等待 RCU 回调清空，避免执行已卸载模块代码。 |
 
 ### 社区讨论
 
 | 厂商 | 简介 |
 |------|------|
-| NVIDIA | [PATCH v6 00/31] vfio/pci: Add CXL Type-2 device passthrough support ------为 CXL Type-2 设备直通提供支持：新增 vfio-cxl 模块，在按需加载后独占组件寄存器 BAR，向客户机只读呈现 HDM 解码寄存器并将 HDM 内存区域作为可映射缓冲区导出；vfio-pci 增加排除范围列表，防止客户机直接访问这些寄存器。同时让持有 HDM 资源的驱动执行 CXL 复位，并在热复位和低功耗返回时恢复解码器状态；当 CXL 端口屏蔽次级总线复位时拒绝相关总线或槽复位，避免误报成功。 |
-| NVIDIA | [PATCH v1 00/19] vfio/pci: Handle PCI error recovery and report state to userspace ------为VFIO PCI增加主机PCI错误恢复协调机制：恢复期间通过内部状态与锁阻塞新的设备访问，并串行化配置空间、复位、中断、运行时电源管理、BAR访问等操作，避免与恢复流程竞争；恢复结果可通过设备特性向用户态报告状态和序号，仅通用vfio-pci驱动在用户态启用后生效。 |
-| OzLabs Community | [PATCH v8 00/9] vfio/pci: Add mmap() for DMABUFs ------为VFIO PCI的DMABUF导出和映射提供完整支持：普通BAR的mmap改为基于DMABUF，使导出的DMABUF文件描述符可被mmap，从而把BAR子范围安全地交给没有VFIO设备文件描述符的其他进程；同时统一撤销和恢复逻辑，并允许用户空间请求立即撤销DMABUF，使其映射失效且不能再被映射或附加。 |
-| Google | [PATCH v1 00/5] vfio/pci: Fix power state race with SR-IOV enablement ------修复 VFIO PCI 设备电源状态转换与 SR-IOV 启用并发时的竞态：关闭设备路径未持有内存锁就执行电源状态恢复，可能与用户态写入虚拟功能数量触发的同时恢复并发执行，导致已启用虚拟功能时的基地址寄存器更新冲突和内核警告。现在所有电源状态转换均在内存锁保护下进行，并对无锁读写的虚拟功能活动标志进行标注，新增自测试覆盖 D3hot 关闭、D3hot 下启用 SR-IOV 及两者竞态，通过内核警告计数判定失败。 |
-| NVIDIA | [PATCH v2 00/16] vfio/pci: Handle PCI error recovery and report state to userspace ------为直通给用户态的 PCI 设备加入主机 PCI 错误恢复处理：错误恢复开始后，新的配置空间、基地址寄存器与只读存储器、中断配置、设备复位和电源管理访问会被阻塞，已进入的访问需先完成，避免用户态与恢复流程并发改动设备；恢复过程中根据打开时保存的状态在复位后重建设备，完成后重新放行访问并通知用户态，上报冻结、复位、失败等状态，失败时保持阻塞，用户态需显式启用该能力。 |
-| Google | [PATCH v1 00/9] vfio: Add support for platform devices ------在 kvmtool 虚拟机管理工具中新增平台设备直通支持：原先只支持 PCI 设备，现在可通过命令行指定已绑定到 VFIO 平台驱动的平台设备，把设备的输入输出内存区域映射到客户机预留地址，并从设备树模板生成客户机节点；同时抽取共用中断配置代码，支持边沿触发中断和多个中断线描述。这使 ARM 等平台设备能透传给客户机，且客户机可按模板获得兼容属性以驱动设备。 |
-| NVIDIA | [PATCH v7 00/10] mlx5 support for VFIO self test ------为VFIO自测试框架新增mlx5 ConnectX设备驱动，可在VFIO环境中初始化HCA、建立命令队列和RDMA自环回队列，执行DMA内存复制测试，并能通过完成事件触发MSI-X中断，从而扩展自测试对mlx5设备DMA和中断路径的验证能力。 |
-| Google | [PATCH v3 00/4] Introduce vfio_dma_mapping_perf_test ------新增 VFIO 直接内存访问映射性能自测工具，以延迟报告替代不稳定的通过或失败判断，分别测量内存映射、DMA 区域映射或解映射和内存解映射耗时。增加基于内存文件的映射测试，用于展示按文件映射接口比传统映射方式更快；并扩展自测框架支持自定义命令行参数，允许指定 DMA 区域大小，便于覆盖不同测试场景。 |
-| Google | [PATCH v6 00/18] iommu: Add live update state preservation ------为支持跨内核热更新，在内核 IOMMU 核心、英特尔 VT-d 及 iommufd/VFIO 中新增状态保存与恢复路径：保存根表、上下文表、PASID 表、域编号和页表，并在恢复时回收已保存域编号、重新附加设备；用户态可先标记要保留的硬件页表，保存期间对应 IO 地址空间被设为不可变，映射或解映射会返回忙，避免状态变化。支持地址转换服务的设备拒绝保存，直通设备可在内核切换后继续使用原有 DMA 映射。 |
-| IBM | [v6,1/5] s390/vfio-ap: Fix leak of pinned NIB and registered GISC in vfio_ap_irq_enable/disable() ------针对s390 vfio-ap AP队列中断使能与禁用，原来在禁用中断时可能过早释放固定通知指示字节页并注销客户中断子类，若硬件仍使能中断，后续中断会直接内存访问已释放页造成内存破坏；现在禁用后先轮询确认中断位已清再释放资源，若超时无法确认则保留该页和中断子类不释放，避免野DMA写。 |
-| IBM | [v11,5/5] vfio-pci/zdev: Add VFIO FMB device features ------为通过VFIO透传的s390 zPCI设备增加FMB（函数测量块）透传能力，原来用户态无法直接获取FMB数据，现在提供两个设备特性：一个用于启用或禁用FMB，另一个在FMB启用后读取最新测量数据，从而让用户态能够按需控制并读取zPCI设备的功能测量统计。 |
-| Individual Contributor | [v2,1/2] vfio/nvgrace-gpu: Use a core-only open_device in fallback mode ------针对NVIDIA Grace GPU在缺少ACPI内存属性或C2C链路断开时的回退模式，原来打开设备仍无条件注册空的内存区间用于毒页处理，导致区间树残留并在重新绑定后触发释放后使用；现在回退模式改用只执行PCI核心使能的打开路径，不再注册该区间，使打开与关闭对称。 |
-| Google | [v1] vfio/pci: pass FAULT_FLAG_WRITE to vmf_insert_pfn_pmd/pud() ------VFIO PCI在插入巨页映射时原来始终按只读处理，当共享可写映射因软脏页清零等机制降级为写保护后，后续写缺页无法升级，陷入无限写缺页循环；现在根据缺页携带的写标志插入可写且标记脏的巨页条目，让写缺页能正确建立可写映射。 |
-| Individual Contributor | [PATCH] vfio/nvgrace-gpu: Skip PFN registration for empty memory regions ------针对NVIDIA Grace GPU回退模式，原使用内存区长度为零时仍无条件注册页帧号地址空间，残留区间导致二次打开失败、解绑后释放后使用，并错误归类内存失效报告；现在仅在该区域长度非零时才注册和注销，回退模式不再注册任何区域。 |
-| IBM | [v6,4/5] vfio/spapr_tce: Normalize EEH IOA error injection addresses ------在 sPAPR VFIO 的增强型错误处理错误注入接口中，先将用户态传入的目标地址规范化为 PCI/IOA 总线地址，再交给平台固件注入。此前 QEMU 可能传入 Linux 资源地址，而固件期望 PCI 总线地址，会造成注入失败。转换只针对 32/64 位且功能为内存或 IO 读写的错误；配置空间偏移和 DMA 地址保持原样不翻译，零地址零掩码代表无地址注入直接通过。 |
-| Huawei | [v6,2/2] hisi_acc_vfio_pci: reject live migration on 64KB page with QM_HW_V3 hardware ------华为加速器在64KB页和第三代队列管理硬件组合下，功能区域与迁移寄存器共享同一个第二基地址寄存器物理页且无隔离，可能向客户机泄漏迁移寄存器并触发其内核回溯。此前修复在打开设备时直接拒绝，使直通完全不可用。现在改为在探测阶段根据虚拟功能控制模式和功能区域小于页大小来选择通用虚拟功能输入输出操作，保留设备直通能力，同时禁用有风险的动态迁移，避免迁移寄存器暴露。 |
-| NVIDIA | [v2,12/12] vfio/nvidia-vgpu: add the Rust VFIO variant driver ------新增用 Rust 编写的 NVIDIA vGPU VFIO PCI 变体驱动，通过 Nova 核心管理虚拟 GPU 实例：首次打开设备时创建实例，最后一个句柄关闭时释放，暴露被分配的设备和子系统标识，限制第一号基地址寄存器窗口，并协调固件复位与 PCI 复位。该驱动通过 VFIO 覆盖匹配设备；没有可用 Nova vGPU 接口的设备仍使用普通 PCI 直通。构建上与 Nova 核心共享导出符号和元数据。 |
-| ARM | [RFC,v2,12/15] vfio: Support VFIO devices that access the CPU MMU ------为不使用 IOMMU 而通过 CPU 内存管理单元访问内存的物理设备增加 VFIO 支持：新增 CPU MMU 组类型和注册接口，设备仍需属于 IOMMU 组，但打开设备组时不要求绑定容器或 IOMMU，也不要求提供 iommufd 所需的附加回调。这适用于虚拟机管理器为其创建虚拟设备（如设备树或 ACPI 表）的场景，管理器具备设备特定知识，知道无需分配容器，使这类设备能通过 VFIO 暴露。 |
-| Red Hat | [v2,3/7] vfio/pci: Add qcom-vfio-pci variant driver ------新增高通 VFIO PCI 变体驱动，用于 ath11k 和 ath12k 无线设备直通。这些设备内嵌中断控制器，固件初始化时需要物理主机 MSI 地址，但虚拟机内只能看到虚拟客户机地址，导致初始化失败。驱动在分配后缓存物理 MSI 值，写入扩展配置空间并放置特定签名，供客户机驱动自动发现使用，无需修改 QEMU。前提是虚拟机启用 IOMMU 中断重映射和缓存模式，保证使用缓存物理地址的中断写入能正确路由。 |
-| Google | [v2] vfio: selftests: Add documentation ------为 VFIO 自测试新增专门文档，说明这类测试作为用户态程序直接操作真实 PCI 设备，通过 VFIO 和 IOMMUFD 接口覆盖功能、回归和性能场景；文档给出设备选择、绑定到 VFIO-PCI 驱动、运行与清理步骤，并介绍辅助库和编写测试的基本结构，帮助内核开发者快速搭建和编写测试。 |
+| NVIDIA | [PATCH v6 00/31] vfio/pci: Add CXL Type-2 device passthrough support ------为将 CXL Type-2 设备透传给虚拟机，新增按需加载的 vfio-cxl 提供模块：提供方持有组件寄存器基地址，向客户机暴露主机管理内存区域，将 HDM 解码器只读呈现并屏蔽直接访问，虚拟化 CXL 扩展配置空间；在复位、低功耗和热复位路径上保存恢复解码器状态，并支持导出内存区域为 DMA 缓冲区。PCI 层还拒绝在次级总线复位被屏蔽的 CXL 端口下报告热复位成功；无提供方时设备仍按普通 PCI 透传。 |
+| NVIDIA | [PATCH v1 00/19] vfio/pci: Handle PCI error recovery and report state to userspace ------为通用 vfio-pci 驱动增加主机 PCI 错误恢复支持并可将事件状态报告用户态。引入恢复状态、锁和等待队列，在设备打开关闭、配置空间访问、复位、中断、电源管理、DMA 缓冲区导出等路径中加入守卫，使恢复开始时阻止新访问、等待已在进行的操作完成，避免恢复回调与关闭或复位并发导致访问已释放状态或锁顺序死锁。恢复期间访问会失败或等待，屏障页错误在临时恢复后可重试；只有通用驱动在用户显式启用后生效，变体驱动保持不变。 |
+| OzLabs Community | [PATCH v8 00/9] vfio/pci: Add mmap() for DMABUFs ------为 VFIO PCI 设备引入基于 DMA 缓冲区的 BAR 映射，并支持对导出的 DMA 缓冲区执行内存映射，使进程可通过共享 DMA 缓冲区文件描述符把 BAR 的特定子范围安全委托给其他进程，无需交出整个设备文件描述符；同时统一 BAR 撤销流程，并修复低功耗恢复路径未恢复映射等问题，支持用户显式请求永久撤销某个缓冲区。 |
+| Google | [PATCH v1 00/5] vfio/pci: Fix power state race with SR-IOV enablement ------修复 VFIO PCI 在关闭设备与启用 SR-IOV 同时发生时，因未持锁而并发将设备从 D3hot 切回 D0 的竞争问题。该竞争在需要电源恢复的设备上可能触发虚拟功能 BAR 更新警告，或重复加载释放保存状态。现在所有功率状态转换都在内存锁下进行，并用原子读/写标注相关标志，同时增加自测覆盖关闭、启用 SR-IOV 及两者并发竞争场景。 |
+| NVIDIA | [PATCH v2 00/16] vfio/pci: Handle PCI error recovery and report state to userspace ------为 VFIO PCI 设备增加主机 PCI 错误恢复期间的访问门控和用户空间通知机制。启用恢复后，在恢复开始时阻断配置空间、BAR/ROM、中断配置、复位、电源管理等访问，并等待已进入的操作完成；恢复完成后从保存快照恢复设备状态、解除阻断并通知用户空间。期间部分请求返回错误，无法恢复时保持阻断并报告失败，避免主机恢复与用户访问相互干扰。 |
+| Google | [PATCH v1 00/9] vfio: Add support for platform devices ------在虚拟机管理器 kvmtool 中新增把平台设备通过 VFIO 直通给客户机的能力，映射设备 MMIO 区域并生成设备树节点，支持多中断和边沿触发；用户可提供设备树模板补充兼容属性等绑定信息，解决只有寄存器和中断不足以让客户机驱动匹配的问题。同时修复已有组内设备文件描述符泄漏，并抽出有线中断的公共设置拆除代码。 |
+| Google | [PATCH v3 00/4] Introduce vfio_dma_mapping_perf_test ------新增 VFIO DMA 映射性能自测试，不依赖容易抖动的延迟阈值，而是直接报告 DMA 区域映射、解除映射、内存映射和解除内存映射等阶段的耗时；测试使用提前填充页表来隔离页错误。另加入基于内存文件的映射测试，用于比较 IOMMU 文件映射接口与普通方法的延迟差异。测试框架增加自定义命令行选项，允许用户指定 DMA 区域大小，例如 16G。 |
+| Google | [PATCH v6 00/18] iommu: Add live update state preservation ------为活跃更新场景提供 IOMMU 状态保存与恢复，覆盖页表、域、设备及 PASID 表和根表或上下文表，其中 vt-d 驱动负责保留并恢复自身硬件状态，未保留设备的旧条目在关机时清理。iommufd 增加标记硬件页表保留的接口；用户态标记后，相关映射不可变并拒绝映射或解除映射，保存时验证后备内存并保留 IOMMU 域。VFIO 字符设备保存时一并保存其 iommufd 附着状态，此后禁止再附加或分离，恢复时重新附着域。 |
+| Google | [PATCH v1 00/7] iommu: Introduce Page Table Observability Framework ------新增 IOMMU 页表可观测性框架，把 IO 页表页面数归属到具体 IOMMU 域，并在 VFIO 容器和 iommufd 的 fdinfo 中暴露 iommu-nr-pages 字段，使用户可查看各设备或容器实际占用的 IO 页表页数。仅通用页表库实现的域会计数，任一附加域不支持时省略该字段，避免报告部分计数；自测还验证了卸载映射后页数暂不下降的当前行为。 |
+| IBM | [v6,1/5] s390/vfio-ap: Fix leak of pinned NIB and registered GISC in vfio_ap_irq_enable/disable() ------针对 s390 加密适配器队列透传，修复启用或禁用中断时对固定通知指示字节页和客户机中断子类的管理：禁用命令是异步的，若在中断位清零前释放固定页，硬件后续 DMA 写入可能落到已被新所有者占用的内存。现在先等待中断位清零，超时则故意保留固定页和中断注册以避免野写入；只有确认队列不再工作时才立即释放。 |
+| IBM | [v11,5/5] vfio-pci/zdev: Add VFIO FMB device features ------为 zPCI 设备新增 VFIO 特性，把 FMB 测量功能透传给用户空间：用户可启用或禁用 FMB，并在启用后读取最新测量数据。该能力面向需要从用户态获取 zPCI 设备测量信息的直通场景。 |
+| Google | [v1] vfio/pci: pass FAULT_FLAG_WRITE to vmf_insert_pfn_pmd/pud() ------修复 VFIO PCI 巨页映射插入时未根据故障类型传递写标志，导致共享可写映射在软件脏页跟踪后或写保护场景下安装只读巨页，后续写故障进入巨页写保护处理却因标志为只读而不做任何修改，造成无限写缺页循环；现在写故障会正确标记新巨页为脏且可写。 |
+| Individual Contributor | [PATCH] vfio/nvgrace-gpu: Skip PFN registration for empty memory regions ------针对 vfio/nvgrace-gpu 设备，在 ACPI 内存属性缺失或 C2C 链路断开的回退模式下，使用内存区域长度为零但仍被注册，导致页帧号地址空间覆盖整个范围且关闭路径无法注销；第二次打开返回 EBUSY，解绑后残留节点可能在后续注册或内存错误处理时访问已释放内存，错误也被记为已恢复而非忽略。现在仅当使用内存区域长度非零时注册和注销该区域，回退模式不再注册，避免残留和误报。 |
+| IBM | [v6,4/5] vfio/spapr_tce: Normalize EEH IOA error injection addresses ------在 IBM Power 的 sPAPR VFIO EEH 错误注入路径中，用户态可能传入主机 Linux BAR 资源地址，而固件平台后端期望 PCI/IOA 总线地址。现在对内存或 IO BAR 目标函数做地址归一化：已经是总线地址则保持不变，是资源地址则借助 BAR 相对偏移转换为总线地址；地址和掩码均为零的无地址注入直接透传。 |
+| NVIDIA | [v2,12/12] vfio/nvidia-vgpu: add the Rust VFIO variant driver ------为 NVIDIA vGPU 虚拟功能新增 Rust 编写的 VFIO PCI 变体驱动，配合 nova-core 管理实例：首次打开时创建实例，最后一次关闭时销毁；暴露分配的设备与子系统标识，限制分配的 BAR1 范围，并协调固件复位与 PCI 复位。无 Nova vGPU 接口的设备继续走普通 PCI 透传。构建系统扩展导出所需 Rust 符号，使该驱动能编译并链接 nova-core。 |
+| ARM | [RFC,v2,12/15] vfio: Support VFIO devices that access the CPU MMU ------新增一类不经 IOMMU、由 CPU MMU 完成 DMA 的 VFIO 设备支持。这类设备不绑定 iommufd 接口、不使用 VFIO 容器，打开时不强制要求容器，设置容器会被拒绝；虚拟机管理器因需要设备特定知识创建虚拟设备，知道不必分配容器。适用于与 CPU 共享页表的设备直通场景。 |
+| Red Hat | [v2,3/7] vfio/pci: Add qcom-vfio-pci variant driver ------针对高通 ath11k/ath12k WiFi 设备直通虚拟机时，固件需要主机物理 MSI 地址而客户机只看到虚拟地址导致初始化失败的问题，新增 VFIO 变体驱动，在分配后缓存物理 MSI 值并写入扩展配置空间，供客户机驱动自动发现使用；要求虚拟机启用 IOMMU 中断重映射和缓存模式，确保设备发出的 MSI 写入能正确路由。 |
+| Kernel.org | [RFC,POC,31/50] vfio: install the migration data descriptor when the ioctl returns ------调整 VFIO 迁移数据文件描述符的安装时机，改为在迁移状态获取 ioctl 返回时通过新的描述符准备机制完成安装，错误和资源回收依赖文件关闭路径统一处理，避免原先手动分配、安装和回退的分散逻辑。 |
+| NVIDIA | [12/13] vfio/nvidia-vgpu: add the NVIDIA vGPU VFIO variant driver ------为 NVIDIA vGPU 虚拟功能新增 VFIO PCI 变体驱动，仅允许通过显式覆盖绑定且只接受虚拟功能，将实例打开、复位和关闭委托给 PF 侧 nova-core 协调；配置空间读取向用户展示固件选定的设备与子系统 ID，并按分配规格调整 BAR1 大小，其余操作沿用 vfio-pci-core。 |
+| Kernel.org | [v8,17/23] vfio/pci: Hand out the P2PDMA provider behind a dma-buf ------让从 VFIO PCI 导出的 dma-buf 向导入方返回其点对点 DMA 提供者，使调用方能判断点对点流量是否直接到达导出的 BAR；当缓冲区已被撤销后不再返回提供者，避免描述已经失效的设备资源。 |
 
 ---
 
 ## 已合入 Patches
 
-暂无。
-
-## 社区讨论中 Patches
-
-### ◆ 子系统：VFIO PCI（17 patches）
-
-**▸ 组织：NVIDIA**（3 patches）
-
-**[SERIES] vfio/pci: Add CXL Type-2 device passthrough support** （cover letter，23/25 个 patch 达到代码量阈值）
-
-- 日期：2026-10-16
-- 状态：社区讨论中
-- 作者邮箱：Manish Honap <mhonap@nvidia.com>
-- 概括：为 VFIO PCI 增加 CXL Type-2 设备透传支持。通过独立 vfio-cxl 模块按需注册回调，将 HDM 内存区域暴露给 guest 并作为 DMA-BUF 导出，使用排除范围列表屏蔽 HDM 解码器寄存器等敏感区域，在设备打开、关闭、重置和低功耗转换中协调状态。原问题：普通 vfio-pci 无法处理 CXL Type-2 的内存和寄存器生命周期，导致透传失败或主机资源冲突。
-- 达到阈值的 patches（23 个，显示前 5）：
-  - vfio/pci: Detect CXL devices and load the CXL provider on demand
-  - vfio/pci: Add a generic excluded-range list
-  - vfio/pci: Virtualize the CXL DVSEC in vfio_pci_config.c
-  - vfio/pci: Call the CXL open and close hooks around device use
-  - vfio/pci: Bracket PCI resets with the CXL reset hooks
-  - ... 及其他 18 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261016161839.2765592-8-mhonap@nvidia.com/
-
-**[v3,1/1] vfio/pci: Remove the core dependency on driver data**
-
-- 日期：2026-10-05
-- 状态：社区讨论中
-- 作者邮箱：Simon Song <xinmengs@nvidia.com>
-- 概括：vfio-pci 核心原本强制变体驱动必须把核心设备指针放在 PCI 驱动数据开头，限制私有数据布局并妨碍 Rust 基础设施的类型化驱动数据。现新增宏为各变体驱动生成包装回调，让它们把私有结构存入驱动数据并透传核心设备给辅助函数，同时调整显示解码回调选择，解除核心对驱动数据布局的依赖。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261005184236.1946167-2-xinmengs@nvidia.com/
-
-**[SERIES] vfio/pci: Handle PCI error recovery and report state to userspace** （cover letter，15/19 个 patch 达到代码量阈值）
-
-- 日期：2026-09-01
-- 状态：社区讨论中
-- 作者邮箱：Shameer Kolothum Thodi <skolothumtho@nvidia.com>
-- 概括：为通用 vfio-pci 驱动增加主机 PCI 错误恢复支持。原先 PCI 错误回调与用户态设备访问、复位、关闭等并发时可能访问已释放状态或造成死锁。现引入恢复状态、锁和访问保护，在设备打开、复位、配置读写、中断、运行时电源管理、DMA 缓冲导出等路径上串行化与恢复流程的冲突，并可将恢复事件和序列号报告给用户态；用户态需显式启用，变体驱动行为保持不变。
-- 达到阈值的 patches（15 个，显示前 5）：
-  - vfio/pci: Serialize generic device lifetime with recovery
-  - vfio/pci: Serialize function reset with recovery
-  - vfio/pci: Serialize ioeventfd writes with recovery
-  - vfio/pci: Retry BAR faults after temporary recovery
-  - vfio/pci: Serialize BAR and ROM access with recovery
-  - ... 及其他 10 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260901093217.8539-2-skolothumtho@nvidia.com/
-
-**▸ 组织：Google**（3 patches）
-
-**[SERIES] vfio/pci: Fix power state race with SR-IOV enablement** （cover letter，3/5 个 patch 达到代码量阈值）
-
-- 日期：2026-10-29
-- 状态：社区讨论中
-- 作者邮箱：David Matlack <dmatlack@google.com>
-- 概括：修复支持 SR-IOV 的 VFIO PCI 设备在关闭与启用虚拟功能并发时的电源状态竞争：若用户通过配置空间把设备置于 D3hot，两条路径可能同时恢复电源，对需要电源恢复的设备可能造成物理功能资源窗口在虚拟功能启用后被错误写回或保存状态被重复释放。现在所有电源状态转换都在同一把内存区域锁保护下进行，并显式标注虚拟功能启用标志的并发访问；同时新增自测覆盖上述场景，并以内核警告计数变化判定失败。
-- 达到阈值的 patches（3 个，显示前 5）：
-  - vfio/pci: Hold memory_lock for all calls to vfio_pci_set_power_state()
-  - vfio/pci: Annotate lockless accesses to vdev->sriov_active
-  - vfio: selftests: Add test for device power state transitions
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261029203324.1637772-2-dmatlack@google.com/
-
-**[SERIES] iommu: Add live update state preservation** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-10-25
-- 状态：社区讨论中
-- 作者邮箱：Samiullah Khawaja <skhawaja@google.com>
-- 概括：为支持跨内核热更新，在内核 IOMMU 核心、英特尔 VT-d 及 iommufd/VFIO 中新增状态保存与恢复路径：保存根表、上下文表、PASID 表、域编号和页表，并在恢复时回收已保存域编号、重新附加设备；用户态可先标记要保留的硬件页表，保存期间对应 IO 地址空间被设为不可变，映射或解映射会返回忙，避免状态变化。支持地址转换服务的设备拒绝保存，直通设备可在内核切换后继续使用原有 DMA 映射。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - iommufd: Add APIs to preserve/unpreserve a vfio cdev
-  - vfio/pci: Preserve the iommufd state of the vfio cdev
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261025021930.674647-17-skhawaja@google.com/
-
-**[v1] vfio/pci: pass FAULT_FLAG_WRITE to vmf_insert_pfn_pmd/pud()**
-
-- 日期：2026-10-24
-- 状态：社区讨论中
-- 作者邮箱：Mina Almasry <almasrymina@google.com>
-- 概括：VFIO PCI在插入巨页映射时原来始终按只读处理，当共享可写映射因软脏页清零等机制降级为写保护后，后续写缺页无法升级，陷入无限写缺页循环；现在根据缺页携带的写标志插入可写且标记脏的巨页条目，让写缺页能正确建立可写映射。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261024015540.538758-1-almasrymina@google.com/
-
-**▸ 组织：OzLabs Community**（2 patches）
-
-**[SERIES] vfio/pci: Add mmap() for DMABUFs** （cover letter，7/8 个 patch 达到代码量阈值）
-
-- 日期：2026-10-06
-- 状态：社区讨论中
-- 作者邮箱：Matt Evans <matt@ozlabs.org>
-- 概括：将 VFIO PCI 设备 BAR 的 mmap 改为通过 DMABUF 实现，并支持对导出的 DMABUF 文件描述符进行 mmap，使进程能安全共享 BAR 子范围而不必交出整个 VFIO 设备文件描述符。同时引入独立锁避免潜在死锁，修复低功耗恢复后撤销状态未恢复问题，统一 BAR 撤销与映射清理。
-- 达到阈值的 patches（7 个，显示前 5）：
-  - vfio/pci: Un-revoke DMABUFs in LOW_POWER_ENTRY_WITH_WAKEUP resume
-  - vfio/pci: Add a helper to look up PFNs for DMABUFs
-  - vfio/pci: Add a helper to create a DMABUF for a BAR-map VMA
-  - vfio/pci: Convert BAR mmap() to use a DMABUF
-  - vfio/pci: Clean up BAR zap and revocation
-  - ... 及其他 2 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261006193643.76330-3-matt@ozlabs.org/
-
-**[v6,9/9] vfio/pci: Permanently revoke a DMABUF on request**
-
-- 日期：2026-09-11
-- 状态：社区讨论中
-- 作者邮箱：Matt Evans <matt@ozlabs.org>
-- 概括：VFIO PCI新增永久撤销DMABUF的接口：驱动进程可通过新特性传入已导出的缓冲区文件描述符，请求永久撤销；成功后缓冲区无法再被导入、附加或映射，已有的动态映射会被清理。用于回收先前借给下级客户端进程的PCI BAR资源，客户端结束后确保资源不可访问，再安全重新导出给新客户端，复位期间的临时撤销保持不变。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260911214200.33793-10-matt@ozlabs.org/
-
-**▸ 组织：Kernel.org**（2 patches）
-
-**[SERIES] KVM/VFIO: guest_memfd support for device MMIO resources** （cover letter，6/6 个 patch 达到代码量阈值）
-
-- 日期：2026-10-17
-- 状态：社区讨论中
-- 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-- 概括：扩展 KVM 客户机内存文件机制支持设备 MMIO 资源，允许 VFIO PCI BAR 作为 PFN 后端提供内存，替代仅 folio 分配方式。新增绑定、获取 PFN、分离等回调，协调 VFIO 设备锁与客户机内存文件转换，限制宿主 BAR 访问和映射，在分离和私有转换时使映射失效。结果：虚拟机可将设备 MMIO 纳入客户机内存文件管理，并支持私有/共享转换。
-- 达到阈值的 patches（6 个，显示前 5）：
-  - vfio/pci: Provide guest_memfd backing for PCI BARs
-  - vfio/pci: Track userspace BAR mappings
-  - vfio: Dispatch guest_memfd provider operations through the filesystem
-  - vfio/pci: Restrict host BAR access for guest_memfd providers
-  - vfio/pci: Detach guest_memfd access before teardown
-  - ... 及其他 1 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261017073149.1303738-9-aneesh.kumar@kernel.org/
-
-**[v8,17/23] vfio/pci: Hand out the P2PDMA provider behind a dma-buf**
-
-- 日期：2026-09-28
-- 状态：社区讨论中
-- 作者邮箱：Leon Romanovsky <leon@kernel.org>
-- 概括：让VFIO PCI导出的dma-buf能够向导入方提供点对点DMA提供者信息，使导入方可以判断其点对点流量是否直接到达被导出的PCI BAR；当缓冲区因复位等原因被撤销后不再返回提供者信息，避免导入方继续使用已失效的点对点路径。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260928-fix-p2p-acs-v4-0-v8-17-404453b9c435@nvidia.com/
-
-**▸ 组织：Red Hat**（2 patches）
-
-**[SERIES] vfio/pci: fall back to platform ROM when pci_map_rom() fails** （cover letter，1/2 个 patch 达到代码量阈值）
-
-- 日期：2026-10-21
-- 状态：社区讨论中
-- 作者邮箱：Michael S. Tsirkin <mst@redhat.com>
-- 概括：修复 VFIO PCI 设备的 ROM 读取逻辑：当硬件 ROM 资源窗口存在但内容不可读时，原先无法继续尝试平台固件提供的 ROM，现在只要硬件映射失败就会回退读取平台 ROM；并针对部分笔记本 GPU 增加从 ACPI 的 ROM 方法获取视频 BIOS 的最终回退。ACPI 规范虽更偏好该方法，但此处仅作为最后手段，避免破坏既有部署。
-- 达到阈值的 patches（1 个，显示前 5）：
-  - vfio/pci: read ROM via ACPI _ROM when hardware ROM is unreadable
-- 来源：https://patchwork.kernel.org/project/kvm/patch/8ab8fdfe47a8d9c9f10680ddb4a03bccad43f7c5.1792566536.git.mst@redhat.com/
-
-**[SERIES] Enable Qualcomm WiFi PCIe passthrough to VMs** （cover letter，1/2 个 patch 达到代码量阈值）
-
-- 日期：2026-10-11
-- 状态：社区讨论中
-- 作者邮箱：Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
-- 概括：为高通 WiFi PCIe 设备透传虚拟机添加支持。高通固件需要物理主机 MSI 地址而非 guest IOVA，新增高通 VFIO PCI 变体驱动，在 PCI 扩展配置空间写入“QMSI”签名缓存主机 MSI 地址数据，虚拟机内驱动发现并使用；同时为 ath11k/ath12k 增加复位后链路恢复重试，解决虚拟化时序变化导致初始化失败。需要 IOMMU 中断重映射和缓存模式配合。
-- 达到阈值的 patches（1 个，显示前 5）：
-  - vfio/pci: Add qcom-vfio-pci variant driver
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261011074514.515894-3-jtornosm@redhat.com/
-
-**▸ 组织：AMD**（1 patches）
-
-**[RFC] vfio/pci: Block for the upstream bridge lock in vfio_pci_core_disable()**
-
-- 日期：2026-09-08
-- 状态：社区讨论中
-- 作者邮箱：YuanShang <YuanShang.Mao@amd.com>
-- 概括：在SR-IOV等同一上游桥下多个VF并发释放时，VFIO PCI释放路径原先用尝试锁获取桥锁，只有一个功能会执行复位，其余功能可能未复位就交给下一用户且无日志。改为阻塞获取上游桥锁，使桥下多个功能的释放复位按顺序执行，避免未复位设备流出，代价是每个功能拆除时需等待一次功能级复位稳定时间。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260908080946.2235849-1-YuanShang.Mao@amd.com/
-
-**▸ 组织：IBM**（1 patches）
-
-**[v11,5/5] vfio-pci/zdev: Add VFIO FMB device features**
-
-- 日期：2026-10-28
-- 状态：社区讨论中
-- 作者邮箱：Omar Elghoul <oelghoul@linux.ibm.com>
-- 概括：为通过VFIO透传的s390 zPCI设备增加FMB（函数测量块）透传能力，原来用户态无法直接获取FMB数据，现在提供两个设备特性：一个用于启用或禁用FMB，另一个在FMB启用后读取最新测量数据，从而让用户态能够按需控制并读取zPCI设备的功能测量统计。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261028154352.15108-6-oelghoul@linux.ibm.com/
+### ◆ 子系统：VFIO PCI（4 patches）
 
 **▸ 组织：归属待核实（baidu.com）**（1 patches）
 
 **vfio/pci: Restore 8-byte ioeventfd support**
 
 - 日期：2026-09-22
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Li,Rongqing <lirongqing@baidu.com>
-- 概括：此前清理条件编译时误把仅在缺少八字节写入支持时才执行的八字节事件注册拒绝变成了无条件拒绝，导致VFIO PCI的所有八字节事件注册失败。现删除该无条件拒绝，恢复八字节事件通知注册支持，符合原始设计意图。
+- 概括：VFIO PCI 的 ioeventfd 注册一度支持 8 字节访问，但此前的一次清理把仅在缺少 64 位写入接口时需要的限制误保留为无条件拒绝，导致所有 8 字节事件寄存器注册失败。现在删除这项无条件检查，恢复 8 字节 ioeventfd 的正常注册。
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20260922040013.2188-1-lirongqing@baidu.com/
 
 **▸ 组织：Individual Contributor**（1 patches）
@@ -279,182 +124,56 @@
 **[1/3] vfio/pci: Drain eventfd RCU callbacks on module exit**
 
 - 日期：2026-09-26
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Jiale Yao <yaojiale02@163.com>
-- 概括：在 vfio-pci 模块卸载场景中，替换事件文件描述符时释放会延迟到 RCU 回调执行，关闭设备后回调仍可能排队，依赖驱动移除后卸载核心模块时回调可能指向已释放的模块代码。现在核心模块退出前等待所有未完成的 RCU 回调，避免回调执行时引用已卸载的模块内存。
+- 概括：修复 VFIO PCI 在替换错误或请求通知的事件文件描述符时，释放回调通过 RCU 延迟执行；设备关闭后回调可能仍排队，导致依赖驱动移除后 vfio-pci-core 模块被卸载而回调仍指向模块代码。现在模块退出前等待 RCU 回调清空，避免执行已卸载模块代码。
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20260926162554.163197-2-yaojiale02@163.com/
+
+**▸ 组织：NVIDIA**（1 patches）
+
+**[v3,1/1] vfio/pci: Remove the core dependency on driver data**
+
+- 日期：2026-10-05
+- 状态：已合入
+- 作者邮箱：Simon Song <xinmengs@nvidia.com>
+- 概括：VFIO PCI 核心原先强制各设备驱动把核心设备结构放在驱动私有数据开头，使变体驱动无法自由安排私有数据布局。现在新增回调包装宏，让各驱动在私有数据中保存自己的结构体，并通过生成的包装把核心设备传给公共辅助函数，从而解除核心对驱动私有数据布局的依赖，为 Rust PCI 类型化驱动数据等不同设计腾出空间。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261005184236.1946167-2-xinmengs@nvidia.com/
 
 **▸ 组织：Huawei**（1 patches）
 
 **[SERIES] fix two issues in hisi_acc_vfio_pci driver** （cover letter，1/2 个 patch 达到代码量阈值）
 
 - 日期：2026-10-13
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Longfang Liu <liulongfang@huawei.com>
-- 概括：修复华为加速器直通驱动的两个问题：物理功能直通时复位准备路径曾因空指针导致内核崩溃，现在先判断是否支持动态迁移，非迁移设备直接跳过复位协调，并避免复位标志未清除而误释放无关锁；第三代队列管理硬件搭配64KB页时，功能区域与迁移寄存器共享物理页，可能向虚拟机泄漏迁移寄存器，改为探测阶段选择通用直通操作，保留直通但禁用动态迁移。
+- 概括：修复华为加速器 VFIO 驱动两个问题：在物理功能直通时队列管理指针为空，复位准备路径先使用它记录超时导致内核崩溃，现将热迁移操作检查移到入口，使非迁移设备完全跳过复位协调并清除此前未清除的复位标志；对于 64KB 页下虚拟功能控制模式硬件，功能区域与迁移寄存器共处同一物理页且无隔离，会向客户机泄漏迁移寄存器，现将模式判定移到探测阶段，让此类设备仍可直通但禁用热迁移。
 - 达到阈值的 patches（1 个，显示前 5）：
   - hisi_acc_vfio_pci: reject live migration on 64KB page with QM_HW_V3 hardware
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20261013071929.3988687-2-liulongfang@huawei.com/
 
 ---
 
-### ◆ 子系统：VFIO Core（12 patches）
+### ◆ 子系统：VFIO Core（2 patches）
 
-**▸ 组织：Individual Contributor**（3 patches）
+**▸ 组织：Individual Contributor**（2 patches）
 
 **[SERIES] vfio/nvgrace-gpu: Separate the fallback-mode open_device** （cover letter，1/2 个 patch 达到代码量阈值）
 
 - 日期：2026-10-15
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Andrea Parri <parri.andrea@gmail.com>
-- 概括：针对英伟达 Grace Hopper GPU 直通设备在 ACPI 内存属性缺失或芯片间高速互连断开时的回退模式，原先打开与关闭路径不对称，会以零长度参数注册地址空间，形成覆盖全范围的区间且不清理，设备重绑后可能触发释放后使用。现在回退模式改用仅执行通用 PCI 核心使能的打开路径，与通用关闭对称，不再触碰 GPU 专用状态；常规路径也去掉零长度判断，无条件初始化模拟寄存器。
+- 概括：修复 NVIDIA Grace GPU 在缺少 ACPI 内存属性或芯片间互联链路断开时进入降级模式的问题。原来降级模式共用完整打开函数但关闭时用核心路径，导致打开时注册覆盖全地址范围的内存区域节点，第二次打开失败，解绑后节点悬空触发释放后使用。现在为降级模式单独实现只做核心启用的打开函数，不再触碰内存区域节点，并移除完整打开中针对降级模式的长度检查。结果消除重复打开失败和释放后使用问题。
 - 达到阈值的 patches（1 个，显示前 5）：
   - vfio/nvgrace-gpu: Use a core-only open_device in fallback mode
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20261015081937.405320-2-parri.andrea@gmail.com/
 
-**vfio/nvgrace-gpu: Skip PFN registration for empty memory regions**
-
-- 日期：2026-09-25
-- 状态：社区讨论中
-- 作者邮箱：Andrea Parri <parri.andrea@gmail.com>
-- 概括：针对NVIDIA Grace GPU回退模式，原使用内存区长度为零时仍无条件注册页帧号地址空间，残留区间导致二次打开失败、解绑后释放后使用，并错误归类内存失效报告；现在仅在该区域长度非零时才注册和注销，回退模式不再注册任何区域。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260925161024.189771-1-parri.andrea@gmail.com/
-
 **[v2] vfio/type1: avoid walking reserved-only mappings while unpinning**
 
 - 日期：2026-09-19
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Sam Crossley <samuelcrossley@gmail.com>
-- 概括：GPU直通等场景拆除大型设备直通DMA映射时，如果一个映射只含保留页帧，原先仍会逐页执行无效释放检查，128 GiB保留映射会遍历约3360万个页帧，单次取消映射可让CPU长时间占用并触发软锁定看门狗。现增加非保留页帧标志，只有保留与非保留页帧混合的映射才逐页处理，纯保留映射跳过该遍历，避免无效空操作带来的长时间软锁定。
+- 概括：修复 VFIO 类型 1 IOMMU 拆除只包含保留页的大型设备直通 DMA 映射时，仍遍历数千万个物理页进行无效分类，导致单次解除映射长时间占用 CPU 并触发软锁；现在区分是否混有非保留页，全部为保留页时跳过遍历直接结束，避免此类拆除路径卡死。
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20260919-vfio-v2-1-68e7ed355972@gmail.com/
-
-**▸ 组织：IBM**（2 patches）
-
-**[v6,4/5] vfio/spapr_tce: Normalize EEH IOA error injection addresses**
-
-- 日期：2026-10-23
-- 状态：社区讨论中
-- 作者邮箱：Narayana Murty N <nnmlinux@linux.ibm.com>
-- 概括：在 sPAPR VFIO 的增强型错误处理错误注入接口中，先将用户态传入的目标地址规范化为 PCI/IOA 总线地址，再交给平台固件注入。此前 QEMU 可能传入 Linux 资源地址，而固件期望 PCI 总线地址，会造成注入失败。转换只针对 32/64 位且功能为内存或 IO 读写的错误；配置空间偏移和 DMA 地址保持原样不翻译，零地址零掩码代表无地址注入直接通过。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261023073642.59657-5-nnmlinux@linux.ibm.com/
-
-**[v2] vfio: Use file-based reference counting for KVM**
-
-- 日期：2026-09-03
-- 状态：社区讨论中
-- 作者邮箱：Steffen Eiden <seiden@linux.ibm.com>
-- 概括：将 VFIO 与 KVM 之间的引用计数从手动模块符号引用改为基于文件引用的机制：接口改为传递文件指针，利用内核已有的文件引用计数和释放机制管理生命周期，不再为每个设备保存释放回调，也不再手动维护模块引用。这样简化了 VFIO 与 KVM 集成代码，并移除 KVM 剩余的外部导出符号。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260903-vfio-v2-1-ef4cd4190ae7@linux.ibm.com/
-
-**▸ 组织：NVIDIA**（2 patches）
-
-**[v2,12/12] vfio/nvidia-vgpu: add the Rust VFIO variant driver**
-
-- 日期：2026-10-23
-- 状态：社区讨论中
-- 作者邮箱：Simon Song <xinmengs@nvidia.com>
-- 概括：新增用 Rust 编写的 NVIDIA vGPU VFIO PCI 变体驱动，通过 Nova 核心管理虚拟 GPU 实例：首次打开设备时创建实例，最后一个句柄关闭时释放，暴露被分配的设备和子系统标识，限制第一号基地址寄存器窗口，并协调固件复位与 PCI 复位。该驱动通过 VFIO 覆盖匹配设备；没有可用 Nova vGPU 接口的设备仍使用普通 PCI 直通。构建上与 Nova 核心共享导出符号和元数据。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261023154009.2246627-13-xinmengs@nvidia.com/
-
-**[12/13] vfio/nvidia-vgpu: add the NVIDIA vGPU VFIO variant driver**
-
-- 日期：2026-09-05
-- 状态：社区讨论中
-- 作者邮箱：Zhi Wang <zhiw@nvidia.com>
-- 概括：为 NVIDIA vGPU 虚拟功能新增 VFIO 变体驱动：这类虚拟功能的打开、复位和关闭需要与物理功能侧的 nova-core 驱动协调，新驱动只在通过驱动覆盖方式绑定且确认为虚拟功能时接管设备，将实例生命周期操作委托给 nova-core，同时向用户态呈现固件选择的设备与子系统标识，并按分配配置调整基地址寄存器 1 区域孔径，其余 VFIO 操作复用核心框架。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260905081116.106613-13-zhiw@nvidia.com/
-
-**▸ 组织：Amazon**（2 patches）
-
-**vfio: Create the group chardev outside vfio.group_lock**
-
-- 日期：2026-09-11
-- 状态：社区讨论中
-- 作者邮箱：Sakac, Pavol <sakacpav@amazon.de>
-- 概括：并行设备探测时，VFIO组字符设备的分配、命名和注册原在全局组锁内完成，注册过程中还会发送热插拔事件，导致无关组创建串行化并拉长锁持有时间。现改为无锁分配、命名和构建字符设备，只在组列表上保留身份，热插拔事件延后到发布时发送；删除仍持锁保证名称释放。使字符设备注册不再占用全局锁，减轻并行探测时全局锁争用。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260911-vfopt-s4-v1-0-98ba1d2ef7ab@amazon.de/
-
-**[RFC,8/8] vfio: Opt the group and vfio-dev class devices into staged sysfs**
-
-- 日期：2026-09-11
-- 状态：社区讨论中
-- 作者邮箱：Sakac, Pavol <sakacpav@amazon.de>
-- 概括：在海量VF同时注册的场景下，VFIO组字符设备和VFIO设备类对象在组锁外创建后，并发注册会集中到内核sysfs锁路径上。由于这两类设备不会被驱动匹配、也没有类接口消费者，热插拔事件又在发布后触发，现将其接入分阶段sysfs注册，使目录一次性发布，避免并发VF注册在sysfs锁上形成集中等待。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260911174414.97060-8-sakacpav@amazon.de/
-
-**▸ 组织：ARM**（1 patches）
-
-**[RFC,v2,12/15] vfio: Support VFIO devices that access the CPU MMU**
-
-- 日期：2026-10-15
-- 状态：社区讨论中
-- 作者邮箱：Ryan Roberts <ryan.roberts@arm.com>
-- 概括：为不使用 IOMMU 而通过 CPU 内存管理单元访问内存的物理设备增加 VFIO 支持：新增 CPU MMU 组类型和注册接口，设备仍需属于 IOMMU 组，但打开设备组时不要求绑定容器或 IOMMU，也不要求提供 iommufd 所需的附加回调。这适用于虚拟机管理器为其创建虚拟设备（如设备树或 ACPI 表）的场景，管理器具备设备特定知识，知道无需分配容器，使这类设备能通过 VFIO 暴露。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261015142552.4128028-13-ryan.roberts@arm.com/
-
-**▸ 组织：归属待核实（openai.com）**（1 patches）
-
-**vfio: Publish the container after all fallible initialization**
-
-- 日期：2026-10-30
-- 状态：社区讨论中
-- 作者邮箱：Kyle Zeng <kylebot@openai.com>
-- 概括：修复 VFIO 模块初始化竞态：原先设备节点在初始化完成前发布，并发打开可能在后续初始化失败时获得容器，失败清理不撤销已打开文件，导致文件操作回调指向已释放模块内存，可触发越界读取。现将容器初始化移出组初始化并作为最后一个可能失败的步骤，先注册无 IOMMU 后端再注册杂项设备，保证一旦可打开则初始化不再失败。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261030042337.74512-1-kylebot@openai.com/
-
-**▸ 组织：Google**（1 patches）
-
-**[SERIES] vfio: Add support for platform devices** （cover letter，6/7 个 patch 达到代码量阈值）
-
-- 日期：2026-10-24
-- 状态：社区讨论中
-- 作者邮箱：Mostafa Saleh <smostafa@google.com>
-- 概括：为 kvmtool 虚拟机监视器新增 VFIO 平台设备直通路径，通过新的命令行参数将已绑定 VFIO 平台驱动的设备分配给虚拟机，映射其 MMIO 区域并生成客户机设备树节点；中断处理覆盖边沿触发类型，还可借助用户提供的设备树模板补全兼容字符串等属性，使客户机驱动能够绑定。同时修复同一 IOMMU 组内非首设备打开时的文件描述符泄漏。
-- 达到阈值的 patches（6 个，显示前 5）：
-  - vfio: Factor out wired IRQ setup and teardown
-  - vfio: Support edge-triggered wired IRQs
-  - vfio: Add basic support for vfio-platform
-  - vfio: Reserve guest address space for VFIO platform
-  - vfio: platform: Add interrupts support
-  - ... 及其他 1 个 patch
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261024161902.2093581-2-smostafa@google.com/
-
----
-
-### ◆ 子系统：VFIO Selftests（3 patches）
-
-**▸ 组织：Google**（3 patches）
-
-**[SERIES] iommu: Introduce Page Table Observability Framework** （cover letter，2/2 个 patch 达到代码量阈值）
-
-- 日期：2026-10-01
-- 状态：社区讨论中
-- 作者邮箱：Pranjal Shrivastava <praan@google.com>
-- 概括：引入输入输出内存管理单元页表观测框架，解决全局页表页数无法归因到具体用户的问题。框架按域统计页表页数，使用通用页表库的驱动自动计入；通过文件描述符信息文件新增页数指标，传统虚拟功能输入输出容器和输入输出内存管理文件描述符接口均可向用户空间报告自身页表占用，仅统计支持计数的域，不支持时省略该指标，避免部分计数。自测验证稀疏映射后页表计数增加且解除映射后计数保持，为后续回收提供观测依据。
-- 达到阈值的 patches（2 个，显示前 5）：
-  - vfio/type1: Expose IO page table usage via fdinfo
-  - vfio/selftests: Add observability test for IO page table usage
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20261001224531.765278-5-praan@google.com/
-
-**[SERIES] Introduce vfio_dma_mapping_perf_test** （cover letter，3/4 个 patch 达到代码量阈值）
-
-- 日期：2026-09-10
-- 状态：社区讨论中
-- 作者邮箱：Aaron Lewis <aaronlewis@google.com>
-- 概括：为 VFIO 新增 DMA 映射性能测试工具，测量 mmap、DMA 映射、解除映射和 munmap 各阶段延迟，支持 memfd 映射与自定义区域大小。传统通过/失败测试在延迟约束下容易抖动，该工具直接报告各阶段耗时，便于评估不同映射方式（如 IOMMU 文件映射接口）的性能差异。
-- 达到阈值的 patches（3 个，显示前 5）：
-  - vfio: selftests: Introduce vfio_dma_mapping_perf_test
-  - vfio: selftests: Add memfd test to vfio_dma_mapping_perf_test
-  - vfio: selftests: Allow a size for vfio_dma_mapping_perf_test
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260910153326.3085937-2-aaronlewis@google.com/
-
-**[v2] vfio: selftests: Add documentation**
-
-- 日期：2026-09-03
-- 状态：社区讨论中
-- 作者邮箱：David Matlack <dmatlack@google.com>
-- 概括：为 VFIO 自测试新增专门文档，说明这类测试作为用户态程序直接操作真实 PCI 设备，通过 VFIO 和 IOMMUFD 接口覆盖功能、回归和性能场景；文档给出设备选择、绑定到 VFIO-PCI 驱动、运行与清理步骤，并介绍辅助库和编写测试的基本结构，帮助内核开发者快速搭建和编写测试。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260903183814.2111748-1-dmatlack@google.com/
 
 ---
 
@@ -465,9 +184,9 @@
 **[v3] vfio/fsl-mc: prevent read-only region mappings from becoming writable**
 
 - 日期：2026-09-03
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Abdifatah Suruur <suruurism@gmail.com>
-- 概括：修复 FSL-MC 总线设备经 VFIO 映射时只读区域可被提升为可写的问题：原实现虽然拒绝不带写标志区域的可写映射，但未清除映射的可写潜力位，用户态可先建立只读映射再通过内存保护接口改为可写。现在对这类区域清除可写潜力位，防止升级；由于 FSL-MC 总线当前发布的区域均带写标志，这条路径暂时不会触发，属于防御性加固。
+- 概括：VFIO 的 FSL-MC 总线设备在区域没有写标志时同样只拒绝初始可写映射，却保留后续可写升级许可，用户空间可先只读映射再改为可写。现在对这些区域清除虚拟内存区域的后续可写许可，防止只读映射被升级；目前所有 FSL-MC 设备区域都带有写标志，此改动为防御性加固。
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20260903092912.444-1-suruurism@gmail.com/
 
 ---
@@ -479,52 +198,24 @@
 **[v4] vfio/platform: prevent read-only region mappings from becoming writable**
 
 - 日期：2026-09-06
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Abdifatah Suruur <suruurism@gmail.com>
-- 概括：修复 VFIO 平台设备内存映射中只读区域可被提升为可写的问题：原实现对无写标志区域仅拒绝直接可写映射，但保留映射的可写潜力位，用户态可先只读映射再利用内存保护接口升级为可写。现在对这类区域清除可写潜力位，阻止权限提升；当前内置平台驱动都未发布无写标志的区域，因此属于防御性加固。
+- 概括：VFIO 平台设备在区域没有写标志时虽拒绝初始可写映射，但没有清除虚拟内存区域的可写升级许可，用户空间可以先只读映射再用内存保护调用改成可写。现在对这类只读区域清除后续可写许可，堵住只读映射被升级为可写的路径；当前没有平台驱动发布只读区域，属于防御性加固。
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20260906123239.10858-1-suruurism@gmail.com/
 
 ---
 
-### ◆ 子系统：VFIO AP (s390)（1 patches）
+### ◆ 子系统：VFIO Selftests（1 patches）
 
-**▸ 组织：IBM**（1 patches）
+**▸ 组织：Google**（1 patches）
 
-**[v6,1/5] s390/vfio-ap: Fix leak of pinned NIB and registered GISC in vfio_ap_irq_enable/disable()**
+**[v2] vfio: selftests: Add documentation**
 
-- 日期：2026-09-04
-- 状态：社区讨论中
-- 作者邮箱：Anthony Krowiak <akrowiak@linux.ibm.com>
-- 概括：针对s390 vfio-ap AP队列中断使能与禁用，原来在禁用中断时可能过早释放固定通知指示字节页并注销客户中断子类，若硬件仍使能中断，后续中断会直接内存访问已释放页造成内存破坏；现在禁用后先轮询确认中断位已清再释放资源，若超时无法确认则保留该页和中断子类不释放，避免野DMA写。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260904093435.1161402-2-akrowiak@linux.ibm.com/
-
----
-
-### ◆ 子系统：VFIO Migration（1 patches）
-
-**▸ 组织：Kernel.org**（1 patches）
-
-**[RFC,POC,31/50] vfio: install the migration data descriptor when the ioctl returns**
-
-- 日期：2026-09-15
-- 状态：社区讨论中
-- 作者邮箱：Christian Brauner <brauner@kernel.org>
-- 概括：调整VFIO设备迁移状态数据描述符的返回方式：在迁移状态查询接口把文件描述符返回用户态时才安装，后续释放依赖文件描述符退出路径处理；替代原先先预留未用描述符、复制完成后再手动安装的做法，简化复制失败时的清理流程。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260915-work-fd-reserve-unify-folded-v1-31-4d5217d6b246@kernel.org/
-
----
-
-### ◆ 子系统：VFIO CCW (s390)（1 patches）
-
-**▸ 组织：Individual Contributor**（1 patches）
-
-**[v1] vfio/ccw: Flush notoper_work before returning from reset**
-
-- 日期：2026-09-22
-- 状态：社区讨论中
-- 作者邮箱：Yuho Choi <oss.patchbox@gmail.com>
-- 概括：针对 s390 上的 VFIO ccw 设备，原先在 DMA 解映射回调中进行复位时，如果子通道无法禁用或静止，关闭流程只排队异步工作来释放通道程序页，回调可能在页面仍被钉住时返回，使 DMA 解映射重试耗尽并可能触发主机崩溃。现在复位发送关闭事件后等待该异步工作完成，确保页面在返回前解钉，正常路径不受影响。
-- 来源：https://patchwork.kernel.org/project/kvm/patch/20260922164928.477669-1-oss.patchbox@gmail.com/
+- 日期：2026-09-03
+- 状态：已合入
+- 作者邮箱：David Matlack <dmatlack@google.com>
+- 概括：为 VFIO 自测试新增专门文档，覆盖设备挑选与设置、测试运行和清理、利用测试框架编写用例的基本步骤，以及辅助库提供的设备与 IOMMU 对象等接口；文档纳入驱动 API 目录，为内核开发者使用和扩展 VFIO 自测试提供入门参考。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260903183814.2111748-1-dmatlack@google.com/
 
 ---
 
@@ -535,9 +226,9 @@
 **[SERIES] vfio: Fix cdev second-open and harden selftests** （cover letter，1/3 个 patch 达到代码量阈值）
 
 - 日期：2026-09-11
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Alex Williamson <alex.williamson@nvidia.com>
-- 概括：修复 VFIO 字符设备第二次绑定在修改共享状态前才检查单打开限制的问题：原先第二次绑定先更新设备令牌和 KVM 关联，随后才被拒绝，错误路径可能破坏当前打开者的令牌和 KVM 引用。现将单打开检查提前到绑定操作开始处并返回忙碌，使无法完成的绑定不触碰现有状态；同时增加自测试验证失败第二次打开不破坏令牌，并延长相关测试超时。
+- 概括：针对 VFIO 字符设备路径的单打开限制，原先第二次绑定检查在已修改设备共享状态之后，失败时可能清除当前打开者的内核虚拟机关联并破坏物理功能令牌；现在把单打开检查提前到状态变更之前，重复绑定直接返回设备忙错误，不触碰原有状态，并新增自测验证失败绑定不会破坏令牌。同时延长相关自测超时，以容纳固件优先错误处理下设备复位延迟过长的情况。
 - 达到阈值的 patches（1 个，显示前 5）：
   - vfio: Reject a second cdev open before mutating shared device state
 - 来源：https://patchwork.kernel.org/project/kvm/patch/20260911170429.1642480-2-alex.williamson@nvidia.com/
@@ -551,9 +242,9 @@
 **[SERIES] vfio: mmap()/mprotect() hygiene for MMIO region mappings** （cover letter，5/5 个 patch 达到代码量阈值）
 
 - 日期：2026-09-29
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Abdifatah Suruur <suruurism@gmail.com>
-- 概括：修复 VFIO 平台、fsl-mc 和 cdx 的 MMIO 区域映射卫生问题：原先只读区域映射仍保留可写许可，用户态可通过内存保护升级为可写；映射偏移可能被物理帧号覆盖，破坏区间树键，未来撤销映射可能失效；cdx 还接受私有映射，写时复制路径会重新引入偏移覆盖。现清除只读区域的可写许可，保留逻辑偏移并要求共享映射，作为防御性修复。
+- 概括：针对 VFIO 平台、fsl-mc 和 CDX 设备的 MMIO 区域映射，修复只读区域可能先只读映射再通过内存保护修改升级为可写而被写入的问题，做法是清除对应虚拟内存的可写许可；同时保持逻辑文件偏移并拒绝非共享映射，避免将来设备撤销映射时因偏移被物理页帧号覆盖而留下失效映射。当前这些路径多为防御性处理，尚无驱动实际暴露只读区域。
 - 达到阈值的 patches（5 个，显示前 5）：
   - vfio/fsl-mc: keep logical vm_pgoff in MMIO region mmap
   - vfio/platform: keep logical vm_pgoff in MMIO region mmap
@@ -571,14 +262,353 @@
 **[SERIES] mlx5 support for VFIO self test** （cover letter，3/5 个 patch 达到代码量阈值）
 
 - 日期：2026-09-21
-- 状态：社区讨论中
+- 状态：已合入
 - 作者邮箱：Jason Gunthorpe <jgg@nvidia.com>
-- 概括：为 VFIO 自测试框架新增 mlx5 网络设备驱动支持，覆盖 ConnectX 设备的硬件初始化、命令接口、DMA 数据路径和 MSI 中断触发，可执行数据搬运等 DMA 测试；同时调整框架允许各驱动声明所需区域大小，补充调试输出，并整理 mlx5 IFC 定义和字段访问宏供自测试驱动使用。
+- 概括：为 VFIO 自测框架补充 mlx5 ConnectX 设备支持：从网络设备驱动中抽取接口定义、常量和访问宏供自测程序使用，并允许驱动声明所需内存区域大小；新增的 mlx5 自测驱动完成硬件初始化、命令接口和内存密钥创建，通过 RDMA 自环回实现数据复制和 MSI-X 中断发送，使这类设备能运行 VFIO 的 DMA 和中断路径自测。
 - 达到阈值的 patches（3 个，显示前 5）：
   - vfio: selftests: mlx5 driver - add send_msi support
   - vfio: selftests: Add mlx5 driver - data path and memcpy ops
   - vfio: selftests: Add mlx5 driver - HW init and command interface
 - 来源：https://patchwork.kernel.org/project/kvm/patch/7-v7-c6d30e8ce1e4+3dfa6-mlx5st_jgg@nvidia.com/
+
+---
+
+## 社区讨论中 Patches
+
+### ◆ 子系统：VFIO PCI（13 patches）
+
+**▸ 组织：Google**（3 patches）
+
+**[SERIES] vfio/pci: Fix power state race with SR-IOV enablement** （cover letter，3/5 个 patch 达到代码量阈值）
+
+- 日期：2026-10-29
+- 状态：社区讨论中
+- 作者邮箱：David Matlack <dmatlack@google.com>
+- 概括：修复 VFIO PCI 设备关闭与启用 SR-IOV 并发时的电源状态竞争。原先进程关闭设备时将设备从 D3hot 恢复到 D0 未持有内存锁，可能与用户写入启用 SR-IOV 参数的线程同时执行，导致 PF 的 BAR 恢复顺序错乱，触发内核警告，甚至并发释放保存的电源状态。现在所有电源状态转换都在写内存锁保护下进行，并对无锁访问的活动标志做显式标注，新增自测覆盖 D3hot 关闭、SR-IOV 与竞争场景。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - vfio/pci: Hold memory_lock for all calls to vfio_pci_set_power_state()
+  - vfio/pci: Annotate lockless accesses to vdev->sriov_active
+  - vfio: selftests: Add test for device power state transitions
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261029203324.1637772-2-dmatlack@google.com/
+
+**[SERIES] iommu: Add live update state preservation** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-10-25
+- 状态：社区讨论中
+- 作者邮箱：Samiullah Khawaja <skhawaja@google.com>
+- 概括：为活跃更新场景提供 IOMMU 状态保存与恢复，覆盖页表、域、设备及 PASID 表和根表或上下文表，其中 vt-d 驱动负责保留并恢复自身硬件状态，未保留设备的旧条目在关机时清理。iommufd 增加标记硬件页表保留的接口；用户态标记后，相关映射不可变并拒绝映射或解除映射，保存时验证后备内存并保留 IOMMU 域。VFIO 字符设备保存时一并保存其 iommufd 附着状态，此后禁止再附加或分离，恢复时重新附着域。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - iommufd: Add APIs to preserve/unpreserve a vfio cdev
+  - vfio/pci: Preserve the iommufd state of the vfio cdev
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261025021930.674647-17-skhawaja@google.com/
+
+**[v1] vfio/pci: pass FAULT_FLAG_WRITE to vmf_insert_pfn_pmd/pud()**
+
+- 日期：2026-10-24
+- 状态：社区讨论中
+- 作者邮箱：Mina Almasry <almasrymina@google.com>
+- 概括：修复 VFIO PCI 巨页映射插入时未根据故障类型传递写标志，导致共享可写映射在软件脏页跟踪后或写保护场景下安装只读巨页，后续写故障进入巨页写保护处理却因标志为只读而不做任何修改，造成无限写缺页循环；现在写故障会正确标记新巨页为脏且可写。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261024015540.538758-1-almasrymina@google.com/
+
+**▸ 组织：OzLabs Community**（2 patches）
+
+**[SERIES] vfio/pci: Add mmap() for DMABUFs** （cover letter，7/8 个 patch 达到代码量阈值）
+
+- 日期：2026-10-06
+- 状态：社区讨论中
+- 作者邮箱：Matt Evans <matt@ozlabs.org>
+- 概括：VFIO PCI 的基地址寄存器映射改为通过 DMA 缓冲区查找物理页并统一撤销；新增把已导出缓冲区描述符映射给其他进程的能力，使进程只能访问基地址寄存器指定子范围而无需共享完整设备描述符，并支持用户空间主动请求撤销缓冲区、清除页表且禁止再次映射或附加。还修复低功耗唤醒恢复路径未恢复缓冲区状态的问题，用独立锁避免内存锁与映射锁可能形成的死锁。
+- 达到阈值的 patches（7 个，显示前 5）：
+  - vfio/pci: Un-revoke DMABUFs in LOW_POWER_ENTRY_WITH_WAKEUP resume
+  - vfio/pci: Add a helper to look up PFNs for DMABUFs
+  - vfio/pci: Add a helper to create a DMABUF for a BAR-map VMA
+  - vfio/pci: Convert BAR mmap() to use a DMABUF
+  - vfio/pci: Clean up BAR zap and revocation
+  - ... 及其他 2 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261006193643.76330-3-matt@ozlabs.org/
+
+**[v6,9/9] vfio/pci: Permanently revoke a DMABUF on request**
+
+- 日期：2026-09-11
+- 状态：社区讨论中
+- 作者邮箱：Matt Evans <matt@ozlabs.org>
+- 概括：在 VFIO PCI 通过直接内存访问缓冲区把设备基址寄存器范围借给客户端进程的场景中，原先撤销状态在复位后仍可恢复，无法彻底回收资源。现增加永久撤销状态和用户态撤销请求，传入目标缓冲区后保证其今后不能再导入、附加或映射，并清除已有动态映射，使原缓冲区失效后基址寄存器范围可安全重新导出。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260911214200.33793-10-matt@ozlabs.org/
+
+**▸ 组织：Kernel.org**（2 patches）
+
+**[SERIES] KVM/VFIO: guest_memfd support for device MMIO resources** （cover letter，6/6 个 patch 达到代码量阈值）
+
+- 日期：2026-10-17
+- 状态：社区讨论中
+- 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+- 概括：为 KVM 受保护虚拟机中直通的 PCI 设备提供将设备 MMIO 资源作为客户机专用内存的支持。原先客户机专用内存只能分配普通物理页，无法处理直接提供物理帧号的设备 MMIO 资源；现在扩展提供者回调支持物理帧号后端，允许 VFIO PCI 附加设备 BAR，并限制主机访问、跟踪用户映射、在分离时清理。适用于希望将直通设备 MMIO 作为客户机私有内存管理的架构，要求架构支持受保护映射且默认禁用内存映射。
+- 达到阈值的 patches（6 个，显示前 5）：
+  - vfio/pci: Provide guest_memfd backing for PCI BARs
+  - vfio/pci: Track userspace BAR mappings
+  - vfio: Dispatch guest_memfd provider operations through the filesystem
+  - vfio/pci: Restrict host BAR access for guest_memfd providers
+  - vfio/pci: Detach guest_memfd access before teardown
+  - ... 及其他 1 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261017073149.1303738-9-aneesh.kumar@kernel.org/
+
+**[v8,17/23] vfio/pci: Hand out the P2PDMA provider behind a dma-buf**
+
+- 日期：2026-09-28
+- 状态：社区讨论中
+- 作者邮箱：Leon Romanovsky <leon@kernel.org>
+- 概括：让从 VFIO PCI 导出的 dma-buf 向导入方返回其点对点 DMA 提供者，使调用方能判断点对点流量是否直接到达导出的 BAR；当缓冲区已被撤销后不再返回提供者，避免描述已经失效的设备资源。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260928-fix-p2p-acs-v4-0-v8-17-404453b9c435@nvidia.com/
+
+**▸ 组织：NVIDIA**（2 patches）
+
+**[SERIES] vfio/pci: Add CXL Type-2 device passthrough support** （cover letter，23/25 个 patch 达到代码量阈值）
+
+- 日期：2026-10-16
+- 状态：社区讨论中
+- 作者邮箱：Manish Honap <mhonap@nvidia.com>
+- 概括：为 VFIO PCI 增加 CXL Type-2 设备直通支持：通过独立的 vfio-cxl 模块注册回调并在绑定此类设备时按需加载，避免普通 PCI 直通引入额外依赖；将 CXL 设备内存解码寄存器只读暴露给客户机，把解码出的内存区域以 DMA 缓冲区形式提供给客户机，并在复位、低功耗和内存错误路径中协调 CXL 状态，同时用排除区域机制阻止客户机直接访问需要虚拟化的配置区间。
+- 达到阈值的 patches（23 个，显示前 5）：
+  - vfio/pci: Detect CXL devices and load the CXL provider on demand
+  - vfio/pci: Add a generic excluded-range list
+  - vfio/pci: Virtualize the CXL DVSEC in vfio_pci_config.c
+  - vfio/pci: Call the CXL open and close hooks around device use
+  - vfio/pci: Bracket PCI resets with the CXL reset hooks
+  - ... 及其他 18 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261016161839.2765592-8-mhonap@nvidia.com/
+
+**[SERIES] vfio/pci: Handle PCI error recovery and report state to userspace** （cover letter，15/19 个 patch 达到代码量阈值）
+
+- 日期：2026-09-01
+- 状态：社区讨论中
+- 作者邮箱：Shameer Kolothum Thodi <skolothumtho@nvidia.com>
+- 概括：为通用 VFIO PCI 驱动新增主机 PCI 错误恢复机制：引入恢复状态和锁，在主机错误恢复冻结或复位设备时，通过访问守卫阻塞并等待配置空间、基址寄存器、复位、中断、电源管理和直接内存访问缓冲区导出等操作退出；恢复完成后放行。用户态启用后还可查询恢复事件状态，默认不支持恢复的变体驱动不受影响。
+- 达到阈值的 patches（15 个，显示前 5）：
+  - vfio/pci: Serialize generic device lifetime with recovery
+  - vfio/pci: Serialize function reset with recovery
+  - vfio/pci: Serialize ioeventfd writes with recovery
+  - vfio/pci: Retry BAR faults after temporary recovery
+  - vfio/pci: Serialize BAR and ROM access with recovery
+  - ... 及其他 10 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260901093217.8539-2-skolothumtho@nvidia.com/
+
+**▸ 组织：Red Hat**（2 patches）
+
+**[SERIES] vfio/pci: fall back to platform ROM when pci_map_rom() fails** （cover letter，1/2 个 patch 达到代码量阈值）
+
+- 日期：2026-10-21
+- 状态：社区讨论中
+- 作者邮箱：Michael S. Tsirkin <mst@redhat.com>
+- 概括：当 VFIO PCI 设备的 ROM BAR 存在但内容不可读（例如 GPU 未被系统固件初始化）时，原来在 BAR 映射失败后会直接停止，无法使用引导加载器保存的 ROM 或平台固件提供的 ACPI ROM 方法。现在在映射失败后先尝试引导加载器保存的 ROM，再尝试 ACPI ROM 方法，使这类设备的视频 BIOS 仍可通过 VFIO 读取。对某些原有行为保守处理，仅作为最后回退。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - vfio/pci: read ROM via ACPI _ROM when hardware ROM is unreadable
+- 来源：https://patchwork.kernel.org/project/kvm/patch/8ab8fdfe47a8d9c9f10680ddb4a03bccad43f7c5.1792566536.git.mst@redhat.com/
+
+**[SERIES] Enable Qualcomm WiFi PCIe passthrough to VMs** （cover letter，1/2 个 patch 达到代码量阈值）
+
+- 日期：2026-10-11
+- 状态：社区讨论中
+- 作者邮箱：Jose Ignacio Tornos Martinez <jtornosm@redhat.com>
+- 概括：为让高通 ath11k/ath12k WiFi 设备通过 PCIe 直通到虚拟机后能正常工作，新增高通 VFIO PCI 变体驱动：在主机侧将主机物理消息信号中断地址写入 PCI 扩展配置空间并用魔数签名标记，虚拟机内对应 WiFi 驱动优先发现并读取这些地址编程固件，而不是使用客户机侧的输入输出虚拟地址，从而避免中断无法送达；同时在两个 WiFi 驱动中增加全局复位后的链路恢复重试，以容忍虚拟化环境中的时序变化。
+- 达到阈值的 patches（1 个，显示前 5）：
+  - vfio/pci: Add qcom-vfio-pci variant driver
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261011074514.515894-3-jtornosm@redhat.com/
+
+**▸ 组织：AMD**（1 patches）
+
+**[RFC] vfio/pci: Block for the upstream bridge lock in vfio_pci_core_disable()**
+
+- 日期：2026-09-08
+- 状态：社区讨论中
+- 作者邮箱：YuanShang <YuanShang.Mao@amd.com>
+- 概括：在 SR-IOV 虚拟功能释放场景中，同一上游桥下的多个功能并发释放时，原先只有赢得桥锁的一个会复位，其余跳过复位直接交还，导致设备未复位且无日志。现改为阻塞获取上游桥锁，让并发释放的复位串行执行，保证每个功能都复位；拆多个功能时每个都要等待一次复位稳定时间。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260908080946.2235849-1-YuanShang.Mao@amd.com/
+
+**▸ 组织：IBM**（1 patches）
+
+**[v11,5/5] vfio-pci/zdev: Add VFIO FMB device features**
+
+- 日期：2026-10-28
+- 状态：社区讨论中
+- 作者邮箱：Omar Elghoul <oelghoul@linux.ibm.com>
+- 概括：为 zPCI 设备新增 VFIO 特性，把 FMB 测量功能透传给用户空间：用户可启用或禁用 FMB，并在启用后读取最新测量数据。该能力面向需要从用户态获取 zPCI 设备测量信息的直通场景。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261028154352.15108-6-oelghoul@linux.ibm.com/
+
+---
+
+### ◆ 子系统：VFIO Core（11 patches）
+
+**▸ 组织：IBM**（2 patches）
+
+**[v6,4/5] vfio/spapr_tce: Normalize EEH IOA error injection addresses**
+
+- 日期：2026-10-23
+- 状态：社区讨论中
+- 作者邮箱：Narayana Murty N <nnmlinux@linux.ibm.com>
+- 概括：在 IBM Power 的 sPAPR VFIO EEH 错误注入路径中，用户态可能传入主机 Linux BAR 资源地址，而固件平台后端期望 PCI/IOA 总线地址。现在对内存或 IO BAR 目标函数做地址归一化：已经是总线地址则保持不变，是资源地址则借助 BAR 相对偏移转换为总线地址；地址和掩码均为零的无地址注入直接透传。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261023073642.59657-5-nnmlinux@linux.ibm.com/
+
+**[v2] vfio: Use file-based reference counting for KVM**
+
+- 日期：2026-09-03
+- 状态：社区讨论中
+- 作者邮箱：Steffen Eiden <seiden@linux.ibm.com>
+- 概括：在 VFIO 与 KVM 虚拟机生命周期绑定的场景中，原先手动获取函数指针并跟踪模块引用，设备还要保存释放函数指针，管理复杂。现改为在内核接口传递虚拟机文件、由内核文件引用计数统一处理，组和设备各自持有引用，简化代码并移除 KVM 对外导出的符号，为后续并行加载多个 KVM 模块创造条件。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260903-vfio-v2-1-ef4cd4190ae7@linux.ibm.com/
+
+**▸ 组织：NVIDIA**（2 patches）
+
+**[v2,12/12] vfio/nvidia-vgpu: add the Rust VFIO variant driver**
+
+- 日期：2026-10-23
+- 状态：社区讨论中
+- 作者邮箱：Simon Song <xinmengs@nvidia.com>
+- 概括：为 NVIDIA vGPU 虚拟功能新增 Rust 编写的 VFIO PCI 变体驱动，配合 nova-core 管理实例：首次打开时创建实例，最后一次关闭时销毁；暴露分配的设备与子系统标识，限制分配的 BAR1 范围，并协调固件复位与 PCI 复位。无 Nova vGPU 接口的设备继续走普通 PCI 透传。构建系统扩展导出所需 Rust 符号，使该驱动能编译并链接 nova-core。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261023154009.2246627-13-xinmengs@nvidia.com/
+
+**[12/13] vfio/nvidia-vgpu: add the NVIDIA vGPU VFIO variant driver**
+
+- 日期：2026-09-05
+- 状态：社区讨论中
+- 作者邮箱：Zhi Wang <zhiw@nvidia.com>
+- 概括：为 NVIDIA vGPU 虚拟功能新增 VFIO PCI 变体驱动，仅允许通过显式覆盖绑定且只接受虚拟功能，将实例打开、复位和关闭委托给 PF 侧 nova-core 协调；配置空间读取向用户展示固件选定的设备与子系统 ID，并按分配规格调整 BAR1 大小，其余操作沿用 vfio-pci-core。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260905081116.106613-13-zhiw@nvidia.com/
+
+**▸ 组织：Amazon**（2 patches）
+
+**vfio: Create the group chardev outside vfio.group_lock**
+
+- 日期：2026-09-11
+- 状态：社区讨论中
+- 作者邮箱：Sakac, Pavol <sakacpav@amazon.de>
+- 概括：在并行设备探测触发大量 VFIO 组同时注册时，原先组字符设备创建一直持有全局组锁，设备添加和事件广播会串行化无关创建，使该锁成为主要竞争点。现将分配、命名和字符设备注册移出锁，只在锁内预留组身份并延迟发布事件，失败构建不再广播事件，从而消除并行探测启用窗口中的锁竞争。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260911-vfopt-s4-v1-0-98ba1d2ef7ab@amazon.de/
+
+**[RFC,8/8] vfio: Opt the group and vfio-dev class devices into staged sysfs**
+
+- 日期：2026-09-11
+- 状态：社区讨论中
+- 作者邮箱：Sakac, Pavol <sakacpav@amazon.de>
+- 概括：在大量虚拟功能并发注册的场景中，VFIO 组字符设备和类设备每次创建时走实时系统设备模型路径，会使并发注册在内核系统设备模型锁上排队。现将这两类设备选择分阶段系统设备模型注册，目录一次性发布，避免任何消费者看到半构建状态，并缓解并发注册带来的锁竞争。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260911174414.97060-8-sakacpav@amazon.de/
+
+**▸ 组织：Google**（2 patches）
+
+**[SERIES] vfio: Add support for platform devices** （cover letter，6/7 个 patch 达到代码量阈值）
+
+- 日期：2026-10-24
+- 状态：社区讨论中
+- 作者邮箱：Mostafa Saleh <smostafa@google.com>
+- 概括：为 kvftool 虚拟机管理器新增 VFIO 平台设备直通能力，使用户可通过新命令行选项将系统平台总线下的设备（事先绑定到 VFIO 平台驱动）分配给虚拟机。原先只支持 PCI 设备直通；现在预留客户机地址空间，映射设备的 MMIO 区域并生成设备树节点，支持边沿触发中断，并允许用户提供设备树模板复制兼容属性等绑定信息，便于客户机驱动匹配。
+- 达到阈值的 patches（6 个，显示前 5）：
+  - vfio: Factor out wired IRQ setup and teardown
+  - vfio: Support edge-triggered wired IRQs
+  - vfio: Add basic support for vfio-platform
+  - vfio: Reserve guest address space for VFIO platform
+  - vfio: platform: Add interrupts support
+  - ... 及其他 1 个 patch
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261024161902.2093581-2-smostafa@google.com/
+
+**[SERIES] iommu: Introduce Page Table Observability Framework** （cover letter，2/2 个 patch 达到代码量阈值）
+
+- 日期：2026-10-01
+- 状态：社区讨论中
+- 作者邮箱：Pranjal Shrivastava <praan@google.com>
+- 概括：新增 IOMMU 页表可观测性框架，把 IO 页表页面数归属到具体 IOMMU 域，并在 VFIO 容器和 iommufd 的 fdinfo 中暴露 iommu-nr-pages 字段，使用户可查看各设备或容器实际占用的 IO 页表页数。仅通用页表库实现的域会计数，任一附加域不支持时省略该字段，避免报告部分计数；自测还验证了卸载映射后页数暂不下降的当前行为。
+- 达到阈值的 patches（2 个，显示前 5）：
+  - vfio/type1: Expose IO page table usage via fdinfo
+  - vfio/selftests: Add observability test for IO page table usage
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261001224531.765278-5-praan@google.com/
+
+**▸ 组织：Individual Contributor**（1 patches）
+
+**vfio/nvgrace-gpu: Skip PFN registration for empty memory regions**
+
+- 日期：2026-09-25
+- 状态：社区讨论中
+- 作者邮箱：Andrea Parri <parri.andrea@gmail.com>
+- 概括：针对 vfio/nvgrace-gpu 设备，在 ACPI 内存属性缺失或 C2C 链路断开的回退模式下，使用内存区域长度为零但仍被注册，导致页帧号地址空间覆盖整个范围且关闭路径无法注销；第二次打开返回 EBUSY，解绑后残留节点可能在后续注册或内存错误处理时访问已释放内存，错误也被记为已恢复而非忽略。现在仅当使用内存区域长度非零时注册和注销该区域，回退模式不再注册，避免残留和误报。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260925161024.189771-1-parri.andrea@gmail.com/
+
+**▸ 组织：ARM**（1 patches）
+
+**[RFC,v2,12/15] vfio: Support VFIO devices that access the CPU MMU**
+
+- 日期：2026-10-15
+- 状态：社区讨论中
+- 作者邮箱：Ryan Roberts <ryan.roberts@arm.com>
+- 概括：新增一类不经 IOMMU、由 CPU MMU 完成 DMA 的 VFIO 设备支持。这类设备不绑定 iommufd 接口、不使用 VFIO 容器，打开时不强制要求容器，设置容器会被拒绝；虚拟机管理器因需要设备特定知识创建虚拟设备，知道不必分配容器。适用于与 CPU 共享页表的设备直通场景。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261015142552.4128028-13-ryan.roberts@arm.com/
+
+**▸ 组织：归属待核实（openai.com）**（1 patches）
+
+**vfio: Publish the container after all fallible initialization**
+
+- 日期：2026-10-30
+- 状态：社区讨论中
+- 作者邮箱：Kyle Zeng <kylebot@openai.com>
+- 概括：在 VFIO 模块首次自动加载的竞态场景中，原先容器设备文件在初始化全部成功前发布，后续初始化失败时已打开文件可能引用已释放模块内存，造成内核越界。现将容器初始化作为最后可失败步骤，先注册无 IOMMU 后端再注册容器设备，失败时反向回收；一旦用户能打开容器文件，模块初始化便不会再失败。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20261030042337.74512-1-kylebot@openai.com/
+
+---
+
+### ◆ 子系统：VFIO AP (s390)（1 patches）
+
+**▸ 组织：IBM**（1 patches）
+
+**[v6,1/5] s390/vfio-ap: Fix leak of pinned NIB and registered GISC in vfio_ap_irq_enable/disable()**
+
+- 日期：2026-09-04
+- 状态：社区讨论中
+- 作者邮箱：Anthony Krowiak <akrowiak@linux.ibm.com>
+- 概括：针对 s390 加密适配器队列透传，修复启用或禁用中断时对固定通知指示字节页和客户机中断子类的管理：禁用命令是异步的，若在中断位清零前释放固定页，硬件后续 DMA 写入可能落到已被新所有者占用的内存。现在先等待中断位清零，超时则故意保留固定页和中断注册以避免野写入；只有确认队列不再工作时才立即释放。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260904093435.1161402-2-akrowiak@linux.ibm.com/
+
+---
+
+### ◆ 子系统：VFIO Migration（1 patches）
+
+**▸ 组织：Kernel.org**（1 patches）
+
+**[RFC,POC,31/50] vfio: install the migration data descriptor when the ioctl returns**
+
+- 日期：2026-09-15
+- 状态：社区讨论中
+- 作者邮箱：Christian Brauner <brauner@kernel.org>
+- 概括：调整 VFIO 迁移数据文件描述符的安装时机，改为在迁移状态获取 ioctl 返回时通过新的描述符准备机制完成安装，错误和资源回收依赖文件关闭路径统一处理，避免原先手动分配、安装和回退的分散逻辑。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260915-work-fd-reserve-unify-folded-v1-31-4d5217d6b246@kernel.org/
+
+---
+
+### ◆ 子系统：VFIO CCW (s390)（1 patches）
+
+**▸ 组织：Individual Contributor**（1 patches）
+
+**[v1] vfio/ccw: Flush notoper_work before returning from reset**
+
+- 日期：2026-09-22
+- 状态：社区讨论中
+- 作者邮箱：Yuho Choi <oss.patchbox@gmail.com>
+- 概括：在 s390 通道设备 DMA 解除映射时，若子通道无法禁用或静默并进入非操作状态，释放通道程序页面的工作只排队异步执行，回调返回时页面仍被固定，可能导致解除映射重试耗尽并触发内核严重错误。现于复位返回前刷新该异步工作，确保页面解除固定完成，正常路径因工作未排队立即返回而不受影响。
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260922164928.477669-1-oss.patchbox@gmail.com/
+
+---
+
+### ◆ 子系统：VFIO Selftests（1 patches）
+
+**▸ 组织：Google**（1 patches）
+
+**[SERIES] Introduce vfio_dma_mapping_perf_test** （cover letter，3/4 个 patch 达到代码量阈值）
+
+- 日期：2026-09-10
+- 状态：社区讨论中
+- 作者邮箱：Aaron Lewis <aaronlewis@google.com>
+- 概括：新增一个 VFIO DMA 映射性能自测程序，直接报告建立内存映射、DMA 映射、DMA 解映射和解除内存映射各阶段的耗时，而不是设定固定延迟阈值造成结果不稳定；同时支持通过 IOMMUFD 按内存文件方式映射，并允许命令行指定区域大小，还在解映射辅助函数中统一检查整个区域是否已完整解除映射。
+- 达到阈值的 patches（3 个，显示前 5）：
+  - vfio: selftests: Introduce vfio_dma_mapping_perf_test
+  - vfio: selftests: Add memfd test to vfio_dma_mapping_perf_test
+  - vfio: selftests: Allow a size for vfio_dma_mapping_perf_test
+- 来源：https://patchwork.kernel.org/project/kvm/patch/20260910153326.3085937-2-aaronlewis@google.com/
 
 ---
 
@@ -591,7 +621,7 @@
 - 日期：2026-09-17
 - 状态：社区讨论中
 - 作者邮箱：Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-- 概括：为机密 guest 环境构建 vIOMMU 创建和 guest TSM 请求基础设施。VFIO 改为缓存 KVM VM 文件引用，iommufd 关联 KVM 文件，增加 vIOMMU provider 注册与外部实现查找，新增 vdevice 的 TSM 请求命令转发 guest 请求，移除旧的 PCI/TSM 接口并引入引用计数上下文。结果：外部 TSM 实现可以统一处理 guest 请求，VM 和设备生命周期更清晰。
+- 概括：将 VFIO 缓存 KVM 的方式从内核指针改为虚拟机文件引用，并在字符设备已打开时提前拒绝重复绑定，防止失败的二次绑定清除设备级虚拟机关联；随后为 iommufd 增加 vIOMMU 提供者注册与查找、保存虚拟机引用，并新增收到客户机 TSM 命令后转发的虚拟设备接口，用于机密客户机场景，同时移除旧的 PCI/TSM 请求接口并调整上下文引用计数。
 - 达到阈值的 patches（2 个，显示前 5）：
   - vfio: cache KVM VM file references instead of raw struct kvm pointers
   - vfio: cdev: Reject duplicate bind before updating KVM file
@@ -646,4 +676,4 @@ python3 tracker.py 子系统 --start 2026-03-01 --end 2026-04-30
 
 ---
 
-*报告由 Linux Patches Tracker 自动生成 | 2026-11-11 12:57:07*
+*报告由 Linux Patches Tracker 自动生成 | 2026-11-11 15:36:23*

@@ -136,6 +136,36 @@ class ReportTests(unittest.TestCase):
                 entries, cache_tag='test-retry'), {'E01': plain})
             self.assertIn(coded, model.call_args[0][1])
 
+    def test_patchwork_merged_states_are_recognized(self):
+        for state in ('accepted', 'merged', 'mainlined', 'in-next',
+                      'awaiting-upstream'):
+            self.assertEqual(tracker.patch_status_from_state(state), '已合入')
+        for state in ('declined', 'superseded', 'invalid', 'rejected',
+                      'not-applicable'):
+            self.assertEqual(tracker.patch_status_from_state(state), '已关闭')
+        self.assertEqual(tracker.patch_status_from_state('new'), '社区讨论中')
+
+    def test_pull_commit_subjects_mark_only_untracked_patches(self):
+        mbox = ('Subject: [GIT,PULL] VFIO updates\n\n'
+                'Author One (2):\n'
+                '      vfio/pci: Fix a race in reset\n'
+                '      vfio: Add new ioctl\n\n'
+                '----------------------------------------------------------------\n'
+                ' file | 2 ++\n')
+        subjects = tracker._parse_pull_commit_subjects(mbox)
+        patches = [
+            {'title': '[PATCH v2] vfio/pci: Fix a race in reset',
+             'state': 'new', 'status': '社区讨论中'},
+            {'title': '[PATCH] vfio: Add new ioctl',
+             'state': 'accepted', 'status': '已合入'},
+            {'title': '[PATCH] vfio: Add new ioctl',
+             'state': 'changes-requested', 'status': '社区讨论中'},
+        ]
+        self.assertEqual(tracker.apply_pull_merge_evidence(patches, subjects), 1)
+        self.assertEqual(patches[0]['status'], '已合入')
+        self.assertEqual(patches[1]['status'], '已合入')
+        self.assertEqual(patches[2]['status'], '社区讨论中')
+
 
 if __name__ == '__main__':
     unittest.main()

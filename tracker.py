@@ -1584,6 +1584,22 @@ def report_summary(p):
 # Core Processing Pipeline
 # ============================================================
 
+MERGED_PATCH_STATES = {
+    'accepted', 'merged', 'mainlined', 'in-next', 'awaiting-upstream',
+}
+CLOSED_PATCH_STATES = {
+    'declined', 'superseded', 'invalid', 'rejected', 'not-applicable',
+}
+
+
+def patch_status_from_state(state):
+    if state in MERGED_PATCH_STATES:
+        return '已合入'
+    if state in CLOSED_PATCH_STATES:
+        return '已关闭'
+    return '社区讨论中'
+
+
 def process_patches(patches_data, config):
     """Process raw patches: filter, classify, enrich."""
     processed = []
@@ -1615,12 +1631,7 @@ def process_patches(patches_data, config):
         version = extract_version(title) or series_version
         summary = chinese_summary(title)
 
-        if state in ['accepted', 'merged']:
-            status = '已合入'
-        elif state in ['declined', 'superseded', 'invalid']:
-            status = '已关闭'
-        else:
-            status = '社区讨论中'
+        status = patch_status_from_state(state)
 
         processed.append({
             'id': patch.get('id'),
@@ -1848,6 +1859,7 @@ def generate_report(patches, start_date, end_date, config, top_table_patches=Non
     filtered = [p for p in patches if start_date <= p['date'] <= end_date]
     merged = [p for p in filtered if p['status'] == '已合入']
     discussion = [p for p in filtered if p['status'] == '社区讨论中']
+    closed = [p for p in filtered if p['status'] == '已关闭']
 
     table_source = top_table_patches if top_table_patches is not None else patches
     table_filtered = [p for p in table_source if start_date <= p['date'] <= end_date]
@@ -1857,6 +1869,7 @@ def generate_report(patches, start_date, end_date, config, top_table_patches=Non
     total = len(filtered)
     disc_pct = len(discussion) * 100 / total if total > 0 else 0
     merged_pct = len(merged) * 100 / total if total > 0 else 0
+    closed_pct = len(closed) * 100 / total if total > 0 else 0
 
     # Organization stats
     org_stats = defaultdict(list)
@@ -1891,6 +1904,7 @@ def generate_report(patches, start_date, end_date, config, top_table_patches=Non
 |------|------|------|
 | 社区讨论中 | {len(discussion)} | {disc_pct:.1f}% |
 | 已合入 | {len(merged)} | {merged_pct:.1f}% |
+| 已关闭 | {len(closed)} | {closed_pct:.1f}% |
 | **总计** | **{total}** | **100%** |
 
 ### 按组织分类（TOP 15）
@@ -2108,6 +2122,51 @@ def _fetch_mbox_text(url, max_chars=30000):
     except Exception as exc:
         print(f"      获取邮件失败: {url} ({exc})")
         return ''
+
+
+PULL_COMMIT_LINE_RE = re.compile(r'^ {6}(\S.*)$')
+
+
+def _normalize_commit_subject(subject):
+    subject = re.sub(r'^(?:Re:\s*)+', '', subject.strip(), flags=re.IGNORECASE)
+    subject = extract_base_title(subject)
+    return re.sub(r'\s+', ' ', subject).strip().lower()
+
+
+def _parse_pull_commit_subjects(mbox_text):
+    subjects = set()
+    for line in mbox_text.splitlines():
+        match = PULL_COMMIT_LINE_RE.match(line)
+        if not match:
+            continue
+        subject = match.group(1).strip()
+        if len(subject) >= 10 and not subject.startswith(('...', '|')):
+            subjects.add(_normalize_commit_subject(subject))
+    return subjects
+
+
+def collect_pull_commit_subjects(raw_patches):
+    subjects = set()
+    for patch in raw_patches:
+        if not patch.get('pull_url') or not patch.get('mbox'):
+            continue
+        mbox_text = _fetch_mbox_text(patch['mbox'], max_chars=500000)
+        subjects.update(_parse_pull_commit_subjects(mbox_text))
+    return subjects
+
+
+def apply_pull_merge_evidence(processed_patches, merged_subjects):
+    if not merged_subjects:
+        return 0
+    marked = 0
+    for patch in processed_patches:
+        if patch.get('state') not in ('new', 'unknown', 'handled-elsewhere'):
+            continue
+        if _normalize_commit_subject(patch.get('title', '')) in merged_subjects:
+            patch['status'] = '已合入'
+            patch['state'] = 'merged-pull'
+            marked += 1
+    return marked
 
 
 def _mail_body_excerpt(mbox_text, limit=8000):
@@ -2452,6 +2511,7 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
             raw = json.load(f)
 
     patches = raw if isinstance(raw, list) else raw.get('patches', [])
+    merged_subjects = collect_pull_commit_subjects(patches)
     patches = [p for p in patches
                if start_date <= (p.get('date') or '')[:10] <= end_date]
     print(f"    共 {len(patches)} 个原始 patches")
@@ -2459,6 +2519,9 @@ def run_pipeline(module_key, config, start_date, end_date, force_refetch=False):
     # Step 1: Filter
     print(f"\n[2/6] 过滤非 {module_key} 相关 patch...")
     processed, filtered = process_patches(patches, config)
+    marked = apply_pull_merge_evidence(processed, merged_subjects)
+    if marked:
+        print(f"    根据已发送 pull request 的提交清单补充 {marked} 个已合入 patch")
     print(f"    {len(processed)} 个相关（过滤 {filtered} 个）")
 
     # Step 2: Dedup
